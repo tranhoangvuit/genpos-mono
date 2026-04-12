@@ -5,32 +5,27 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	genposv1 "github.com/genpick/genpos-mono/backend/gen/genpos/v1"
-	"github.com/genpick/genpos-mono/backend/gen/genpos/v1/genposv1connect"
-
-	"connectrpc.com/connect"
+	"github.com/genpick/genpos-mono/backend/internal/app"
+	"github.com/genpick/genpos-mono/backend/internal/config"
 )
 
-type GenposServer struct{}
-
-func (s *GenposServer) Ping(
-	_ context.Context,
-	req *connect.Request[genposv1.PingRequest],
-) (*connect.Response[genposv1.PingResponse], error) {
-	return connect.NewResponse(&genposv1.PingResponse{
-		Message: "pong",
-	}), nil
-}
-
 func main() {
-	srv := &GenposServer{}
-	mux := http.NewServeMux()
+	ctx := context.Background()
 
-	path, handler := genposv1connect.NewGenposServiceHandler(srv)
-	mux.Handle(path, handler)
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
 
-	corsHandler := withCORS(mux)
+	application, err := app.InitializeApp(ctx, cfg)
+	if err != nil {
+		log.Fatalf("failed to initialize app: %v", err)
+	}
+	defer application.DB.Close()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -41,30 +36,28 @@ func main() {
 	p.SetHTTP1(true)
 	p.SetUnencryptedHTTP2(true)
 
-	s := &http.Server{
+	srv := &http.Server{
 		Addr:      ":" + port,
-		Handler:   corsHandler,
+		Handler:   application.NewHTTPHandler(),
 		Protocols: p,
 	}
 
-	log.Printf("backend listening on :%s", port)
-	if err := s.ListenAndServe(); err != nil {
-		log.Fatal(err)
+	go func() {
+		application.Logger.Info("backend listening", "port", port)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	application.Logger.Info("shutting down server")
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Printf("server shutdown error: %v", err)
 	}
 }
-
-func withCORS(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Connect-Protocol-Version")
-		w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-		h.ServeHTTP(w, r)
-	})
-}
-
-var _ genposv1connect.GenposServiceHandler = (*GenposServer)(nil)

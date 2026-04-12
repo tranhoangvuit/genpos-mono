@@ -9,6 +9,7 @@ package genposv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -101,16 +102,239 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
+type ListProductsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProductsRequest) Reset() {
+	*x = ListProductsRequest{}
+	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProductsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProductsRequest) ProtoMessage() {}
+
+func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProductsRequest.ProtoReflect.Descriptor instead.
+func (*ListProductsRequest) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListProductsRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *ListProductsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListProductsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListProductsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Products      []*Product             `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProductsResponse) Reset() {
+	*x = ListProductsResponse{}
+	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProductsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProductsResponse) ProtoMessage() {}
+
+func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProductsResponse.ProtoReflect.Descriptor instead.
+func (*ListProductsResponse) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListProductsResponse) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+type Product struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrgId         string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Sku           string                 `protobuf:"bytes,4,opt,name=sku,proto3" json:"sku,omitempty"`
+	PriceCents    int64                  `protobuf:"varint,5,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
+	Active        bool                   `protobuf:"varint,6,opt,name=active,proto3" json:"active,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Product) Reset() {
+	*x = Product{}
+	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Product) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Product) ProtoMessage() {}
+
+func (x *Product) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Product.ProtoReflect.Descriptor instead.
+func (*Product) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Product) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Product) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *Product) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Product) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *Product) GetPriceCents() int64 {
+	if x != nil {
+		return x.PriceCents
+	}
+	return 0
+}
+
+func (x *Product) GetActive() bool {
+	if x != nil {
+		return x.Active
+	}
+	return false
+}
+
+func (x *Product) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Product) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 var File_genpos_v1_genpos_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_genpos_proto_rawDesc = "" +
 	"\n" +
-	"\x16genpos/v1/genpos.proto\x12\tgenpos.v1\"\r\n" +
+	"\x16genpos/v1/genpos.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\r\n" +
 	"\vPingRequest\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2J\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"a\n" +
+	"\x13ListProductsRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"F\n" +
+	"\x14ListProductsResponse\x12.\n" +
+	"\bproducts\x18\x01 \x03(\v2\x12.genpos.v1.ProductR\bproducts\"\x85\x02\n" +
+	"\aProduct\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
+	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x10\n" +
+	"\x03sku\x18\x04 \x01(\tR\x03sku\x12\x1f\n" +
+	"\vprice_cents\x18\x05 \x01(\x03R\n" +
+	"priceCents\x12\x16\n" +
+	"\x06active\x18\x06 \x01(\bR\x06active\x129\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x9d\x01\n" +
 	"\rGenposService\x129\n" +
-	"\x04Ping\x12\x16.genpos.v1.PingRequest\x1a\x17.genpos.v1.PingResponse\"\x00B\xa0\x01\n" +
+	"\x04Ping\x12\x16.genpos.v1.PingRequest\x1a\x17.genpos.v1.PingResponse\"\x00\x12Q\n" +
+	"\fListProducts\x12\x1e.genpos.v1.ListProductsRequest\x1a\x1f.genpos.v1.ListProductsResponse\"\x00B\xa0\x01\n" +
 	"\rcom.genpos.v1B\vGenposProtoP\x01Z=github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1\xa2\x02\x03GXX\xaa\x02\tGenpos.V1\xca\x02\tGenpos\\V1\xe2\x02\x15Genpos\\V1\\GPBMetadata\xea\x02\n" +
 	"Genpos::V1b\x06proto3"
 
@@ -126,19 +350,28 @@ func file_genpos_v1_genpos_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_genpos_proto_rawDescData
 }
 
-var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_genpos_v1_genpos_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: genpos.v1.PingRequest
-	(*PingResponse)(nil), // 1: genpos.v1.PingResponse
+	(*PingRequest)(nil),           // 0: genpos.v1.PingRequest
+	(*PingResponse)(nil),          // 1: genpos.v1.PingResponse
+	(*ListProductsRequest)(nil),   // 2: genpos.v1.ListProductsRequest
+	(*ListProductsResponse)(nil),  // 3: genpos.v1.ListProductsResponse
+	(*Product)(nil),               // 4: genpos.v1.Product
+	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
 var file_genpos_v1_genpos_proto_depIdxs = []int32{
-	0, // 0: genpos.v1.GenposService.Ping:input_type -> genpos.v1.PingRequest
-	1, // 1: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	4, // 0: genpos.v1.ListProductsResponse.products:type_name -> genpos.v1.Product
+	5, // 1: genpos.v1.Product.created_at:type_name -> google.protobuf.Timestamp
+	5, // 2: genpos.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
+	0, // 3: genpos.v1.GenposService.Ping:input_type -> genpos.v1.PingRequest
+	2, // 4: genpos.v1.GenposService.ListProducts:input_type -> genpos.v1.ListProductsRequest
+	1, // 5: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
+	3, // 6: genpos.v1.GenposService.ListProducts:output_type -> genpos.v1.ListProductsResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_genpos_v1_genpos_proto_init() }
@@ -152,7 +385,7 @@ func file_genpos_v1_genpos_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_genpos_proto_rawDesc), len(file_genpos_v1_genpos_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

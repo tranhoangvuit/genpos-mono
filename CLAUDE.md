@@ -34,5 +34,7 @@ Dev server starts on port 3000.
 
 `docker compose up -d` starts:
 - PostgreSQL 17 on :5432 (wal_level=logical for PowerSync)
+  - `genpos_dev` — development database (default, used by backend and PowerSync)
+  - `genpos_test` — integration test database (created by init script)
 - Redis 7 on :6379
-- PowerSync on :8080
+- PowerSync on :8080 (connected to genpos_dev)

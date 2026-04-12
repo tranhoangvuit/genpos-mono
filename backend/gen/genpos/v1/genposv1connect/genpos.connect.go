@@ -35,11 +35,15 @@ const (
 const (
 	// GenposServicePingProcedure is the fully-qualified name of the GenposService's Ping RPC.
 	GenposServicePingProcedure = "/genpos.v1.GenposService/Ping"
+	// GenposServiceListProductsProcedure is the fully-qualified name of the GenposService's
+	// ListProducts RPC.
+	GenposServiceListProductsProcedure = "/genpos.v1.GenposService/ListProducts"
 )
 
 // GenposServiceClient is a client for the genpos.v1.GenposService service.
 type GenposServiceClient interface {
 	Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error)
+	ListProducts(context.Context, *connect.Request[v1.ListProductsRequest]) (*connect.Response[v1.ListProductsResponse], error)
 }
 
 // NewGenposServiceClient constructs a client for the genpos.v1.GenposService service. By default,
@@ -59,12 +63,19 @@ func NewGenposServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(genposServiceMethods.ByName("Ping")),
 			connect.WithClientOptions(opts...),
 		),
+		listProducts: connect.NewClient[v1.ListProductsRequest, v1.ListProductsResponse](
+			httpClient,
+			baseURL+GenposServiceListProductsProcedure,
+			connect.WithSchema(genposServiceMethods.ByName("ListProducts")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // genposServiceClient implements GenposServiceClient.
 type genposServiceClient struct {
-	ping *connect.Client[v1.PingRequest, v1.PingResponse]
+	ping         *connect.Client[v1.PingRequest, v1.PingResponse]
+	listProducts *connect.Client[v1.ListProductsRequest, v1.ListProductsResponse]
 }
 
 // Ping calls genpos.v1.GenposService.Ping.
@@ -72,9 +83,15 @@ func (c *genposServiceClient) Ping(ctx context.Context, req *connect.Request[v1.
 	return c.ping.CallUnary(ctx, req)
 }
 
+// ListProducts calls genpos.v1.GenposService.ListProducts.
+func (c *genposServiceClient) ListProducts(ctx context.Context, req *connect.Request[v1.ListProductsRequest]) (*connect.Response[v1.ListProductsResponse], error) {
+	return c.listProducts.CallUnary(ctx, req)
+}
+
 // GenposServiceHandler is an implementation of the genpos.v1.GenposService service.
 type GenposServiceHandler interface {
 	Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error)
+	ListProducts(context.Context, *connect.Request[v1.ListProductsRequest]) (*connect.Response[v1.ListProductsResponse], error)
 }
 
 // NewGenposServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -90,10 +107,18 @@ func NewGenposServiceHandler(svc GenposServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(genposServiceMethods.ByName("Ping")),
 		connect.WithHandlerOptions(opts...),
 	)
+	genposServiceListProductsHandler := connect.NewUnaryHandler(
+		GenposServiceListProductsProcedure,
+		svc.ListProducts,
+		connect.WithSchema(genposServiceMethods.ByName("ListProducts")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/genpos.v1.GenposService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case GenposServicePingProcedure:
 			genposServicePingHandler.ServeHTTP(w, r)
+		case GenposServiceListProductsProcedure:
+			genposServiceListProductsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -105,4 +130,8 @@ type UnimplementedGenposServiceHandler struct{}
 
 func (UnimplementedGenposServiceHandler) Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.GenposService.Ping is not implemented"))
+}
+
+func (UnimplementedGenposServiceHandler) ListProducts(context.Context, *connect.Request[v1.ListProductsRequest]) (*connect.Response[v1.ListProductsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.GenposService.ListProducts is not implemented"))
 }

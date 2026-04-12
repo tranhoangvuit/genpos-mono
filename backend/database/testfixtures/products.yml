@@ -1,0 +1,26 @@
+- id: "01900000-0000-0000-0000-000000000001"
+  org_id: "test-org-1"
+  name: "Widget A"
+  sku: "WGT-A"
+  price_cents: 1099
+  active: true
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000002"
+  org_id: "test-org-1"
+  name: "Widget B"
+  sku: "WGT-B"
+  price_cents: 2099
+  active: true
+  created_at: "2024-01-02T00:00:00Z"
+  updated_at: "2024-01-02T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000003"
+  org_id: "test-org-2"
+  name: "Gadget X"
+  sku: "GDG-X"
+  price_cents: 999
+  active: true
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"

@@ -1,12 +1,12 @@
 replication:
   connections:
     - type: postgresql
-      uri: postgres://postgres:postgres@postgres:5432/genpos
+      uri: postgres://postgres:postgres@postgres:5432/genpos_dev
       sslmode: disable
 
 storage:
   type: postgresql
-  uri: postgres://postgres:postgres@postgres:5432/genpos
+  uri: postgres://postgres:postgres@postgres:5432/genpos_dev
 
 port: 8080
 

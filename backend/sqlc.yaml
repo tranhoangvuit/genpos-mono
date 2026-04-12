@@ -1,0 +1,15 @@
+version: "2"
+sql:
+    - engine: "postgresql"
+      queries: "internal/infrastructure/datastore/query/"
+      schema: "database/migrations/"
+      gen:
+          go:
+              package: "sqlc"
+              out: "internal/infrastructure/datastore/sqlc"
+              sql_package: "pgx/v5"
+              emit_json_tags: true
+              emit_interface: true
+              emit_empty_slices: true
+              emit_exact_table_names: false
+              emit_prepared_queries: false
