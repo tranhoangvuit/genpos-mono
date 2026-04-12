@@ -1,0 +1,6 @@
+bucket_definitions:
+  global:
+    data:
+      # Add your sync rules here. Example:
+      # - SELECT * FROM public.todos
+      []

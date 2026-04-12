@@ -1,0 +1,35 @@
+replication:
+  connections:
+    - type: postgresql
+      uri: postgres://postgres:postgres@postgres:5432/genpos
+      sslmode: disable
+
+storage:
+  type: postgresql
+  uri: postgres://postgres:postgres@postgres:5432/genpos
+
+port: 8080
+
+sync_rules:
+  path: sync-rules.yaml
+
+# Dev auth - replace with proper JWKS in production
+client_auth:
+  jwks:
+    keys:
+      - kty: oct
+        k: "bXktZGV2LXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5n"
+        alg: HS256
+  audience:
+    - powersync-dev
+
+api:
+  tokens:
+    - powersync-dev-token
+
+telemetry:
+  disable_telemetry_sharing: true
+
+system:
+  logging:
+    level: info
