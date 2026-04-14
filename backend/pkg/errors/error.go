@@ -171,26 +171,34 @@ func New(code string) oops.OopsErrorBuilder {
 	return oops.Code(code)
 }
 
-// Convenience constructors per error-handling rules.
+// Convenience constructors per error-handling rules. Each sets the passed
+// message as both the internal error text and the Public() user-facing text,
+// so ToConnectError surfaces a useful message instead of the generic default.
 
 func NotFound(msg string) error {
-	return oops.Code(CodeNotFound).Errorf("%s", msg)
+	return oops.Code(CodeNotFound).Public(msg).Errorf("%s", msg)
 }
 
 func BadRequest(msg string) error {
-	return oops.Code(CodeBadRequest).Errorf("%s", msg)
+	return oops.Code(CodeBadRequest).Public(msg).Errorf("%s", msg)
 }
 
+// Internal is used for server-side failures. It does NOT set a public message —
+// the generic "internal server error" is shown instead to avoid leaking details.
 func Internal(msg string) error {
 	return oops.Code(CodeInternal).Errorf("%s", msg)
 }
 
 func Unauthorized(msg string) error {
-	return oops.Code(CodeUnauthorized).Errorf("%s", msg)
+	return oops.Code(CodeUnauthorized).Public(msg).Errorf("%s", msg)
 }
 
 func Forbidden(msg string) error {
-	return oops.Code(CodeForbidden).Errorf("%s", msg)
+	return oops.Code(CodeForbidden).Public(msg).Errorf("%s", msg)
+}
+
+func Conflict(msg string) error {
+	return oops.Code(CodeConflict).Public(msg).Errorf("%s", msg)
 }
 
 // Wrap wraps an error with a short domain message, preserving the original cause.

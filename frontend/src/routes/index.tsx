@@ -1,16 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
+
+import { bootstrapAuth } from '@/shared/auth/bootstrap'
+import { useAuthStore } from '@/shared/auth/store'
 
 export const Route = createFileRoute('/')({
-  component: Home,
+  component: IndexRedirect,
 })
 
-function Home() {
-  return (
-    <div style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>GenPOS</h1>
-      <p>Backend: ConnectRPC on Go</p>
-      <p>Frontend: TanStack Start</p>
-      <p>Infrastructure: PostgreSQL 17 + Redis + PowerSync</p>
-    </div>
-  )
+function IndexRedirect() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    void bootstrapAuth().finally(() => {
+      void navigate({
+        to: useAuthStore.getState().user ? '/dashboard' : '/signin',
+        replace: true,
+      })
+    })
+  }, [navigate])
+  return null
 }

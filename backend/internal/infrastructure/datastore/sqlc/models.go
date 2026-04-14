@@ -8,6 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Org struct {
+	ID        pgtype.UUID        `json:"id"`
+	Slug      string             `json:"slug"`
+	Name      string             `json:"name"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
 type Product struct {
 	ID         pgtype.UUID        `json:"id"`
 	OrgID      string             `json:"org_id"`
@@ -17,4 +25,26 @@ type Product struct {
 	Active     bool               `json:"active"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
+}
+
+type RefreshToken struct {
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	TokenHash string             `json:"token_hash"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+	RevokedAt pgtype.Timestamptz `json:"revoked_at"`
+	UserAgent string             `json:"user_agent"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+}
+
+type User struct {
+	ID           pgtype.UUID        `json:"id"`
+	OrgID        pgtype.UUID        `json:"org_id"`
+	Email        string             `json:"email"`
+	PasswordHash string             `json:"password_hash"`
+	Name         string             `json:"name"`
+	Role         string             `json:"role"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
 }

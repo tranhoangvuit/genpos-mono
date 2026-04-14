@@ -23,6 +23,8 @@ const _ = connect.IsAtLeastVersion1_13_0
 const (
 	// GenposServiceName is the fully-qualified name of the GenposService service.
 	GenposServiceName = "genpos.v1.GenposService"
+	// AuthServiceName is the fully-qualified name of the AuthService service.
+	AuthServiceName = "genpos.v1.AuthService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -38,6 +40,16 @@ const (
 	// GenposServiceListProductsProcedure is the fully-qualified name of the GenposService's
 	// ListProducts RPC.
 	GenposServiceListProductsProcedure = "/genpos.v1.GenposService/ListProducts"
+	// AuthServiceSignUpProcedure is the fully-qualified name of the AuthService's SignUp RPC.
+	AuthServiceSignUpProcedure = "/genpos.v1.AuthService/SignUp"
+	// AuthServiceSignInProcedure is the fully-qualified name of the AuthService's SignIn RPC.
+	AuthServiceSignInProcedure = "/genpos.v1.AuthService/SignIn"
+	// AuthServiceSignOutProcedure is the fully-qualified name of the AuthService's SignOut RPC.
+	AuthServiceSignOutProcedure = "/genpos.v1.AuthService/SignOut"
+	// AuthServiceRefreshProcedure is the fully-qualified name of the AuthService's Refresh RPC.
+	AuthServiceRefreshProcedure = "/genpos.v1.AuthService/Refresh"
+	// AuthServiceMeProcedure is the fully-qualified name of the AuthService's Me RPC.
+	AuthServiceMeProcedure = "/genpos.v1.AuthService/Me"
 )
 
 // GenposServiceClient is a client for the genpos.v1.GenposService service.
@@ -134,4 +146,188 @@ func (UnimplementedGenposServiceHandler) Ping(context.Context, *connect.Request[
 
 func (UnimplementedGenposServiceHandler) ListProducts(context.Context, *connect.Request[v1.ListProductsRequest]) (*connect.Response[v1.ListProductsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.GenposService.ListProducts is not implemented"))
+}
+
+// AuthServiceClient is a client for the genpos.v1.AuthService service.
+type AuthServiceClient interface {
+	// SignUp creates a new organization and its first admin user.
+	SignUp(context.Context, *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error)
+	// SignIn authenticates a user by email + password and sets session cookies.
+	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
+	// SignOut revokes the refresh token and clears session cookies.
+	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
+	// Refresh rotates the refresh token and issues a new access token.
+	Refresh(context.Context, *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error)
+	// Me returns the currently authenticated user (requires access cookie).
+	Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error)
+}
+
+// NewAuthServiceClient constructs a client for the genpos.v1.AuthService service. By default, it
+// uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and sends
+// uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or
+// connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AuthServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	authServiceMethods := v1.File_genpos_v1_genpos_proto.Services().ByName("AuthService").Methods()
+	return &authServiceClient{
+		signUp: connect.NewClient[v1.SignUpRequest, v1.SignUpResponse](
+			httpClient,
+			baseURL+AuthServiceSignUpProcedure,
+			connect.WithSchema(authServiceMethods.ByName("SignUp")),
+			connect.WithClientOptions(opts...),
+		),
+		signIn: connect.NewClient[v1.SignInRequest, v1.SignInResponse](
+			httpClient,
+			baseURL+AuthServiceSignInProcedure,
+			connect.WithSchema(authServiceMethods.ByName("SignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		signOut: connect.NewClient[v1.SignOutRequest, v1.SignOutResponse](
+			httpClient,
+			baseURL+AuthServiceSignOutProcedure,
+			connect.WithSchema(authServiceMethods.ByName("SignOut")),
+			connect.WithClientOptions(opts...),
+		),
+		refresh: connect.NewClient[v1.RefreshRequest, v1.RefreshResponse](
+			httpClient,
+			baseURL+AuthServiceRefreshProcedure,
+			connect.WithSchema(authServiceMethods.ByName("Refresh")),
+			connect.WithClientOptions(opts...),
+		),
+		me: connect.NewClient[v1.MeRequest, v1.MeResponse](
+			httpClient,
+			baseURL+AuthServiceMeProcedure,
+			connect.WithSchema(authServiceMethods.ByName("Me")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// authServiceClient implements AuthServiceClient.
+type authServiceClient struct {
+	signUp  *connect.Client[v1.SignUpRequest, v1.SignUpResponse]
+	signIn  *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	signOut *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
+	refresh *connect.Client[v1.RefreshRequest, v1.RefreshResponse]
+	me      *connect.Client[v1.MeRequest, v1.MeResponse]
+}
+
+// SignUp calls genpos.v1.AuthService.SignUp.
+func (c *authServiceClient) SignUp(ctx context.Context, req *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error) {
+	return c.signUp.CallUnary(ctx, req)
+}
+
+// SignIn calls genpos.v1.AuthService.SignIn.
+func (c *authServiceClient) SignIn(ctx context.Context, req *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
+	return c.signIn.CallUnary(ctx, req)
+}
+
+// SignOut calls genpos.v1.AuthService.SignOut.
+func (c *authServiceClient) SignOut(ctx context.Context, req *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error) {
+	return c.signOut.CallUnary(ctx, req)
+}
+
+// Refresh calls genpos.v1.AuthService.Refresh.
+func (c *authServiceClient) Refresh(ctx context.Context, req *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error) {
+	return c.refresh.CallUnary(ctx, req)
+}
+
+// Me calls genpos.v1.AuthService.Me.
+func (c *authServiceClient) Me(ctx context.Context, req *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error) {
+	return c.me.CallUnary(ctx, req)
+}
+
+// AuthServiceHandler is an implementation of the genpos.v1.AuthService service.
+type AuthServiceHandler interface {
+	// SignUp creates a new organization and its first admin user.
+	SignUp(context.Context, *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error)
+	// SignIn authenticates a user by email + password and sets session cookies.
+	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
+	// SignOut revokes the refresh token and clears session cookies.
+	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
+	// Refresh rotates the refresh token and issues a new access token.
+	Refresh(context.Context, *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error)
+	// Me returns the currently authenticated user (requires access cookie).
+	Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error)
+}
+
+// NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
+// on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	authServiceMethods := v1.File_genpos_v1_genpos_proto.Services().ByName("AuthService").Methods()
+	authServiceSignUpHandler := connect.NewUnaryHandler(
+		AuthServiceSignUpProcedure,
+		svc.SignUp,
+		connect.WithSchema(authServiceMethods.ByName("SignUp")),
+		connect.WithHandlerOptions(opts...),
+	)
+	authServiceSignInHandler := connect.NewUnaryHandler(
+		AuthServiceSignInProcedure,
+		svc.SignIn,
+		connect.WithSchema(authServiceMethods.ByName("SignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	authServiceSignOutHandler := connect.NewUnaryHandler(
+		AuthServiceSignOutProcedure,
+		svc.SignOut,
+		connect.WithSchema(authServiceMethods.ByName("SignOut")),
+		connect.WithHandlerOptions(opts...),
+	)
+	authServiceRefreshHandler := connect.NewUnaryHandler(
+		AuthServiceRefreshProcedure,
+		svc.Refresh,
+		connect.WithSchema(authServiceMethods.ByName("Refresh")),
+		connect.WithHandlerOptions(opts...),
+	)
+	authServiceMeHandler := connect.NewUnaryHandler(
+		AuthServiceMeProcedure,
+		svc.Me,
+		connect.WithSchema(authServiceMethods.ByName("Me")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/genpos.v1.AuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case AuthServiceSignUpProcedure:
+			authServiceSignUpHandler.ServeHTTP(w, r)
+		case AuthServiceSignInProcedure:
+			authServiceSignInHandler.ServeHTTP(w, r)
+		case AuthServiceSignOutProcedure:
+			authServiceSignOutHandler.ServeHTTP(w, r)
+		case AuthServiceRefreshProcedure:
+			authServiceRefreshHandler.ServeHTTP(w, r)
+		case AuthServiceMeProcedure:
+			authServiceMeHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedAuthServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAuthServiceHandler struct{}
+
+func (UnimplementedAuthServiceHandler) SignUp(context.Context, *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.SignUp is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.SignIn is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.SignOut is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) Refresh(context.Context, *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.Refresh is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.Me is not implemented"))
 }

@@ -1,0 +1,41 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "auth": {
+    "brand": "GenPos",
+    "tagline": "Everything your storefront needs.",
+    "subTagline": "Sell, sync, and scale — from one place.",
+    "copyright": "© {{year}} GenPos. All rights reserved.",
+    "signIn": "Sign In",
+    "signInSubtitle": "Enter your email to access your store.",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "haveAccount": "Already have an account?",
+    "signUpTitle": "Create your store",
+    "signUpSubtitle": "Pick a domain, set your credentials, and you're in.",
+    "businessDomain": "Business domain",
+    "businessDomainHint": "Lowercase letters, numbers, and hyphens (max 32).",
+    "creatingAccount": "Creating...",
+    "invalidCredentials": "Invalid email or password.",
+    "validation": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Password is required.",
+      "passwordMin": "Password must be at least 8 characters.",
+      "domainRequired": "Business domain is required.",
+      "domainInvalid": "Domain must be 1-32 lowercase letters, numbers, or hyphens."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}",
+    "signedInAs": "Signed in as {{email}} at {{domain}}",
+    "signOut": "Sign out"
+  }
+}

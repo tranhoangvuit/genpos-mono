@@ -6,10 +6,21 @@ package sqlc
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
+	CreateOrg(ctx context.Context, arg CreateOrgParams) (Org, error)
+	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetOrgByID(ctx context.Context, id pgtype.UUID) (Org, error)
+	GetOrgBySlug(ctx context.Context, slug string) (Org, error)
+	GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
+	GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error)
+	RevokeRefreshToken(ctx context.Context, arg RevokeRefreshTokenParams) error
 }
 
 var _ Querier = (*Queries)(nil)

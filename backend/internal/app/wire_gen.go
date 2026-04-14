@@ -12,6 +12,7 @@ import (
 
 	"github.com/genpick/genpos-mono/backend/internal/config"
 	"github.com/genpick/genpos-mono/backend/internal/handler"
+	grpchandler "github.com/genpick/genpos-mono/backend/internal/handler/grpc"
 	"github.com/genpick/genpos-mono/backend/internal/infrastructure/datastore"
 	"github.com/genpick/genpos-mono/backend/internal/usecase"
 	"github.com/genpick/genpos-mono/backend/pkg/database"
@@ -30,13 +31,27 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	pool := db.Pool
 	tenantDB := datastore.NewTenantDB(pool)
+
+	// Catalog
 	productReader := datastore.NewProductReader()
 	productUsecase := usecase.NewProductUsecase(tenantDB, productReader)
 	server := handler.NewServer(logger, productUsecase)
 
+	// Auth
+	userReader := datastore.NewUserReader()
+	userWriter := datastore.NewUserWriter()
+	orgReader := datastore.NewOrgReader()
+	orgWriter := datastore.NewOrgWriter()
+	refreshReader := datastore.NewRefreshTokenReader()
+	refreshWriter := datastore.NewRefreshTokenWriter()
+	authUsecase := usecase.NewAuthUsecase(cfg, userReader, userWriter, orgReader, orgWriter, refreshReader, refreshWriter)
+	authHandler := grpchandler.NewAuthHandler(cfg, logger, authUsecase)
+
 	return &App{
-		Logger: logger,
-		Server: server,
-		DB:     db,
+		Logger:      logger,
+		Server:      server,
+		AuthHandler: authHandler,
+		DB:          db,
+		Config:      cfg,
 	}, nil
 }

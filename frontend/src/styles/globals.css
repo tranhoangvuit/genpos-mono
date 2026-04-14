@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+
+  /* Matches the desk light theme exactly. No dark mode for phase 1. */
+  --color-background: hsl(210 22% 96.5%);
+  --color-foreground: hsl(200 4.5% 13.1%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(200 4.5% 13.1%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(200 4.5% 13.1%);
+  --color-primary: hsl(180 1.8% 11.2%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(210 22% 96.5%);
+  --color-secondary-foreground: hsl(200 4.5% 13.1%);
+  --color-muted: hsl(210 22% 96.5%);
+  --color-muted-foreground: hsl(210 3.5% 44.3%);
+  --color-accent: hsl(210 22% 96.5%);
+  --color-accent-foreground: hsl(200 4.5% 13.1%);
+  --color-destructive: hsl(9.2 88.7% 44.9%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-success: hsl(156 58.5% 93.3%);
+  --color-success-foreground: hsl(165 100% 25.1%);
+  --color-border: hsl(210 18% 90%);
+  --color-input: hsl(210 18% 90%);
+  --color-ring: hsl(200 4.5% 13.1%);
+
+  --radius-sm: calc(0.5rem - 4px);
+  --radius-md: calc(0.5rem - 2px);
+  --radius-lg: 0.5rem;
+  --radius-xl: calc(0.5rem + 4px);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}

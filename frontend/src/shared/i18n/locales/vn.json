@@ -1,0 +1,41 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn."
+  },
+  "auth": {
+    "brand": "GenPos",
+    "tagline": "Mọi thứ cửa hàng của bạn cần.",
+    "subTagline": "Bán hàng, đồng bộ và mở rộng — từ một nơi.",
+    "copyright": "© {{year}} GenPos. Bảo lưu mọi quyền.",
+    "signIn": "Đăng nhập",
+    "signInSubtitle": "Nhập email để truy cập cửa hàng của bạn.",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ tôi",
+    "signingIn": "Đang đăng nhập...",
+    "noAccount": "Chưa có tài khoản?",
+    "signUp": "Đăng ký",
+    "haveAccount": "Đã có tài khoản?",
+    "signUpTitle": "Tạo cửa hàng của bạn",
+    "signUpSubtitle": "Chọn tên miền, đặt thông tin đăng nhập và bắt đầu.",
+    "businessDomain": "Tên miền doanh nghiệp",
+    "businessDomainHint": "Chữ thường, số và dấu gạch ngang (tối đa 32 ký tự).",
+    "creatingAccount": "Đang tạo...",
+    "invalidCredentials": "Email hoặc mật khẩu không hợp lệ.",
+    "validation": {
+      "emailRequired": "Vui lòng nhập email.",
+      "emailInvalid": "Nhập một địa chỉ email hợp lệ.",
+      "passwordRequired": "Vui lòng nhập mật khẩu.",
+      "passwordMin": "Mật khẩu phải có ít nhất 8 ký tự.",
+      "domainRequired": "Vui lòng nhập tên miền.",
+      "domainInvalid": "Tên miền phải là 1-32 ký tự chữ thường, số hoặc dấu gạch ngang."
+    }
+  },
+  "dashboard": {
+    "welcome": "Chào mừng trở lại, {{name}}",
+    "signedInAs": "Đăng nhập với {{email}} tại {{domain}}",
+    "signOut": "Đăng xuất"
+  }
+}
