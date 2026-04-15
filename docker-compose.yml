@@ -3,7 +3,7 @@ services:
     image: postgres:17
     restart: unless-stopped
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-3033}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -42,7 +42,7 @@ services:
     image: journeyapps/powersync-service:latest
     restart: unless-stopped
     ports:
-      - "${POWERSYNC_PORT:-8080}:8080"
+      - "${POWERSYNC_PORT:-3034}:8080"
     volumes:
       - ./powersync/powersync.yaml:/config/powersync.yaml
       - ./powersync/sync-rules.yaml:/config/sync-rules.yaml
@@ -51,6 +51,44 @@ services:
       postgres:
         condition: service_healthy
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3031}:3031"
+    env_file:
+      - ./backend/.env
+    environment:
+      SERVER_PORT: 3031
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      AUTH_FRONTEND_ORIGIN: http://localhost:3032
+    volumes:
+      - ./backend:/app
+      - backend_tmp:/app/tmp
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3032}:3032"
+    environment:
+      VITE_API_BASE_URL: http://localhost:3031
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
   redis_data:
+  backend_tmp:
+  frontend_node_modules:

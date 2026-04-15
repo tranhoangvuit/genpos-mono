@@ -11,7 +11,7 @@ import (
 // Config holds PostgreSQL connection configuration.
 type Config struct {
 	Host            string `required:"true" split_words:"true"`
-	Port            int    `required:"true" split_words:"true" default:"5432"`
+	Port            int    `required:"true" split_words:"true" default:"3033"`
 	Database        string `required:"true" split_words:"true"`
 	User            string `required:"true" split_words:"true"`
 	Password        string `required:"true" split_words:"true"`

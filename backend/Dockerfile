@@ -12,6 +12,6 @@ FROM alpine:3.21
 
 COPY --from=builder /server /server
 
-EXPOSE 8081
+EXPOSE 3031
 
 CMD ["/server"]

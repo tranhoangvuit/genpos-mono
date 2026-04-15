@@ -1,0 +1,203 @@
+# Product variants for Espresso
+- id: "01900000-0000-0000-0000-000000000100"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000070"
+  name: "Single Shot"
+  sku: "ESP-SGL"
+  barcode: "123456789001"
+  price: 2.50
+  cost_price: 0.80
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000101"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000070"
+  name: "Double Shot"
+  sku: "ESP-DBL"
+  barcode: "123456789002"
+  price: 3.50
+  cost_price: 1.20
+  track_stock: true
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Latte
+- id: "01900000-0000-0000-0000-000000000102"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000071"
+  name: "Small"
+  sku: "LAT-SML"
+  barcode: "123456789003"
+  price: 4.00
+  cost_price: 1.50
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000103"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000071"
+  name: "Medium"
+  sku: "LAT-MED"
+  barcode: "123456789004"
+  price: 4.75
+  cost_price: 1.80
+  track_stock: true
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000104"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000071"
+  name: "Large"
+  sku: "LAT-LRG"
+  barcode: "123456789005"
+  price: 5.50
+  cost_price: 2.10
+  track_stock: true
+  is_active: true
+  sort_order: 3
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Cappuccino
+- id: "01900000-0000-0000-0000-000000000105"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000072"
+  name: "Small"
+  sku: "CAP-SML"
+  barcode: "123456789006"
+  price: 3.75
+  cost_price: 1.40
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000106"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000072"
+  name: "Medium"
+  sku: "CAP-MED"
+  barcode: "123456789007"
+  price: 4.50
+  cost_price: 1.70
+  track_stock: true
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000107"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000072"
+  name: "Large"
+  sku: "CAP-LRG"
+  barcode: "123456789008"
+  price: 5.25
+  cost_price: 2.00
+  track_stock: true
+  is_active: true
+  sort_order: 3
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Cold Brew
+- id: "01900000-0000-0000-0000-000000000108"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000073"
+  name: "Regular"
+  sku: "CBR-REG"
+  barcode: "123456789009"
+  price: 4.25
+  cost_price: 1.60
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Croissant
+- id: "01900000-0000-0000-0000-000000000109"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000074"
+  name: "Butter"
+  sku: "CRY-BTR"
+  barcode: "123456789010"
+  price: 3.50
+  cost_price: 1.20
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Breakfast Sandwich
+- id: "01900000-0000-0000-0000-00000000010A"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000075"
+  name: "Bacon & Egg"
+  sku: "BFS-BAC"
+  barcode: "123456789011"
+  price: 6.50
+  cost_price: 2.80
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Muffin
+- id: "01900000-0000-0000-0000-00000000010B"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000076"
+  name: "Blueberry"
+  sku: "MUF-BLU"
+  barcode: "123456789012"
+  price: 2.75
+  cost_price: 0.90
+  track_stock: true
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+# Product variants for Gift Card
+- id: "01900000-0000-0000-0000-00000000010C"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000077"
+  name: "$10 Card"
+  sku: "GC-010"
+  barcode: "123456789013"
+  price: 10.00
+  cost_price: 0.00
+  track_stock: false
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-00000000010D"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  product_id: "01900000-0000-0000-0000-000000000077"
+  name: "$25 Card"
+  sku: "GC-025"
+  barcode: "123456789014"
+  price: 25.00
+  cost_price: 0.00
+  track_stock: false
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"

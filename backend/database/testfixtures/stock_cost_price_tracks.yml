@@ -1,0 +1,166 @@
+# Cost tracking for stock purchase
+- id: "01900000-0000-0000-0000-000000000320"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  movement_id: "01900000-0000-0000-0000-000000000300"
+  direction: "in"
+  movement_type: "purchase"
+  quantity: 100
+  unit_cost: 1.75
+  total_cost: 175.00
+  avg_cost_before: 1.85
+  avg_cost_after: 1.80
+  stock_on_hand_before: 45
+  stock_on_hand_after: 145
+  created_at: "2024-06-10T08:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000321"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  movement_id: "01900000-0000-0000-0000-000000000301"
+  direction: "in"
+  movement_type: "purchase"
+  quantity: 50
+  unit_cost: 1.15
+  total_cost: 57.50
+  avg_cost_before: 1.25
+  avg_cost_after: 1.20
+  stock_on_hand_before: 30
+  stock_on_hand_after: 80
+  created_at: "2024-06-10T08:00:00Z"
+
+# Cost tracking for sales
+- id: "01900000-0000-0000-0000-000000000322"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  movement_id: "01900000-0000-0000-0000-000000000302"
+  direction: "out"
+  movement_type: "sale"
+  quantity: 2
+  unit_cost: 1.80
+  total_cost: 3.60
+  avg_cost_before: 1.80
+  avg_cost_after: 1.80
+  stock_on_hand_before: 145
+  stock_on_hand_after: 143
+  created_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000323"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  movement_id: "01900000-0000-0000-0000-000000000303"
+  direction: "out"
+  movement_type: "sale"
+  quantity: 1
+  unit_cost: 1.20
+  total_cost: 1.20
+  avg_cost_before: 1.20
+  avg_cost_after: 1.20
+  stock_on_hand_before: 80
+  stock_on_hand_after: 79
+  created_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000324"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000106"
+  movement_id: "01900000-0000-0000-0000-000000000304"
+  direction: "out"
+  movement_type: "sale"
+  quantity: 1
+  unit_cost: 1.70
+  total_cost: 1.70
+  avg_cost_before: 1.70
+  avg_cost_after: 1.70
+  stock_on_hand_before: 60
+  stock_on_hand_after: 59
+  created_at: "2024-06-14T11:15:00Z"
+
+# Cost tracking for refund
+- id: "01900000-0000-0000-0000-000000000325"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000108"
+  movement_id: "01900000-0000-0000-0000-000000000305"
+  direction: "in"
+  movement_type: "refund"
+  quantity: 1
+  unit_cost: 1.60
+  total_cost: 1.60
+  avg_cost_before: 1.60
+  avg_cost_after: 1.60
+  stock_on_hand_before: 25
+  stock_on_hand_after: 26
+  created_at: "2024-06-14T15:30:00Z"
+
+# Cost tracking for adjustment
+- id: "01900000-0000-0000-0000-000000000326"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-00000000010B"
+  movement_id: "01900000-0000-0000-0000-000000000306"
+  direction: "out"
+  movement_type: "adjustment"
+  quantity: 3
+  unit_cost: 0.90
+  total_cost: 2.70
+  avg_cost_before: 0.90
+  avg_cost_after: 0.90
+  stock_on_hand_before: 20
+  stock_on_hand_after: 17
+  created_at: "2024-06-13T09:00:00Z"
+
+# Cost tracking for stock take
+- id: "01900000-0000-0000-0000-000000000327"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000104"
+  movement_id: "01900000-0000-0000-0000-000000000307"
+  direction: "out"
+  movement_type: "stock_take"
+  quantity: 2
+  unit_cost: 2.10
+  total_cost: 4.20
+  avg_cost_before: 2.10
+  avg_cost_after: 2.10
+  stock_on_hand_before: 55
+  stock_on_hand_after: 53
+  created_at: "2024-06-12T18:00:00Z"
+
+# Cost tracking for transfer out
+- id: "01900000-0000-0000-0000-000000000328"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000102"
+  movement_id: "01900000-0000-0000-0000-000000000308"
+  direction: "out"
+  movement_type: "transfer_out"
+  quantity: 10
+  unit_cost: 1.50
+  total_cost: 15.00
+  avg_cost_before: 1.50
+  avg_cost_after: 1.50
+  stock_on_hand_before: 80
+  stock_on_hand_after: 70
+  created_at: "2024-06-11T14:00:00Z"
+
+# Cost tracking for transfer in
+- id: "01900000-0000-0000-0000-000000000329"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000011"
+  variant_id: "01900000-0000-0000-0000-000000000102"
+  movement_id: "01900000-0000-0000-0000-000000000309"
+  direction: "in"
+  movement_type: "transfer_in"
+  quantity: 10
+  unit_cost: 1.50
+  total_cost: 15.00
+  avg_cost_before: 1.52
+  avg_cost_after: 1.50
+  stock_on_hand_before: 40
+  stock_on_hand_after: 50
+  created_at: "2024-06-11T15:00:00Z"

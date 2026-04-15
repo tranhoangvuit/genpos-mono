@@ -1,26 +1,74 @@
-- id: "01900000-0000-0000-0000-000000000001"
-  org_id: "test-org-1"
-  name: "Widget A"
-  sku: "WGT-A"
-  price_cents: 1099
-  active: true
+- id: "01900000-0000-0000-0000-000000000070"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  category_id: "01900000-0000-0000-0000-000000000060"
+  name: "Espresso"
+  description: "Rich and bold single shot espresso"
+  is_active: true
+  sort_order: 1
   created_at: "2024-01-01T00:00:00Z"
   updated_at: "2024-01-01T00:00:00Z"
 
-- id: "01900000-0000-0000-0000-000000000002"
-  org_id: "test-org-1"
-  name: "Widget B"
-  sku: "WGT-B"
-  price_cents: 2099
-  active: true
-  created_at: "2024-01-02T00:00:00Z"
-  updated_at: "2024-01-02T00:00:00Z"
+- id: "01900000-0000-0000-0000-000000000071"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  category_id: "01900000-0000-0000-0000-000000000060"
+  name: "Latte"
+  description: "Smooth espresso with steamed milk"
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
 
-- id: "01900000-0000-0000-0000-000000000003"
-  org_id: "test-org-2"
-  name: "Gadget X"
-  sku: "GDG-X"
-  price_cents: 999
-  active: true
+- id: "01900000-0000-0000-0000-000000000072"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  category_id: "01900000-0000-0000-0000-000000000060"
+  name: "Cappuccino"
+  description: "Espresso with foamed milk"
+  is_active: true
+  sort_order: 3
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000073"
+  org_id: "01900000-0000-0000-0000-000000000060"
+  name: "Cold Brew"
+  description: "Smooth cold-steeped coffee"
+  is_active: true
+  sort_order: 4
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000074"
+  org_id: "01900000-0000-0000-0000-000000000061"
+  name: "Croissant"
+  description: "Buttery French pastry"
+  is_active: true
+  sort_order: 1
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000075"
+  org_id: "01900000-0000-0000-0000-000000000061"
+  name: "Breakfast Sandwich"
+  description: "Egg, cheese, and bacon on toast"
+  is_active: true
+  sort_order: 2
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000076"
+  org_id: "01900000-0000-0000-0000-000000000061"
+  name: "Muffin"
+  description: "Blueberry muffin"
+  is_active: true
+  sort_order: 3
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000077"
+  org_id: "01900000-0000-0000-0000-000000000062"
+  name: "Gift Card"
+  description: "Brew & Go Gift Card"
+  is_active: true
+  sort_order: 1
   created_at: "2024-01-01T00:00:00Z"
   updated_at: "2024-01-01T00:00:00Z"

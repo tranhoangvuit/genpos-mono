@@ -1,0 +1,26 @@
+- id: "01900000-0000-0000-0000-000000000120"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "10% Loyalty Discount"
+  type: "percentage"
+  value: 10.00
+  is_active: true
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000121"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "$2 Off"
+  type: "fixed"
+  value: 2.00
+  is_active: true
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000122"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "Happy Hour 20% Off"
+  type: "percentage"
+  value: 20.00
+  is_active: false
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-06-01T00:00:00Z"

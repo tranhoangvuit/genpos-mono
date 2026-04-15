@@ -1,0 +1,208 @@
+# Order line items for ORD-2024-00001 (Latte + Croissant + Muffin)
+- id: "01900000-0000-0000-0000-000000000210"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000200"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  product_name: "Latte"
+  variant_name: "Medium"
+  sku: "LAT-MED"
+  quantity: 2
+  unit_price: 4.75
+  cost_price_snapshot: 1.80
+  tax_rate: 0.0800
+  tax_amount: 0.76
+  discount_amount: 0.95
+  line_total: 9.55
+  created_at: "2024-06-14T10:30:00Z"
+  updated_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000211"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000200"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  product_name: "Croissant"
+  variant_name: "Butter"
+  sku: "CRY-BTR"
+  quantity: 1
+  unit_price: 3.50
+  cost_price_snapshot: 1.20
+  tax_rate: 0.0800
+  tax_amount: 0.28
+  discount_amount: 0.35
+  line_total: 3.43
+  created_at: "2024-06-14T10:30:00Z"
+  updated_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000212"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000200"
+  variant_id: "01900000-0000-0000-0000-00000000010B"
+  product_name: "Muffin"
+  variant_name: "Blueberry"
+  sku: "MUF-BLU"
+  quantity: 1
+  unit_price: 2.75
+  cost_price_snapshot: 0.90
+  tax_rate: 0.0800
+  tax_amount: 0.22
+  discount_amount: 0.28
+  line_total: 2.69
+  created_at: "2024-06-14T10:30:00Z"
+  updated_at: "2024-06-14T10:30:00Z"
+
+# Order line items for ORD-2024-00002 (Cappuccino + Breakfast Sandwich)
+- id: "01900000-0000-0000-0000-000000000213"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000201"
+  variant_id: "01900000-0000-0000-0000-000000000106"
+  product_name: "Cappuccino"
+  variant_name: "Medium"
+  sku: "CAP-MED"
+  quantity: 1
+  unit_price: 4.50
+  cost_price_snapshot: 1.70
+  tax_rate: 0.0800
+  tax_amount: 0.36
+  discount_amount: 0.00
+  line_total: 4.86
+  created_at: "2024-06-14T11:15:00Z"
+  updated_at: "2024-06-14T11:15:00Z"
+
+- id: "01900000-0000-0000-0000-000000000214"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000201"
+  variant_id: "01900000-0000-0000-0000-00000000010A"
+  product_name: "Breakfast Sandwich"
+  variant_name: "Bacon & Egg"
+  sku: "BFS-BAC"
+  quantity: 1
+  unit_price: 6.50
+  cost_price_snapshot: 2.80
+  tax_rate: 0.0800
+  tax_amount: 0.52
+  discount_amount: 0.00
+  line_total: 7.02
+  created_at: "2024-06-14T11:15:00Z"
+  updated_at: "2024-06-14T11:15:00Z"
+
+# Order line items for ORD-2024-00003 (Open order - multiple items)
+- id: "01900000-0000-0000-0000-000000000215"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000202"
+  variant_id: "01900000-0000-0000-0000-000000000104"
+  product_name: "Latte"
+  variant_name: "Large"
+  sku: "LAT-LRG"
+  quantity: 2
+  unit_price: 5.50
+  cost_price_snapshot: 2.10
+  tax_rate: 0.0800
+  tax_amount: 0.88
+  discount_amount: 0.00
+  line_total: 12.88
+  created_at: "2024-06-15T09:00:00Z"
+  updated_at: "2024-06-15T09:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000216"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000202"
+  variant_id: "01900000-0000-0000-0000-000000000107"
+  product_name: "Cappuccino"
+  variant_name: "Large"
+  sku: "CAP-LRG"
+  quantity: 1
+  unit_price: 5.25
+  cost_price_snapshot: 2.00
+  tax_rate: 0.0800
+  tax_amount: 0.42
+  discount_amount: 0.00
+  line_total: 5.67
+  created_at: "2024-06-15T09:00:00Z"
+  updated_at: "2024-06-15T09:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000217"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000202"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  product_name: "Croissant"
+  variant_name: "Butter"
+  sku: "CRY-BTR"
+  quantity: 1
+  unit_price: 3.50
+  cost_price_snapshot: 1.20
+  tax_rate: 0.0800
+  tax_amount: 0.28
+  discount_amount: 0.00
+  line_total: 3.78
+  created_at: "2024-06-15T09:00:00Z"
+  updated_at: "2024-06-15T09:00:00Z"
+
+# Order line items for ORD-2024-00004 (Refunded order - Cold Brew)
+- id: "01900000-0000-0000-0000-000000000218"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000203"
+  variant_id: "01900000-0000-0000-0000-000000000108"
+  product_name: "Cold Brew"
+  variant_name: "Regular"
+  sku: "CBR-REG"
+  quantity: 1
+  unit_price: 4.25
+  cost_price_snapshot: 1.60
+  tax_rate: 0.0800
+  tax_amount: 0.34
+  discount_amount: 0.00
+  line_total: 4.59
+  created_at: "2024-06-14T14:00:00Z"
+  updated_at: "2024-06-14T14:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000219"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000203"
+  variant_id: "01900000-0000-0000-0000-00000000010B"
+  product_name: "Muffin"
+  variant_name: "Blueberry"
+  sku: "MUF-BLU"
+  quantity: 1
+  unit_price: 2.75
+  cost_price_snapshot: 0.90
+  tax_rate: 0.0800
+  tax_amount: 0.22
+  discount_amount: 0.00
+  line_total: 2.97
+  created_at: "2024-06-14T14:00:00Z"
+  updated_at: "2024-06-14T14:00:00Z"
+
+# Order line items for ORD-2024-00005 (Partially refunded)
+- id: "01900000-0000-0000-0000-00000000021A"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000204"
+  variant_id: "01900000-0000-0000-0000-000000000101"
+  product_name: "Espresso"
+  variant_name: "Double Shot"
+  sku: "ESP-DBL"
+  quantity: 2
+  unit_price: 3.50
+  cost_price_snapshot: 1.20
+  tax_rate: 0.0800
+  tax_amount: 0.56
+  discount_amount: 0.70
+  line_total: 6.36
+  created_at: "2024-06-14T15:45:00Z"
+  updated_at: "2024-06-14T15:45:00Z"
+
+- id: "01900000-0000-0000-0000-00000000021B"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  order_id: "01900000-0000-0000-0000-000000000204"
+  variant_id: "01900000-0000-0000-0000-00000000010C"
+  product_name: "Gift Card"
+  variant_name: "$10 Card"
+  sku: "GC-010"
+  quantity: 2
+  unit_price: 10.00
+  cost_price_snapshot: 0.00
+  tax_rate: 0.0800
+  tax_amount: 1.60
+  discount_amount: 2.00
+  line_total: 19.60
+  created_at: "2024-06-14T15:45:00Z"
+  updated_at: "2024-06-14T15:45:00Z"

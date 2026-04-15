@@ -12,8 +12,8 @@ Monorepo for GenPOS: PostgreSQL 17 + Redis + PowerSync + Go ConnectRPC backend +
 ## Commands
 
 - `make infra` — start PostgreSQL, Redis, PowerSync via Docker Compose
-- `make backend` — run Go backend on :8081
-- `make frontend` — run frontend dev server on :3000
+- `make backend` — run Go backend on :3031
+- `make frontend` — run frontend dev server on :3032
 - `make proto` — regenerate Go code from proto files (requires buf, protoc-gen-go, protoc-gen-connect-go)
 
 ## Backend
@@ -22,19 +22,19 @@ Go module: `github.com/genpick/genpos-mono/backend`
 
 Proto definitions live in `backend/proto/`. After editing `.proto` files, run `make proto` to regenerate.
 
-The server starts on port 8081 (configurable via `PORT` env var).
+The server starts on port 3031 (configurable via `PORT` env var).
 
 ## Frontend
 
 Uses pnpm. Run `make frontend-install` to install dependencies.
 
-Dev server starts on port 3000.
+Dev server starts on port 3032.
 
 ## Infrastructure
 
 `docker compose up -d` starts:
-- PostgreSQL 17 on :5432 (wal_level=logical for PowerSync)
+- PostgreSQL 17 on :3033 (wal_level=logical for PowerSync)
   - `genpos_dev` — development database (default, used by backend and PowerSync)
   - `genpos_test` — integration test database (created by init script)
 - Redis 7 on :6379
-- PowerSync on :8080 (connected to genpos_dev)
+- PowerSync on :3034 (connected to genpos_dev)

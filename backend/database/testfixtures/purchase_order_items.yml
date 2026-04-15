@@ -1,0 +1,62 @@
+# Purchase order items for PO-2024-00001 (Draft)
+- id: "01900000-0000-0000-0000-000000000340"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000330"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  quantity_ordered: 100
+  quantity_received: 0
+  cost_price: 1.75
+  created_at: "2024-06-14T16:00:00Z"
+  updated_at: "2024-06-14T16:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000341"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000330"
+  variant_id: "01900000-0000-0000-0000-000000000104"
+  quantity_ordered: 50
+  quantity_received: 0
+  cost_price: 2.05
+  created_at: "2024-06-14T16:00:00Z"
+  updated_at: "2024-06-14T16:00:00Z"
+
+# Purchase order items for PO-2024-00002 (Received)
+- id: "01900000-0000-0000-0000-000000000342"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000331"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  quantity_ordered: 50
+  quantity_received: 50
+  cost_price: 1.15
+  created_at: "2024-06-07T10:00:00Z"
+  updated_at: "2024-06-10T08:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000343"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000331"
+  variant_id: "01900000-0000-0000-0000-00000000010B"
+  quantity_ordered: 30
+  quantity_received: 30
+  cost_price: 0.85
+  created_at: "2024-06-07T10:00:00Z"
+  updated_at: "2024-06-10T08:00:00Z"
+
+# Purchase order items for PO-2024-00003 (Partial)
+- id: "01900000-0000-0000-0000-000000000344"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000332"
+  variant_id: "01900000-0000-0000-0000-000000000106"
+  quantity_ordered: 40
+  quantity_received: 40
+  cost_price: 1.65
+  created_at: "2024-06-12T09:00:00Z"
+  updated_at: "2024-06-14T14:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000345"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  purchase_order_id: "01900000-0000-0000-0000-000000000332"
+  variant_id: "01900000-0000-0000-0000-00000000010A"
+  quantity_ordered: 20
+  quantity_received: 15
+  cost_price: 2.75
+  created_at: "2024-06-12T09:00:00Z"
+  updated_at: "2024-06-14T14:00:00Z"

@@ -12,7 +12,7 @@ import { AuthService, GenposService } from '@/gen/genpos/v1/genpos_pb'
 
 const baseUrl =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
-  'http://localhost:8081'
+  'http://localhost:3031'
 
 const fetchWithCredentials: typeof fetch = (input, init) =>
   fetch(input, { ...init, credentials: 'include' })

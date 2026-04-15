@@ -1,0 +1,23 @@
+- id: "01900000-0000-0000-0000-000000000030"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "admin"
+  permissions: '{"*": "*"}'
+  is_system: true
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000031"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "manager"
+  permissions: '{"orders": "*", "inventory": "*", "reports": "*", "users": "read", "products": "*", "customers": "*"}'
+  is_system: false
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000032"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  name: "cashier"
+  permissions: '{"orders": "create", "customers": "read", "products": "read"}'
+  is_system: false
+  created_at: "2024-01-01T00:00:00Z"
+  updated_at: "2024-01-01T00:00:00Z"

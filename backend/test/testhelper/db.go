@@ -15,7 +15,7 @@ func SetupTestDB(t *testing.T) *pgxpool.Pool {
 	t.Helper()
 
 	host := envOrDefault("TEST_DB_HOST", "localhost")
-	port := envOrDefault("TEST_DB_PORT", "5432")
+	port := envOrDefault("TEST_DB_PORT", "3033")
 	user := envOrDefault("TEST_DB_USER", "postgres")
 	pass := envOrDefault("TEST_DB_PASSWORD", "postgres")
 	dbName := envOrDefault("TEST_DB_NAME", "genpos_test")
@@ -107,7 +107,7 @@ func SetupTestDBWithRLS(t *testing.T) *pgxpool.Pool {
 	t.Helper()
 
 	host := envOrDefault("TEST_DB_HOST", "localhost")
-	port := envOrDefault("TEST_DB_PORT", "5432")
+	port := envOrDefault("TEST_DB_PORT", "3033")
 	dbName := envOrDefault("TEST_DB_NAME", "genpos_test")
 
 	dsn := fmt.Sprintf("host=%s port=%s dbname=%s user=genpos_app password=genpos_app sslmode=disable",

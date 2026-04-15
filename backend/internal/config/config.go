@@ -29,13 +29,13 @@ type AuthConfig struct {
 	RefreshTTLShort time.Duration `envconfig:"REFRESH_TTL_SHORT" default:"24h"`
 	CookieDomain    string        `envconfig:"COOKIE_DOMAIN" default:""`
 	CookieSecure    bool          `envconfig:"COOKIE_SECURE" default:"false"`
-	FrontendOrigin  string        `envconfig:"FRONTEND_ORIGIN" default:"http://localhost:3000"`
+	FrontendOrigin  string        `envconfig:"FRONTEND_ORIGIN" default:"http://localhost:3032"`
 }
 
 // Config holds all application configuration.
 type Config struct {
 	ServiceName string `envconfig:"SERVICE_NAME" default:"genpos"`
-	ServerPort  int    `envconfig:"SERVER_PORT" default:"8081"`
+	ServerPort  int    `envconfig:"SERVER_PORT" default:"3031"`
 	Env         Env    `envconfig:"ENV" default:"dev"`
 
 	Database database.Config `envconfig:"DATABASE"`

@@ -1,0 +1,127 @@
+# Stock movements for purchases (stock in)
+- id: "01900000-0000-0000-0000-000000000300"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  direction: "in"
+  quantity: 100
+  movement_type: "purchase"
+  user_id: "01900000-0000-0000-0000-000000000041"
+  notes: "Weekly stock delivery"
+  created_at: "2024-06-10T08:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000301"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  direction: "in"
+  quantity: 50
+  movement_type: "purchase"
+  user_id: "01900000-0000-0000-0000-000000000041"
+  notes: "Weekly stock delivery"
+  created_at: "2024-06-10T08:00:00Z"
+
+# Stock movements for sales (stock out)
+- id: "01900000-0000-0000-0000-000000000302"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  register_id: "01900000-0000-0000-0000-000000000020"
+  variant_id: "01900000-0000-0000-0000-000000000103"
+  direction: "out"
+  quantity: 2
+  movement_type: "sale"
+  reference_type: "order"
+  reference_id: "01900000-0000-0000-0000-000000000200"
+  user_id: "01900000-0000-0000-0000-000000000043"
+  created_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000303"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  register_id: "01900000-0000-0000-0000-000000000020"
+  variant_id: "01900000-0000-0000-0000-000000000109"
+  direction: "out"
+  quantity: 1
+  movement_type: "sale"
+  reference_type: "order"
+  reference_id: "01900000-0000-0000-0000-000000000200"
+  user_id: "01900000-0000-0000-0000-000000000043"
+  created_at: "2024-06-14T10:30:00Z"
+
+- id: "01900000-0000-0000-0000-000000000304"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  register_id: "01900000-0000-0000-0000-000000000020"
+  variant_id: "01900000-0000-0000-0000-000000000106"
+  direction: "out"
+  quantity: 1
+  movement_type: "sale"
+  reference_type: "order"
+  reference_id: "01900000-0000-0000-0000-000000000201"
+  user_id: "01900000-0000-0000-0000-000000000043"
+  created_at: "2024-06-14T11:15:00Z"
+
+# Stock movements for refunds (stock in)
+- id: "01900000-0000-0000-0000-000000000305"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000108"
+  direction: "in"
+  quantity: 1
+  movement_type: "refund"
+  reference_type: "order"
+  reference_id: "01900000-0000-0000-0000-000000000203"
+  user_id: "01900000-0000-0000-0000-000000000043"
+  notes: "Refund for damaged item"
+  created_at: "2024-06-14T15:30:00Z"
+
+# Stock movements for adjustments
+- id: "01900000-0000-0000-0000-000000000306"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-00000000010B"
+  direction: "out"
+  quantity: 3
+  movement_type: "adjustment"
+  user_id: "01900000-0000-0000-0000-000000000041"
+  notes: "Spoilage - expired items discarded"
+  created_at: "2024-06-13T09:00:00Z"
+
+# Stock movements for stock takes
+- id: "01900000-0000-0000-0000-000000000307"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000104"
+  direction: "out"
+  quantity: 2
+  movement_type: "stock_take"
+  reference_type: "stock_take"
+  reference_id: "01900000-0000-0000-0000-000000000350"
+  user_id: "01900000-0000-0000-0000-000000000041"
+  notes: "Stock take adjustment"
+  created_at: "2024-06-12T18:00:00Z"
+
+# Transfer movements
+- id: "01900000-0000-0000-0000-000000000308"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000010"
+  variant_id: "01900000-0000-0000-0000-000000000102"
+  direction: "out"
+  quantity: 10
+  movement_type: "transfer_out"
+  transfer_store_id: "01900000-0000-0000-0000-000000000011"
+  user_id: "01900000-0000-0000-0000-000000000041"
+  notes: "Transfer to Mall Location"
+  created_at: "2024-06-11T14:00:00Z"
+
+- id: "01900000-0000-0000-0000-000000000309"
+  org_id: "01900000-0000-0000-0000-000000000001"
+  store_id: "01900000-0000-0000-0000-000000000011"
+  variant_id: "01900000-0000-0000-0000-000000000102"
+  direction: "in"
+  quantity: 10
+  movement_type: "transfer_in"
+  transfer_store_id: "01900000-0000-0000-0000-000000000010"
+  user_id: "01900000-0000-0000-0000-000000000042"
+  notes: "Transfer from Downtown"
+  created_at: "2024-06-11T15:00:00Z"

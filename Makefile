@@ -28,8 +28,8 @@ frontend-install:
 dev:
 	@echo "Run in separate terminals:"
 	@echo "  make infra      # start postgres, redis, powersync"
-	@echo "  make backend    # start go server on :8081"
-	@echo "  make frontend   # start vite dev on :3000"
+	@echo "  make backend    # start go server on :3031"
+	@echo "  make frontend   # start vite dev on :3032"
 
 clean:
 	docker compose down -v
