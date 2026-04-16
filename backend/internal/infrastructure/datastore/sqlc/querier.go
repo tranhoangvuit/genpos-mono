@@ -11,15 +11,18 @@ import (
 )
 
 type Querier interface {
-	CreateOrg(ctx context.Context, arg CreateOrgParams) (Org, error)
+	CreateOrg(ctx context.Context, arg CreateOrgParams) (CreateOrgRow, error)
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
-	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	GetOrgByID(ctx context.Context, id pgtype.UUID) (Org, error)
-	GetOrgBySlug(ctx context.Context, slug string) (Org, error)
+	CreateRole(ctx context.Context, arg CreateRoleParams) (CreateRoleRow, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	GetOrgByID(ctx context.Context, id pgtype.UUID) (GetOrgByIDRow, error)
+	GetOrgBySlug(ctx context.Context, slug string) (GetOrgBySlugRow, error)
 	GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error)
-	GetUserByEmail(ctx context.Context, email string) (User, error)
-	GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
-	ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error)
+	GetRoleByOrgAndName(ctx context.Context, arg GetRoleByOrgAndNameParams) (GetRoleByOrgAndNameRow, error)
+	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
+	GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error)
+	ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error)
+	ListRolesByOrg(ctx context.Context, orgID pgtype.UUID) ([]ListRolesByOrgRow, error)
 	RevokeRefreshToken(ctx context.Context, arg RevokeRefreshTokenParams) error
 }
 

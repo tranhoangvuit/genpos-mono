@@ -34,7 +34,7 @@ func (r *orgStore) GetBySlug(ctx context.Context, slug string) (*entity.Org, err
 		}
 		return nil, errors.Wrap(err, "get org by slug")
 	}
-	return toOrgEntity(row), nil
+	return toOrgEntity(row.ID, row.Slug, row.Name, row.CreatedAt, row.UpdatedAt), nil
 }
 
 func (r *orgStore) GetByID(ctx context.Context, id string) (*entity.Org, error) {
@@ -53,7 +53,7 @@ func (r *orgStore) GetByID(ctx context.Context, id string) (*entity.Org, error) 
 		}
 		return nil, errors.Wrap(err, "get org by id")
 	}
-	return toOrgEntity(row), nil
+	return toOrgEntity(row.ID, row.Slug, row.Name, row.CreatedAt, row.UpdatedAt), nil
 }
 
 func (r *orgStore) Create(ctx context.Context, params gateway.CreateOrgParams) (*entity.Org, error) {
@@ -68,16 +68,16 @@ func (r *orgStore) Create(ctx context.Context, params gateway.CreateOrgParams) (
 	if err != nil {
 		return nil, errors.Wrap(err, "create org")
 	}
-	return toOrgEntity(row), nil
+	return toOrgEntity(row.ID, row.Slug, row.Name, row.CreatedAt, row.UpdatedAt), nil
 }
 
-func toOrgEntity(row sqlc.Org) *entity.Org {
+func toOrgEntity(id pgtype.UUID, slug, name string, createdAt, updatedAt pgtype.Timestamptz) *entity.Org {
 	return &entity.Org{
-		ID:        uuidString(row.ID),
-		Slug:      row.Slug,
-		Name:      row.Name,
-		CreatedAt: row.CreatedAt.Time,
-		UpdatedAt: row.UpdatedAt.Time,
+		ID:        uuidString(id),
+		Slug:      slug,
+		Name:      name,
+		CreatedAt: createdAt.Time,
+		UpdatedAt: updatedAt.Time,
 	}
 }
 

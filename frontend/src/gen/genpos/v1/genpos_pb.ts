@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/genpos.proto.
  */
 export const file_genpos_v1_genpos: GenFile = /*@__PURE__*/
-  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiSAoTTGlzdFByb2R1Y3RzUmVxdWVzdBIOCgZvcmdfaWQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEg4KBm9mZnNldBgDIAEoBSI8ChRMaXN0UHJvZHVjdHNSZXNwb25zZRIkCghwcm9kdWN0cxgBIAMoCzISLmdlbnBvcy52MS5Qcm9kdWN0IsUBCgdQcm9kdWN0EgoKAmlkGAEgASgJEg4KBm9yZ19pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgsKA3NrdRgEIAEoCRITCgtwcmljZV9jZW50cxgFIAEoAxIOCgZhY3RpdmUYBiABKAgSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIzCg5TaWduVXBSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIkUKDVNpZ25JblJlcXVlc3QSDQoFZW1haWwYASABKAkSEAoIcGFzc3dvcmQYAiABKAkSEwoLcmVtZW1iZXJfbWUYAyABKAgiMwoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIQCg5TaWduT3V0UmVxdWVzdCIRCg9TaWduT3V0UmVzcG9uc2UiEAoOUmVmcmVzaFJlcXVlc3QiNAoPUmVmcmVzaFJlc3BvbnNlEiEKBHVzZXIYASABKAsyEy5nZW5wb3MudjEuQXV0aFVzZXIiCwoJTWVSZXF1ZXN0Ii8KCk1lUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlcjKdAQoNR2VucG9zU2VydmljZRI5CgRQaW5nEhYuZ2VucG9zLnYxLlBpbmdSZXF1ZXN0GhcuZ2VucG9zLnYxLlBpbmdSZXNwb25zZSIAElEKDExpc3RQcm9kdWN0cxIeLmdlbnBvcy52MS5MaXN0UHJvZHVjdHNSZXF1ZXN0Gh8uZ2VucG9zLnYxLkxpc3RQcm9kdWN0c1Jlc3BvbnNlIgAyzAIKC0F1dGhTZXJ2aWNlEj8KBlNpZ25VcBIYLmdlbnBvcy52MS5TaWduVXBSZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25VcFJlc3BvbnNlIgASPwoGU2lnbkluEhguZ2VucG9zLnYxLlNpZ25JblJlcXVlc3QaGS5nZW5wb3MudjEuU2lnbkluUmVzcG9uc2UiABJCCgdTaWduT3V0EhkuZ2VucG9zLnYxLlNpZ25PdXRSZXF1ZXN0GhouZ2VucG9zLnYxLlNpZ25PdXRSZXNwb25zZSIAEkIKB1JlZnJlc2gSGS5nZW5wb3MudjEuUmVmcmVzaFJlcXVlc3QaGi5nZW5wb3MudjEuUmVmcmVzaFJlc3BvbnNlIgASMwoCTWUSFC5nZW5wb3MudjEuTWVSZXF1ZXN0GhUuZ2VucG9zLnYxLk1lUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiSAoTTGlzdFByb2R1Y3RzUmVxdWVzdBIOCgZvcmdfaWQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEg4KBm9mZnNldBgDIAEoBSI8ChRMaXN0UHJvZHVjdHNSZXNwb25zZRIkCghwcm9kdWN0cxgBIAMoCzISLmdlbnBvcy52MS5Qcm9kdWN0IsUBCgdQcm9kdWN0EgoKAmlkGAEgASgJEg4KBm9yZ19pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgsKA3NrdRgEIAEoCRITCgtwcmljZV9jZW50cxgFIAEoAxIOCgZhY3RpdmUYBiABKAgSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIzCg5TaWduVXBSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIkUKDVNpZ25JblJlcXVlc3QSDQoFZW1haWwYASABKAkSEAoIcGFzc3dvcmQYAiABKAkSEwoLcmVtZW1iZXJfbWUYAyABKAgiMwoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIQCg5TaWduT3V0UmVxdWVzdCIRCg9TaWduT3V0UmVzcG9uc2UiEAoOUmVmcmVzaFJlcXVlc3QiNAoPUmVmcmVzaFJlc3BvbnNlEiEKBHVzZXIYASABKAsyEy5nZW5wb3MudjEuQXV0aFVzZXIiCwoJTWVSZXF1ZXN0Ii8KCk1lUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIVChNHZXRTeW5jVG9rZW5SZXF1ZXN0IksKFEdldFN5bmNUb2tlblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEhIKCmV4cGlyZXNfYXQYAyABKAMynQEKDUdlbnBvc1NlcnZpY2USOQoEUGluZxIWLmdlbnBvcy52MS5QaW5nUmVxdWVzdBoXLmdlbnBvcy52MS5QaW5nUmVzcG9uc2UiABJRCgxMaXN0UHJvZHVjdHMSHi5nZW5wb3MudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBofLmdlbnBvcy52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIAMp8DCgtBdXRoU2VydmljZRI/CgZTaWduVXASGC5nZW5wb3MudjEuU2lnblVwUmVxdWVzdBoZLmdlbnBvcy52MS5TaWduVXBSZXNwb25zZSIAEj8KBlNpZ25JbhIYLmdlbnBvcy52MS5TaWduSW5SZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25JblJlc3BvbnNlIgASQgoHU2lnbk91dBIZLmdlbnBvcy52MS5TaWduT3V0UmVxdWVzdBoaLmdlbnBvcy52MS5TaWduT3V0UmVzcG9uc2UiABJCCgdSZWZyZXNoEhkuZ2VucG9zLnYxLlJlZnJlc2hSZXF1ZXN0GhouZ2VucG9zLnYxLlJlZnJlc2hSZXNwb25zZSIAEjMKAk1lEhQuZ2VucG9zLnYxLk1lUmVxdWVzdBoVLmdlbnBvcy52MS5NZVJlc3BvbnNlIgASUQoMR2V0U3luY1Rva2VuEh4uZ2VucG9zLnYxLkdldFN5bmNUb2tlblJlcXVlc3QaHy5nZW5wb3MudjEuR2V0U3luY1Rva2VuUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.PingRequest
@@ -359,6 +359,46 @@ export const MeResponseSchema: GenMessage<MeResponse> = /*@__PURE__*/
   messageDesc(file_genpos_v1_genpos, 15);
 
 /**
+ * @generated from message genpos.v1.GetSyncTokenRequest
+ */
+export type GetSyncTokenRequest = Message<"genpos.v1.GetSyncTokenRequest"> & {
+};
+
+/**
+ * Describes the message genpos.v1.GetSyncTokenRequest.
+ * Use `create(GetSyncTokenRequestSchema)` to create a new message.
+ */
+export const GetSyncTokenRequestSchema: GenMessage<GetSyncTokenRequest> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_genpos, 16);
+
+/**
+ * @generated from message genpos.v1.GetSyncTokenResponse
+ */
+export type GetSyncTokenResponse = Message<"genpos.v1.GetSyncTokenResponse"> & {
+  /**
+   * @generated from field: string token = 1;
+   */
+  token: string;
+
+  /**
+   * @generated from field: string endpoint = 2;
+   */
+  endpoint: string;
+
+  /**
+   * @generated from field: int64 expires_at = 3;
+   */
+  expiresAt: bigint;
+};
+
+/**
+ * Describes the message genpos.v1.GetSyncTokenResponse.
+ * Use `create(GetSyncTokenResponseSchema)` to create a new message.
+ */
+export const GetSyncTokenResponseSchema: GenMessage<GetSyncTokenResponse> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_genpos, 17);
+
+/**
  * @generated from service genpos.v1.GenposService
  */
 export const GenposService: GenService<{
@@ -434,6 +474,16 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof MeRequestSchema;
     output: typeof MeResponseSchema;
+  },
+  /**
+   * GetSyncToken returns a short-lived JWT for PowerSync client authentication.
+   *
+   * @generated from rpc genpos.v1.AuthService.GetSyncToken
+   */
+  getSyncToken: {
+    methodKind: "unary";
+    input: typeof GetSyncTokenRequestSchema;
+    output: typeof GetSyncTokenResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_genpos_v1_genpos, 1);

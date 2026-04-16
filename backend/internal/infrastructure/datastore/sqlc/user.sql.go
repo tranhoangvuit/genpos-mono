@@ -12,7 +12,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (org_id, email, password_hash, name, role)
+INSERT INTO users (org_id, role_id, email, password_hash, name)
 VALUES (
     $1,
     $2,
@@ -20,33 +20,44 @@ VALUES (
     $4,
     $5
 )
-RETURNING id, org_id, email, password_hash, name, role, created_at, updated_at
+RETURNING id, org_id, role_id, email, password_hash, name, created_at, updated_at
 `
 
 type CreateUserParams struct {
 	OrgID        pgtype.UUID `json:"org_id"`
-	Email        string      `json:"email"`
-	PasswordHash string      `json:"password_hash"`
+	RoleID       pgtype.UUID `json:"role_id"`
+	Email        pgtype.Text `json:"email"`
+	PasswordHash pgtype.Text `json:"password_hash"`
 	Name         string      `json:"name"`
-	Role         string      `json:"role"`
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+type CreateUserRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	OrgID        pgtype.UUID        `json:"org_id"`
+	RoleID       pgtype.UUID        `json:"role_id"`
+	Email        pgtype.Text        `json:"email"`
+	PasswordHash pgtype.Text        `json:"password_hash"`
+	Name         string             `json:"name"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
 	row := q.db.QueryRow(ctx, createUser,
 		arg.OrgID,
+		arg.RoleID,
 		arg.Email,
 		arg.PasswordHash,
 		arg.Name,
-		arg.Role,
 	)
-	var i User
+	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
 		&i.OrgID,
+		&i.RoleID,
 		&i.Email,
 		&i.PasswordHash,
 		&i.Name,
-		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -54,21 +65,39 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, org_id, email, password_hash, name, role, created_at, updated_at
-FROM users
-WHERE lower(email) = lower($1)
+SELECT u.id, u.org_id, u.email, u.password_hash, u.name,
+       u.role_id, r.name AS role_name, r.permissions AS role_permissions,
+       u.created_at, u.updated_at
+FROM users u
+JOIN roles r ON r.id = u.role_id
+WHERE lower(u.email) = lower($1)
 `
 
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+type GetUserByEmailRow struct {
+	ID              pgtype.UUID        `json:"id"`
+	OrgID           pgtype.UUID        `json:"org_id"`
+	Email           pgtype.Text        `json:"email"`
+	PasswordHash    pgtype.Text        `json:"password_hash"`
+	Name            string             `json:"name"`
+	RoleID          pgtype.UUID        `json:"role_id"`
+	RoleName        string             `json:"role_name"`
+	RolePermissions []byte             `json:"role_permissions"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
 	row := q.db.QueryRow(ctx, getUserByEmail, email)
-	var i User
+	var i GetUserByEmailRow
 	err := row.Scan(
 		&i.ID,
 		&i.OrgID,
 		&i.Email,
 		&i.PasswordHash,
 		&i.Name,
-		&i.Role,
+		&i.RoleID,
+		&i.RoleName,
+		&i.RolePermissions,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -76,21 +105,39 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, org_id, email, password_hash, name, role, created_at, updated_at
-FROM users
-WHERE id = $1
+SELECT u.id, u.org_id, u.email, u.password_hash, u.name,
+       u.role_id, r.name AS role_name, r.permissions AS role_permissions,
+       u.created_at, u.updated_at
+FROM users u
+JOIN roles r ON r.id = u.role_id
+WHERE u.id = $1
 `
 
-func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error) {
+type GetUserByIDRow struct {
+	ID              pgtype.UUID        `json:"id"`
+	OrgID           pgtype.UUID        `json:"org_id"`
+	Email           pgtype.Text        `json:"email"`
+	PasswordHash    pgtype.Text        `json:"password_hash"`
+	Name            string             `json:"name"`
+	RoleID          pgtype.UUID        `json:"role_id"`
+	RoleName        string             `json:"role_name"`
+	RolePermissions []byte             `json:"role_permissions"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error) {
 	row := q.db.QueryRow(ctx, getUserByID, id)
-	var i User
+	var i GetUserByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.OrgID,
 		&i.Email,
 		&i.PasswordHash,
 		&i.Name,
-		&i.Role,
+		&i.RoleID,
+		&i.RoleName,
+		&i.RolePermissions,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

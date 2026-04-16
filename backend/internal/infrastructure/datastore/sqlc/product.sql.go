@@ -7,12 +7,15 @@ package sqlc
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const listProducts = `-- name: ListProducts :many
-SELECT id, org_id, name, sku, price_cents, active, created_at, updated_at
+SELECT id, org_id, category_id, name, description, image_url, is_active, sort_order, created_at, updated_at
 FROM products
-ORDER BY created_at DESC
+WHERE deleted_at IS NULL
+ORDER BY sort_order ASC, created_at DESC
 LIMIT $2 OFFSET $1
 `
 
@@ -21,22 +24,37 @@ type ListProductsParams struct {
 	Limit  int32 `json:"limit"`
 }
 
-func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error) {
+type ListProductsRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	CategoryID  pgtype.UUID        `json:"category_id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	ImageUrl    pgtype.Text        `json:"image_url"`
+	IsActive    bool               `json:"is_active"`
+	SortOrder   int32              `json:"sort_order"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error) {
 	rows, err := q.db.Query(ctx, listProducts, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Product{}
+	items := []ListProductsRow{}
 	for rows.Next() {
-		var i Product
+		var i ListProductsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.OrgID,
+			&i.CategoryID,
 			&i.Name,
-			&i.Sku,
-			&i.PriceCents,
-			&i.Active,
+			&i.Description,
+			&i.ImageUrl,
+			&i.IsActive,
+			&i.SortOrder,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {

@@ -32,15 +32,24 @@ type AuthConfig struct {
 	FrontendOrigin  string        `envconfig:"FRONTEND_ORIGIN" default:"http://localhost:3032"`
 }
 
+// PowerSyncConfig holds PowerSync JWT bridge settings.
+type PowerSyncConfig struct {
+	JWTSecret string        `envconfig:"JWT_SECRET" default:"my-dev-secret-key-for-jwt-signing"`
+	Audience  string        `envconfig:"AUDIENCE" default:"powersync-dev"`
+	Endpoint  string        `envconfig:"ENDPOINT" default:"http://localhost:3034"`
+	TokenTTL  time.Duration `envconfig:"TOKEN_TTL" default:"5m"`
+}
+
 // Config holds all application configuration.
 type Config struct {
 	ServiceName string `envconfig:"SERVICE_NAME" default:"genpos"`
 	ServerPort  int    `envconfig:"SERVER_PORT" default:"3031"`
 	Env         Env    `envconfig:"ENV" default:"dev"`
 
-	Database database.Config `envconfig:"DATABASE"`
-	Log      log.Config      `envconfig:"LOG"`
-	Auth     AuthConfig      `envconfig:"AUTH"`
+	Database  database.Config  `envconfig:"DATABASE"`
+	Log       log.Config       `envconfig:"LOG"`
+	Auth      AuthConfig       `envconfig:"AUTH"`
+	PowerSync PowerSyncConfig  `envconfig:"POWERSYNC"`
 }
 
 // Load loads the configuration from environment variables.

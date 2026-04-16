@@ -33,20 +33,18 @@ func (r *productReader) ListProducts(ctx context.Context, params gateway.ListPro
 
 	products := make([]*entity.Product, 0, len(rows))
 	for _, row := range rows {
-		products = append(products, toProductEntity(row))
+		products = append(products, &entity.Product{
+			ID:          uuidString(row.ID),
+			OrgID:       uuidString(row.OrgID),
+			CategoryID:  uuidString(row.CategoryID),
+			Name:        row.Name,
+			Description: row.Description.String,
+			ImageURL:    row.ImageUrl.String,
+			IsActive:    row.IsActive,
+			SortOrder:   row.SortOrder,
+			CreatedAt:   row.CreatedAt.Time,
+			UpdatedAt:   row.UpdatedAt.Time,
+		})
 	}
 	return products, nil
-}
-
-func toProductEntity(row sqlc.Product) *entity.Product {
-	return &entity.Product{
-		ID:         row.ID.String(),
-		OrgID:      row.OrgID,
-		Name:       row.Name,
-		SKU:        row.Sku,
-		PriceCents: row.PriceCents,
-		Active:     row.Active,
-		CreatedAt:  row.CreatedAt.Time,
-		UpdatedAt:  row.UpdatedAt.Time,
-	}
 }

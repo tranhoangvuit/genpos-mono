@@ -30,10 +30,13 @@ func newAuthTestConfig() *config.Config {
 
 type authMocks struct {
 	ctrl           *gomock.Controller
+	tx             *gatewaymock.MockTxManager
 	users          *gatewaymock.MockUserReader
 	usersW         *gatewaymock.MockUserWriter
 	orgs           *gatewaymock.MockOrgReader
 	orgsW          *gatewaymock.MockOrgWriter
+	roles          *gatewaymock.MockRoleReader
+	rolesW         *gatewaymock.MockRoleWriter
 	refreshTokens  *gatewaymock.MockRefreshTokenReader
 	refreshTokensW *gatewaymock.MockRefreshTokenWriter
 }
@@ -43,10 +46,13 @@ func newAuthMocks(t *testing.T) *authMocks {
 	ctrl := gomock.NewController(t)
 	return &authMocks{
 		ctrl:           ctrl,
+		tx:             gatewaymock.NewMockTxManager(ctrl),
 		users:          gatewaymock.NewMockUserReader(ctrl),
 		usersW:         gatewaymock.NewMockUserWriter(ctrl),
 		orgs:           gatewaymock.NewMockOrgReader(ctrl),
 		orgsW:          gatewaymock.NewMockOrgWriter(ctrl),
+		roles:          gatewaymock.NewMockRoleReader(ctrl),
+		rolesW:         gatewaymock.NewMockRoleWriter(ctrl),
 		refreshTokens:  gatewaymock.NewMockRefreshTokenReader(ctrl),
 		refreshTokensW: gatewaymock.NewMockRefreshTokenWriter(ctrl),
 	}
@@ -55,10 +61,20 @@ func newAuthMocks(t *testing.T) *authMocks {
 func (m *authMocks) newUsecase() usecase.AuthUsecase {
 	return usecase.NewAuthUsecase(
 		newAuthTestConfig(),
+		m.tx,
 		m.users, m.usersW,
 		m.orgs, m.orgsW,
+		m.roles, m.rolesW,
 		m.refreshTokens, m.refreshTokensW,
 	)
+}
+
+// stubPassthroughTx makes the mock TxManager just execute fn directly.
+func (m *authMocks) stubPassthroughTx() {
+	m.tx.EXPECT().Do(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, fn func(context.Context) error) error {
+			return fn(ctx)
+		}).AnyTimes()
 }
 
 func Test_AuthUsecase_SignUp(t *testing.T) {
@@ -70,29 +86,41 @@ func Test_AuthUsecase_SignUp(t *testing.T) {
 		wantErr     bool
 		wantErrCode string
 	}{
-		"creates org and user": {
+		"creates org and user with seeded roles": {
 			in: input.SignUpInput{Domain: "acme", Email: "owner@acme.test", Password: "hunter2hunter"},
 			setup: func(m *authMocks) {
 				m.orgs.EXPECT().GetBySlug(gomock.Any(), "acme").
 					Return(nil, errors.NotFound("org not found"))
 				m.users.EXPECT().GetByEmail(gomock.Any(), "owner@acme.test").
 					Return(nil, errors.NotFound("user not found"))
+				m.stubPassthroughTx()
 				m.orgsW.EXPECT().Create(gomock.Any(), gateway.CreateOrgParams{Slug: "acme", Name: "acme"}).
 					Return(&entity.Org{ID: "org-1", Slug: "acme", Name: "acme"}, nil)
+				// 3 default roles seeded; admin first
+				m.rolesW.EXPECT().
+					Create(gomock.Any(), gomock.AssignableToTypeOf(gateway.CreateRoleParams{})).
+					DoAndReturn(func(_ context.Context, p gateway.CreateRoleParams) (*entity.Role, error) {
+						return &entity.Role{
+							ID:          "role-" + p.Name,
+							OrgID:       p.OrgID,
+							Name:        p.Name,
+							Permissions: p.Permissions,
+							IsSystem:    p.IsSystem,
+						}, nil
+					}).Times(3)
 				m.usersW.EXPECT().
 					Create(gomock.Any(), gomock.AssignableToTypeOf(gateway.CreateUserParams{})).
 					DoAndReturn(func(_ context.Context, p gateway.CreateUserParams) (*entity.User, error) {
-						if p.OrgID != "org-1" || p.Email != "owner@acme.test" || p.Role != "admin" || p.Name != "owner" {
+						if p.OrgID != "org-1" || p.Email != "owner@acme.test" || p.RoleID != "role-admin" || p.Name != "owner" {
 							t.Errorf("unexpected create user params: %+v", p)
 						}
-						// The stored hash must verify against the plaintext password.
 						ok, err := auth.VerifyPassword("hunter2hunter", p.PasswordHash)
 						if err != nil || !ok {
 							t.Errorf("password hash does not verify: ok=%v err=%v", ok, err)
 						}
 						return &entity.User{
-							ID: "user-1", OrgID: p.OrgID, Email: p.Email,
-							PasswordHash: p.PasswordHash, Name: p.Name, Role: p.Role,
+							ID: "user-1", OrgID: p.OrgID, RoleID: p.RoleID,
+							Email: p.Email, PasswordHash: p.PasswordHash, Name: p.Name,
 						}, nil
 					})
 				m.refreshTokensW.EXPECT().
@@ -190,7 +218,11 @@ func Test_AuthUsecase_SignIn(t *testing.T) {
 			in: input.SignInInput{Email: "owner@acme.test", Password: "hunter2hunter", RememberMe: true},
 			setup: func(m *authMocks) {
 				m.users.EXPECT().GetByEmail(gomock.Any(), "owner@acme.test").
-					Return(&entity.User{ID: "u-1", OrgID: "o-1", Email: "owner@acme.test", PasswordHash: hash, Name: "owner", Role: "admin"}, nil)
+					Return(&entity.User{
+						ID: "u-1", OrgID: "o-1", Email: "owner@acme.test",
+						PasswordHash: hash, Name: "owner", RoleName: "admin",
+						Permissions: map[string]string{"*": "*"},
+					}, nil)
 				m.orgs.EXPECT().GetByID(gomock.Any(), "o-1").
 					Return(&entity.Org{ID: "o-1", Slug: "acme", Name: "acme"}, nil)
 				m.refreshTokensW.EXPECT().
@@ -203,7 +235,11 @@ func Test_AuthUsecase_SignIn(t *testing.T) {
 			in: input.SignInInput{Email: "owner@acme.test", Password: "hunter2hunter", RememberMe: false},
 			setup: func(m *authMocks) {
 				m.users.EXPECT().GetByEmail(gomock.Any(), "owner@acme.test").
-					Return(&entity.User{ID: "u-1", OrgID: "o-1", Email: "owner@acme.test", PasswordHash: hash}, nil)
+					Return(&entity.User{
+						ID: "u-1", OrgID: "o-1", Email: "owner@acme.test",
+						PasswordHash: hash, RoleName: "admin",
+						Permissions: map[string]string{"*": "*"},
+					}, nil)
 				m.orgs.EXPECT().GetByID(gomock.Any(), "o-1").
 					Return(&entity.Org{ID: "o-1", Slug: "acme"}, nil)
 				m.refreshTokensW.EXPECT().
@@ -287,7 +323,10 @@ func Test_AuthUsecase_Refresh(t *testing.T) {
 						TokenHash: hashed, ExpiresAt: now.Add(10 * 24 * time.Hour),
 					}, nil)
 				m.users.EXPECT().GetByID(gomock.Any(), "u-1").
-					Return(&entity.User{ID: "u-1", OrgID: "o-1", Role: "admin"}, nil)
+					Return(&entity.User{
+						ID: "u-1", OrgID: "o-1", RoleName: "admin",
+						Permissions: map[string]string{"*": "*"},
+					}, nil)
 				m.orgs.EXPECT().GetByID(gomock.Any(), "o-1").
 					Return(&entity.Org{ID: "o-1", Slug: "acme"}, nil)
 				m.refreshTokensW.EXPECT().Revoke(gomock.Any(), "rt-old", gomock.Any()).

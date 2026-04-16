@@ -30,6 +30,7 @@ func (a *App) NewHTTPHandler() http.Handler {
 	interceptors := connect.WithInterceptors(
 		interceptor.NewDBInterceptor(a.DB.Pool),
 		interceptor.NewAuthInterceptor(a.Config),
+		interceptor.NewPermissionInterceptor(interceptor.DefaultProcedurePermissions()),
 	)
 
 	genposPath, genposHTTP := genposv1connect.NewGenposServiceHandler(a.Server, interceptors)
@@ -41,10 +42,6 @@ func (a *App) NewHTTPHandler() http.Handler {
 	return withCORS(a.Config.Auth.FrontendOrigin, mux)
 }
 
-// withCORS emits the CORS headers required for the TanStack Start frontend
-// to talk to this backend with credentials: 'include'. The origin must be
-// echoed back exactly (wildcards are rejected by browsers when credentials
-// are in play).
 func withCORS(origin string, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", origin)

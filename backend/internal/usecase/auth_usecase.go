@@ -18,7 +18,6 @@ import (
 //go:generate mockgen -source=auth_usecase.go -destination=mock/mock_auth_usecase.go -package=mock
 
 // AuthSession is the result of a successful SignIn/SignUp/Refresh operation.
-// Handlers translate this into two Set-Cookie response headers.
 type AuthSession struct {
 	User               *entity.User
 	Org                *entity.Org
@@ -40,10 +39,13 @@ type AuthUsecase interface {
 
 type authUsecase struct {
 	cfg            config.AuthConfig
+	tx             gateway.TxManager
 	users          gateway.UserReader
 	usersW         gateway.UserWriter
 	orgs           gateway.OrgReader
 	orgsW          gateway.OrgWriter
+	roles          gateway.RoleReader
+	rolesW         gateway.RoleWriter
 	refreshTokens  gateway.RefreshTokenReader
 	refreshTokensW gateway.RefreshTokenWriter
 }
@@ -51,19 +53,25 @@ type authUsecase struct {
 // NewAuthUsecase constructs an AuthUsecase.
 func NewAuthUsecase(
 	cfg *config.Config,
+	tx gateway.TxManager,
 	users gateway.UserReader,
 	usersW gateway.UserWriter,
 	orgs gateway.OrgReader,
 	orgsW gateway.OrgWriter,
+	roles gateway.RoleReader,
+	rolesW gateway.RoleWriter,
 	refreshTokens gateway.RefreshTokenReader,
 	refreshTokensW gateway.RefreshTokenWriter,
 ) AuthUsecase {
 	return &authUsecase{
 		cfg:            cfg.Auth,
+		tx:             tx,
 		users:          users,
 		usersW:         usersW,
 		orgs:           orgs,
 		orgsW:          orgsW,
+		roles:          roles,
+		rolesW:         rolesW,
 		refreshTokens:  refreshTokens,
 		refreshTokensW: refreshTokensW,
 	}
@@ -87,8 +95,6 @@ func (u *authUsecase) SignUp(ctx context.Context, in input.SignUpInput) (*AuthSe
 		return nil, errors.BadRequest("password must be at least 8 characters")
 	}
 
-	// Reject duplicate domains and duplicate emails up front so we can return
-	// a specific message. A concurrent race still hits the DB unique index.
 	if existing, err := u.orgs.GetBySlug(ctx, domain); err == nil && existing != nil {
 		return nil, errors.Conflict("domain already taken")
 	} else if err != nil && errors.GetCode(err) != errors.CodeNotFound {
@@ -106,23 +112,47 @@ func (u *authUsecase) SignUp(ctx context.Context, in input.SignUpInput) (*AuthSe
 		return nil, errors.Wrap(err, "hash password")
 	}
 
-	org, err := u.orgsW.Create(ctx, gateway.CreateOrgParams{
-		Slug: domain,
-		Name: domain,
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "create org")
-	}
+	var org *entity.Org
+	var user *entity.User
+	var adminRole *entity.Role
 
-	user, err := u.usersW.Create(ctx, gateway.CreateUserParams{
-		OrgID:        org.ID,
-		Email:        email,
-		PasswordHash: hash,
-		Name:         deriveName(email),
-		Role:         "admin",
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "create user")
+	if err := u.tx.Do(ctx, func(txCtx context.Context) error {
+		var txErr error
+
+		org, txErr = u.orgsW.Create(txCtx, gateway.CreateOrgParams{
+			Slug: domain,
+			Name: domain,
+		})
+		if txErr != nil {
+			return errors.Wrap(txErr, "create org")
+		}
+
+		for _, seed := range auth.DefaultRoles() {
+			role, seedErr := u.rolesW.Create(txCtx, seed.ToCreateRoleParams(org.ID))
+			if seedErr != nil {
+				return errors.Wrap(seedErr, "seed role "+seed.Name)
+			}
+			if seed.Name == "admin" {
+				adminRole = role
+			}
+		}
+
+		user, txErr = u.usersW.Create(txCtx, gateway.CreateUserParams{
+			OrgID:        org.ID,
+			RoleID:       adminRole.ID,
+			Email:        email,
+			PasswordHash: hash,
+			Name:         deriveName(email),
+		})
+		if txErr != nil {
+			return errors.Wrap(txErr, "create user")
+		}
+
+		user.RoleName = adminRole.Name
+		user.Permissions = adminRole.Permissions
+		return nil
+	}); err != nil {
+		return nil, err
 	}
 
 	return u.issueSession(ctx, user, org, true, in.UserAgent)
@@ -200,7 +230,6 @@ func (u *authUsecase) Refresh(ctx context.Context, in input.RefreshInput) (*Auth
 		return nil, errors.Wrap(err, "load org")
 	}
 
-	// Rotate: revoke the current token before issuing a new one.
 	if err := u.refreshTokensW.Revoke(ctx, existing.ID, now); err != nil {
 		return nil, errors.Wrap(err, "revoke old refresh token")
 	}
@@ -227,7 +256,8 @@ func (u *authUsecase) Me(ctx context.Context, userID string) (*entity.User, *ent
 func (u *authUsecase) issueSession(ctx context.Context, user *entity.User, org *entity.Org, longLived bool, userAgent string) (*AuthSession, error) {
 	accessToken, err := auth.SignAccessToken(
 		[]byte(u.cfg.JWTSecret),
-		user.ID, org.ID, org.Slug, user.Role,
+		user.ID, org.ID, org.Slug, user.RoleName,
+		auth.PermissionSet(user.Permissions),
 		u.cfg.AccessTTL,
 	)
 	if err != nil {
@@ -265,7 +295,6 @@ func (u *authUsecase) issueSession(ctx context.Context, user *entity.User, org *
 	}, nil
 }
 
-// deriveName returns a best-effort display name from an email address.
 func deriveName(email string) string {
 	at := strings.IndexByte(email, '@')
 	if at <= 0 {
@@ -273,4 +302,3 @@ func deriveName(email string) string {
 	}
 	return email[:at]
 }
-

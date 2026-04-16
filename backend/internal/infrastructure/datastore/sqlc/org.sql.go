@@ -12,7 +12,7 @@ import (
 )
 
 const createOrg = `-- name: CreateOrg :one
-INSERT INTO orgs (slug, name)
+INSERT INTO organizations (slug, name)
 VALUES ($1, $2)
 RETURNING id, slug, name, created_at, updated_at
 `
@@ -22,9 +22,17 @@ type CreateOrgParams struct {
 	Name string `json:"name"`
 }
 
-func (q *Queries) CreateOrg(ctx context.Context, arg CreateOrgParams) (Org, error) {
+type CreateOrgRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Slug      string             `json:"slug"`
+	Name      string             `json:"name"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) CreateOrg(ctx context.Context, arg CreateOrgParams) (CreateOrgRow, error) {
 	row := q.db.QueryRow(ctx, createOrg, arg.Slug, arg.Name)
-	var i Org
+	var i CreateOrgRow
 	err := row.Scan(
 		&i.ID,
 		&i.Slug,
@@ -37,13 +45,21 @@ func (q *Queries) CreateOrg(ctx context.Context, arg CreateOrgParams) (Org, erro
 
 const getOrgByID = `-- name: GetOrgByID :one
 SELECT id, slug, name, created_at, updated_at
-FROM orgs
+FROM organizations
 WHERE id = $1
 `
 
-func (q *Queries) GetOrgByID(ctx context.Context, id pgtype.UUID) (Org, error) {
+type GetOrgByIDRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Slug      string             `json:"slug"`
+	Name      string             `json:"name"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) GetOrgByID(ctx context.Context, id pgtype.UUID) (GetOrgByIDRow, error) {
 	row := q.db.QueryRow(ctx, getOrgByID, id)
-	var i Org
+	var i GetOrgByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Slug,
@@ -56,13 +72,21 @@ func (q *Queries) GetOrgByID(ctx context.Context, id pgtype.UUID) (Org, error) {
 
 const getOrgBySlug = `-- name: GetOrgBySlug :one
 SELECT id, slug, name, created_at, updated_at
-FROM orgs
+FROM organizations
 WHERE slug = $1
 `
 
-func (q *Queries) GetOrgBySlug(ctx context.Context, slug string) (Org, error) {
+type GetOrgBySlugRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Slug      string             `json:"slug"`
+	Name      string             `json:"name"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) GetOrgBySlug(ctx context.Context, slug string) (GetOrgBySlugRow, error) {
 	row := q.db.QueryRow(ctx, getOrgBySlug, slug)
-	var i Org
+	var i GetOrgBySlugRow
 	err := row.Scan(
 		&i.ID,
 		&i.Slug,

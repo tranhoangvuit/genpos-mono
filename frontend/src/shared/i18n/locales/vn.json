@@ -37,5 +37,25 @@
     "welcome": "Chào mừng trở lại, {{name}}",
     "signedInAs": "Đăng nhập với {{email}} tại {{domain}}",
     "signOut": "Đăng xuất"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "categories": "Danh mục",
+    "inventory": "Kho hàng",
+    "purchaseOrders": "Đơn nhập hàng",
+    "stockTakes": "Kiểm kê",
+    "customers": "Khách hàng",
+    "customerGroups": "Nhóm",
+    "reports": "Báo cáo",
+    "dailySalesReport": "Báo cáo bán hàng ngày",
+    "addons": "Tiện ích",
+    "settings": "Cài đặt",
+    "stores": "Cửa hàng",
+    "payments": "Thanh toán",
+    "taxes": "Thuế",
+    "members": "Thành viên",
+    "searchPlaceholder": "Tìm kiếm...",
+    "notifications": "Thông báo"
   }
 }

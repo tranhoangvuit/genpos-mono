@@ -50,6 +50,9 @@ const (
 	AuthServiceRefreshProcedure = "/genpos.v1.AuthService/Refresh"
 	// AuthServiceMeProcedure is the fully-qualified name of the AuthService's Me RPC.
 	AuthServiceMeProcedure = "/genpos.v1.AuthService/Me"
+	// AuthServiceGetSyncTokenProcedure is the fully-qualified name of the AuthService's GetSyncToken
+	// RPC.
+	AuthServiceGetSyncTokenProcedure = "/genpos.v1.AuthService/GetSyncToken"
 )
 
 // GenposServiceClient is a client for the genpos.v1.GenposService service.
@@ -160,6 +163,8 @@ type AuthServiceClient interface {
 	Refresh(context.Context, *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error)
 	// Me returns the currently authenticated user (requires access cookie).
 	Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error)
+	// GetSyncToken returns a short-lived JWT for PowerSync client authentication.
+	GetSyncToken(context.Context, *connect.Request[v1.GetSyncTokenRequest]) (*connect.Response[v1.GetSyncTokenResponse], error)
 }
 
 // NewAuthServiceClient constructs a client for the genpos.v1.AuthService service. By default, it
@@ -203,16 +208,23 @@ func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(authServiceMethods.ByName("Me")),
 			connect.WithClientOptions(opts...),
 		),
+		getSyncToken: connect.NewClient[v1.GetSyncTokenRequest, v1.GetSyncTokenResponse](
+			httpClient,
+			baseURL+AuthServiceGetSyncTokenProcedure,
+			connect.WithSchema(authServiceMethods.ByName("GetSyncToken")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // authServiceClient implements AuthServiceClient.
 type authServiceClient struct {
-	signUp  *connect.Client[v1.SignUpRequest, v1.SignUpResponse]
-	signIn  *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	signOut *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
-	refresh *connect.Client[v1.RefreshRequest, v1.RefreshResponse]
-	me      *connect.Client[v1.MeRequest, v1.MeResponse]
+	signUp       *connect.Client[v1.SignUpRequest, v1.SignUpResponse]
+	signIn       *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	signOut      *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
+	refresh      *connect.Client[v1.RefreshRequest, v1.RefreshResponse]
+	me           *connect.Client[v1.MeRequest, v1.MeResponse]
+	getSyncToken *connect.Client[v1.GetSyncTokenRequest, v1.GetSyncTokenResponse]
 }
 
 // SignUp calls genpos.v1.AuthService.SignUp.
@@ -240,6 +252,11 @@ func (c *authServiceClient) Me(ctx context.Context, req *connect.Request[v1.MeRe
 	return c.me.CallUnary(ctx, req)
 }
 
+// GetSyncToken calls genpos.v1.AuthService.GetSyncToken.
+func (c *authServiceClient) GetSyncToken(ctx context.Context, req *connect.Request[v1.GetSyncTokenRequest]) (*connect.Response[v1.GetSyncTokenResponse], error) {
+	return c.getSyncToken.CallUnary(ctx, req)
+}
+
 // AuthServiceHandler is an implementation of the genpos.v1.AuthService service.
 type AuthServiceHandler interface {
 	// SignUp creates a new organization and its first admin user.
@@ -252,6 +269,8 @@ type AuthServiceHandler interface {
 	Refresh(context.Context, *connect.Request[v1.RefreshRequest]) (*connect.Response[v1.RefreshResponse], error)
 	// Me returns the currently authenticated user (requires access cookie).
 	Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error)
+	// GetSyncToken returns a short-lived JWT for PowerSync client authentication.
+	GetSyncToken(context.Context, *connect.Request[v1.GetSyncTokenRequest]) (*connect.Response[v1.GetSyncTokenResponse], error)
 }
 
 // NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -291,6 +310,12 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(authServiceMethods.ByName("Me")),
 		connect.WithHandlerOptions(opts...),
 	)
+	authServiceGetSyncTokenHandler := connect.NewUnaryHandler(
+		AuthServiceGetSyncTokenProcedure,
+		svc.GetSyncToken,
+		connect.WithSchema(authServiceMethods.ByName("GetSyncToken")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/genpos.v1.AuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuthServiceSignUpProcedure:
@@ -303,6 +328,8 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 			authServiceRefreshHandler.ServeHTTP(w, r)
 		case AuthServiceMeProcedure:
 			authServiceMeHandler.ServeHTTP(w, r)
+		case AuthServiceGetSyncTokenProcedure:
+			authServiceGetSyncTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -330,4 +357,8 @@ func (UnimplementedAuthServiceHandler) Refresh(context.Context, *connect.Request
 
 func (UnimplementedAuthServiceHandler) Me(context.Context, *connect.Request[v1.MeRequest]) (*connect.Response[v1.MeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.Me is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) GetSyncToken(context.Context, *connect.Request[v1.GetSyncTokenRequest]) (*connect.Response[v1.GetSyncTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.AuthService.GetSyncToken is not implemented"))
 }

@@ -1,6 +1,26 @@
 bucket_definitions:
-  global:
+  by_org:
+    parameters:
+      - SELECT token_parameters.o AS org_id
     data:
-      # Add your sync rules here. Example:
-      # - SELECT * FROM public.todos
-      []
+      - SELECT id, org_id, slug, name, currency, timezone, status, created_at, updated_at
+        FROM organizations
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, name, address, phone, email, timezone, status, created_at, updated_at
+        FROM stores
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, store_id, name, status, created_at, updated_at
+        FROM registers
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, name, permissions, is_system, created_at, updated_at
+        FROM roles
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, role_id, name, email, phone, status, created_at, updated_at
+        FROM users
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, parent_id, name, sort_order, color, image_url, created_at, updated_at
+        FROM categories
+        WHERE org_id = bucket.org_id
+      - SELECT id, org_id, category_id, name, description, image_url, is_active, sort_order, created_at, updated_at
+        FROM products
+        WHERE org_id = bucket.org_id

@@ -1,4 +1,5 @@
 import { authClient, setOnAuthFailure } from '@/shared/api/client'
+import { connectSync, disconnectSync } from '@/shared/sync/client'
 
 import { useAuthStore } from './store'
 
@@ -13,6 +14,9 @@ export function bootstrapAuth(): Promise<void> {
       try {
         const res = await authClient.me({})
         useAuthStore.getState().setUser(res.user ?? null)
+        if (res.user) {
+          void connectSync()
+        }
       } catch {
         useAuthStore.getState().setUser(null)
       }
@@ -24,6 +28,7 @@ export function bootstrapAuth(): Promise<void> {
 export function resetAuthBootstrap(): void {
   hydrationPromise = null
   useAuthStore.getState().clear()
+  void disconnectSync()
 }
 
 setOnAuthFailure(() => {

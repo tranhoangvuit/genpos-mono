@@ -57,6 +57,9 @@ service AuthService {
 
   // Me returns the currently authenticated user (requires access cookie).
   rpc Me(MeRequest) returns (MeResponse) {}
+
+  // GetSyncToken returns a short-lived JWT for PowerSync client authentication.
+  rpc GetSyncToken(GetSyncTokenRequest) returns (GetSyncTokenResponse) {}
 }
 
 message AuthUser {
@@ -103,4 +106,12 @@ message MeRequest {}
 
 message MeResponse {
   AuthUser user = 1;
+}
+
+message GetSyncTokenRequest {}
+
+message GetSyncTokenResponse {
+  string token    = 1;
+  string endpoint = 2;
+  int64  expires_at = 3;
 }

@@ -831,6 +831,102 @@ func (x *MeResponse) GetUser() *AuthUser {
 	return nil
 }
 
+type GetSyncTokenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSyncTokenRequest) Reset() {
+	*x = GetSyncTokenRequest{}
+	mi := &file_genpos_v1_genpos_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSyncTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSyncTokenRequest) ProtoMessage() {}
+
+func (x *GetSyncTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_genpos_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSyncTokenRequest.ProtoReflect.Descriptor instead.
+func (*GetSyncTokenRequest) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{16}
+}
+
+type GetSyncTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Endpoint      string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	ExpiresAt     int64                  `protobuf:"varint,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSyncTokenResponse) Reset() {
+	*x = GetSyncTokenResponse{}
+	mi := &file_genpos_v1_genpos_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSyncTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSyncTokenResponse) ProtoMessage() {}
+
+func (x *GetSyncTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_genpos_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSyncTokenResponse.ProtoReflect.Descriptor instead.
+func (*GetSyncTokenResponse) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetSyncTokenResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *GetSyncTokenResponse) GetEndpoint() string {
+	if x != nil {
+		return x.Endpoint
+	}
+	return ""
+}
+
+func (x *GetSyncTokenResponse) GetExpiresAt() int64 {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return 0
+}
+
 var File_genpos_v1_genpos_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_genpos_proto_rawDesc = "" +
@@ -885,16 +981,23 @@ const file_genpos_v1_genpos_proto_rawDesc = "" +
 	"\tMeRequest\"5\n" +
 	"\n" +
 	"MeResponse\x12'\n" +
-	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user2\x9d\x01\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\"\x15\n" +
+	"\x13GetSyncTokenRequest\"g\n" +
+	"\x14GetSyncTokenResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
+	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\x03 \x01(\x03R\texpiresAt2\x9d\x01\n" +
 	"\rGenposService\x129\n" +
 	"\x04Ping\x12\x16.genpos.v1.PingRequest\x1a\x17.genpos.v1.PingResponse\"\x00\x12Q\n" +
-	"\fListProducts\x12\x1e.genpos.v1.ListProductsRequest\x1a\x1f.genpos.v1.ListProductsResponse\"\x002\xcc\x02\n" +
+	"\fListProducts\x12\x1e.genpos.v1.ListProductsRequest\x1a\x1f.genpos.v1.ListProductsResponse\"\x002\x9f\x03\n" +
 	"\vAuthService\x12?\n" +
 	"\x06SignUp\x12\x18.genpos.v1.SignUpRequest\x1a\x19.genpos.v1.SignUpResponse\"\x00\x12?\n" +
 	"\x06SignIn\x12\x18.genpos.v1.SignInRequest\x1a\x19.genpos.v1.SignInResponse\"\x00\x12B\n" +
 	"\aSignOut\x12\x19.genpos.v1.SignOutRequest\x1a\x1a.genpos.v1.SignOutResponse\"\x00\x12B\n" +
 	"\aRefresh\x12\x19.genpos.v1.RefreshRequest\x1a\x1a.genpos.v1.RefreshResponse\"\x00\x123\n" +
-	"\x02Me\x12\x14.genpos.v1.MeRequest\x1a\x15.genpos.v1.MeResponse\"\x00B\xa0\x01\n" +
+	"\x02Me\x12\x14.genpos.v1.MeRequest\x1a\x15.genpos.v1.MeResponse\"\x00\x12Q\n" +
+	"\fGetSyncToken\x12\x1e.genpos.v1.GetSyncTokenRequest\x1a\x1f.genpos.v1.GetSyncTokenResponse\"\x00B\xa0\x01\n" +
 	"\rcom.genpos.v1B\vGenposProtoP\x01Z=github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1\xa2\x02\x03GXX\xaa\x02\tGenpos.V1\xca\x02\tGenpos\\V1\xe2\x02\x15Genpos\\V1\\GPBMetadata\xea\x02\n" +
 	"Genpos::V1b\x06proto3"
 
@@ -910,7 +1013,7 @@ func file_genpos_v1_genpos_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_genpos_proto_rawDescData
 }
 
-var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_genpos_v1_genpos_proto_goTypes = []any{
 	(*PingRequest)(nil),           // 0: genpos.v1.PingRequest
 	(*PingResponse)(nil),          // 1: genpos.v1.PingResponse
@@ -928,12 +1031,14 @@ var file_genpos_v1_genpos_proto_goTypes = []any{
 	(*RefreshResponse)(nil),       // 13: genpos.v1.RefreshResponse
 	(*MeRequest)(nil),             // 14: genpos.v1.MeRequest
 	(*MeResponse)(nil),            // 15: genpos.v1.MeResponse
-	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
+	(*GetSyncTokenRequest)(nil),   // 16: genpos.v1.GetSyncTokenRequest
+	(*GetSyncTokenResponse)(nil),  // 17: genpos.v1.GetSyncTokenResponse
+	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
 }
 var file_genpos_v1_genpos_proto_depIdxs = []int32{
 	4,  // 0: genpos.v1.ListProductsResponse.products:type_name -> genpos.v1.Product
-	16, // 1: genpos.v1.Product.created_at:type_name -> google.protobuf.Timestamp
-	16, // 2: genpos.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 1: genpos.v1.Product.created_at:type_name -> google.protobuf.Timestamp
+	18, // 2: genpos.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 3: genpos.v1.SignUpResponse.user:type_name -> genpos.v1.AuthUser
 	5,  // 4: genpos.v1.SignInResponse.user:type_name -> genpos.v1.AuthUser
 	5,  // 5: genpos.v1.RefreshResponse.user:type_name -> genpos.v1.AuthUser
@@ -945,15 +1050,17 @@ var file_genpos_v1_genpos_proto_depIdxs = []int32{
 	10, // 11: genpos.v1.AuthService.SignOut:input_type -> genpos.v1.SignOutRequest
 	12, // 12: genpos.v1.AuthService.Refresh:input_type -> genpos.v1.RefreshRequest
 	14, // 13: genpos.v1.AuthService.Me:input_type -> genpos.v1.MeRequest
-	1,  // 14: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
-	3,  // 15: genpos.v1.GenposService.ListProducts:output_type -> genpos.v1.ListProductsResponse
-	7,  // 16: genpos.v1.AuthService.SignUp:output_type -> genpos.v1.SignUpResponse
-	9,  // 17: genpos.v1.AuthService.SignIn:output_type -> genpos.v1.SignInResponse
-	11, // 18: genpos.v1.AuthService.SignOut:output_type -> genpos.v1.SignOutResponse
-	13, // 19: genpos.v1.AuthService.Refresh:output_type -> genpos.v1.RefreshResponse
-	15, // 20: genpos.v1.AuthService.Me:output_type -> genpos.v1.MeResponse
-	14, // [14:21] is the sub-list for method output_type
-	7,  // [7:14] is the sub-list for method input_type
+	16, // 14: genpos.v1.AuthService.GetSyncToken:input_type -> genpos.v1.GetSyncTokenRequest
+	1,  // 15: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
+	3,  // 16: genpos.v1.GenposService.ListProducts:output_type -> genpos.v1.ListProductsResponse
+	7,  // 17: genpos.v1.AuthService.SignUp:output_type -> genpos.v1.SignUpResponse
+	9,  // 18: genpos.v1.AuthService.SignIn:output_type -> genpos.v1.SignInResponse
+	11, // 19: genpos.v1.AuthService.SignOut:output_type -> genpos.v1.SignOutResponse
+	13, // 20: genpos.v1.AuthService.Refresh:output_type -> genpos.v1.RefreshResponse
+	15, // 21: genpos.v1.AuthService.Me:output_type -> genpos.v1.MeResponse
+	17, // 22: genpos.v1.AuthService.GetSyncToken:output_type -> genpos.v1.GetSyncTokenResponse
+	15, // [15:23] is the sub-list for method output_type
+	7,  // [7:15] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -970,7 +1077,7 @@ func file_genpos_v1_genpos_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_genpos_proto_rawDesc), len(file_genpos_v1_genpos_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

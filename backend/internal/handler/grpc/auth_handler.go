@@ -5,6 +5,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"connectrpc.com/connect"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/genpick/genpos-mono/backend/internal/handler/interceptor"
 	"github.com/genpick/genpos-mono/backend/internal/usecase"
 	"github.com/genpick/genpos-mono/backend/internal/usecase/input"
+	"github.com/genpick/genpos-mono/backend/pkg/auth"
 	"github.com/genpick/genpos-mono/backend/pkg/cookies"
 	"github.com/genpick/genpos-mono/backend/pkg/errors"
 )
@@ -22,9 +24,10 @@ import (
 // AuthHandler implements AuthServiceHandler.
 type AuthHandler struct {
 	genposv1connect.UnimplementedAuthServiceHandler
-	logger     *slog.Logger
-	usecase    usecase.AuthUsecase
-	cookieCfg  cookies.Config
+	logger    *slog.Logger
+	usecase   usecase.AuthUsecase
+	cookieCfg cookies.Config
+	syncCfg   config.PowerSyncConfig
 }
 
 // NewAuthHandler constructs an AuthHandler.
@@ -36,6 +39,7 @@ func NewAuthHandler(cfg *config.Config, logger *slog.Logger, uc usecase.AuthUsec
 			Domain: cfg.Auth.CookieDomain,
 			Secure: cfg.Auth.CookieSecure,
 		},
+		syncCfg: cfg.PowerSync,
 	}
 }
 
@@ -150,6 +154,34 @@ func (h *AuthHandler) logAndConvert(ctx context.Context, op string, err error) e
 	return errors.ToConnectError(err)
 }
 
+func (h *AuthHandler) GetSyncToken(
+	ctx context.Context,
+	_ *connect.Request[genposv1.GetSyncTokenRequest],
+) (*connect.Response[genposv1.GetSyncTokenResponse], error) {
+	authCtx := interceptor.FromContext(ctx)
+	if authCtx == nil {
+		return nil, errors.ToConnectError(errors.Unauthorized("not signed in"))
+	}
+
+	token, err := auth.SignSyncToken(
+		[]byte(h.syncCfg.JWTSecret),
+		h.syncCfg.Audience,
+		authCtx.UserID,
+		authCtx.OrgID,
+		h.syncCfg.TokenTTL,
+	)
+	if err != nil {
+		return nil, h.logAndConvert(ctx, "get sync token", err)
+	}
+
+	expiresAt := time.Now().UTC().Add(h.syncCfg.TokenTTL).Unix()
+	return connect.NewResponse(&genposv1.GetSyncTokenResponse{
+		Token:     token,
+		Endpoint:  h.syncCfg.Endpoint,
+		ExpiresAt: expiresAt,
+	}), nil
+}
+
 func toProtoUser(user *entity.User, org *entity.Org) *genposv1.AuthUser {
 	return &genposv1.AuthUser{
 		Id:      user.ID,
@@ -157,11 +189,10 @@ func toProtoUser(user *entity.User, org *entity.Org) *genposv1.AuthUser {
 		OrgSlug: org.Slug,
 		Email:   user.Email,
 		Name:    user.Name,
-		Role:    user.Role,
+		Role:    user.RoleName,
 	}
 }
 
-// userAgent extracts the User-Agent header, falling back to empty string.
 func userAgent(h http.Header) string {
 	return h.Get("User-Agent")
 }

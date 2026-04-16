@@ -11,6 +11,7 @@ func Test_Auth_SignAndParseAccessToken(t *testing.T) {
 	t.Parallel()
 
 	secret := []byte("test-secret-do-not-use-in-production")
+	perms := auth.PermissionSet{"*": "*"}
 
 	cases := map[string]struct {
 		userID  string
@@ -18,7 +19,6 @@ func Test_Auth_SignAndParseAccessToken(t *testing.T) {
 		orgSlug string
 		role    string
 		ttl     time.Duration
-		wantErr bool
 	}{
 		"admin claims round-trip": {
 			userID: "u-1", orgID: "o-1", orgSlug: "acme", role: "admin", ttl: time.Hour,
@@ -32,7 +32,7 @@ func Test_Auth_SignAndParseAccessToken(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			token, err := auth.SignAccessToken(secret, tc.userID, tc.orgID, tc.orgSlug, tc.role, tc.ttl)
+			token, err := auth.SignAccessToken(secret, tc.userID, tc.orgID, tc.orgSlug, tc.role, perms, tc.ttl)
 			if err != nil {
 				t.Fatalf("sign: %v", err)
 			}
@@ -47,6 +47,9 @@ func Test_Auth_SignAndParseAccessToken(t *testing.T) {
 				claims.Role != tc.role {
 				t.Errorf("claims mismatch: %+v", claims)
 			}
+			if !claims.Permissions.Allows("anything", "anything") {
+				t.Errorf("expected wildcard permissions in token")
+			}
 		})
 	}
 }
@@ -56,12 +59,13 @@ func Test_Auth_ParseAccessToken_Rejects(t *testing.T) {
 
 	secret := []byte("test-secret")
 	wrongSecret := []byte("other-secret")
+	perms := auth.PermissionSet{"*": "*"}
 
-	validToken, err := auth.SignAccessToken(secret, "u", "o", "s", "admin", time.Hour)
+	validToken, err := auth.SignAccessToken(secret, "u", "o", "s", "admin", perms, time.Hour)
 	if err != nil {
 		t.Fatalf("sign: %v", err)
 	}
-	expiredToken, err := auth.SignAccessToken(secret, "u", "o", "s", "admin", -time.Second)
+	expiredToken, err := auth.SignAccessToken(secret, "u", "o", "s", "admin", perms, -time.Second)
 	if err != nil {
 		t.Fatalf("sign expired: %v", err)
 	}

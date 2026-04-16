@@ -14,10 +14,11 @@ import (
 
 // AuthContext holds the authenticated user extracted from the access cookie.
 type AuthContext struct {
-	UserID  string
-	OrgID   string
-	OrgSlug string
-	Role    string
+	UserID      string
+	OrgID       string
+	OrgSlug     string
+	Role        string
+	Permissions auth.PermissionSet
 }
 
 type authCtxKey struct{}
@@ -38,16 +39,22 @@ func WithAuth(ctx context.Context, a *AuthContext) context.Context {
 // publicProcedures are RPCs that must succeed without an access cookie.
 // Refresh is included because it validates the refresh cookie itself.
 var publicProcedures = map[string]struct{}{
-	"/genpos.v1.AuthService/SignUp":  {},
-	"/genpos.v1.AuthService/SignIn":  {},
-	"/genpos.v1.AuthService/SignOut": {},
+	"/genpos.v1.AuthService/SignUp":   {},
+	"/genpos.v1.AuthService/SignIn":   {},
+	"/genpos.v1.AuthService/SignOut":  {},
 	"/genpos.v1.AuthService/Refresh": {},
-	"/genpos.v1.GenposService/Ping":  {},
+	"/genpos.v1.GenposService/Ping":   {},
+}
+
+// IsPublicProcedure returns true if the procedure does not require auth.
+func IsPublicProcedure(procedure string) bool {
+	_, ok := publicProcedures[procedure]
+	return ok
 }
 
 // NewAuthInterceptor parses the gp_access cookie on every unary request and
 // injects an AuthContext into the handler ctx. Public procedures are passed
-// through without validation — they read cookies themselves when needed.
+// through without validation.
 func NewAuthInterceptor(cfg *config.Config) connect.UnaryInterceptorFunc {
 	secret := []byte(cfg.Auth.JWTSecret)
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
@@ -67,10 +74,11 @@ func NewAuthInterceptor(cfg *config.Config) connect.UnaryInterceptorFunc {
 			}
 
 			ctx = WithAuth(ctx, &AuthContext{
-				UserID:  claims.UserID,
-				OrgID:   claims.OrgID,
-				OrgSlug: claims.OrgSlug,
-				Role:    claims.Role,
+				UserID:      claims.UserID,
+				OrgID:       claims.OrgID,
+				OrgSlug:     claims.OrgSlug,
+				Role:        claims.Role,
+				Permissions: claims.Permissions,
 			})
 			return next(ctx, req)
 		})

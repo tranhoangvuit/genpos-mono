@@ -8,23 +8,180 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Org struct {
+type Category struct {
 	ID        pgtype.UUID        `json:"id"`
-	Slug      string             `json:"slug"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	ParentID  pgtype.UUID        `json:"parent_id"`
 	Name      string             `json:"name"`
+	SortOrder int32              `json:"sort_order"`
+	Color     pgtype.Text        `json:"color"`
+	ImageUrl  pgtype.Text        `json:"image_url"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Customer struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	Name      string             `json:"name"`
+	Email     pgtype.Text        `json:"email"`
+	Phone     pgtype.Text        `json:"phone"`
+	Notes     pgtype.Text        `json:"notes"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Discount struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	Name      string             `json:"name"`
+	Type      string             `json:"type"`
+	Value     pgtype.Numeric     `json:"value"`
+	IsActive  bool               `json:"is_active"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Order struct {
+	ID            pgtype.UUID        `json:"id"`
+	OrgID         pgtype.UUID        `json:"org_id"`
+	StoreID       pgtype.UUID        `json:"store_id"`
+	RegisterID    pgtype.UUID        `json:"register_id"`
+	ShiftID       pgtype.UUID        `json:"shift_id"`
+	CustomerID    pgtype.UUID        `json:"customer_id"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	OrderNumber   string             `json:"order_number"`
+	Status        string             `json:"status"`
+	Subtotal      pgtype.Numeric     `json:"subtotal"`
+	TaxTotal      pgtype.Numeric     `json:"tax_total"`
+	DiscountTotal pgtype.Numeric     `json:"discount_total"`
+	Total         pgtype.Numeric     `json:"total"`
+	Notes         pgtype.Text        `json:"notes"`
+	CompletedAt   pgtype.Timestamptz `json:"completed_at"`
+	DeletedAt     pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
+type OrderLineItem struct {
+	ID                pgtype.UUID        `json:"id"`
+	OrgID             pgtype.UUID        `json:"org_id"`
+	OrderID           pgtype.UUID        `json:"order_id"`
+	VariantID         pgtype.UUID        `json:"variant_id"`
+	ProductName       string             `json:"product_name"`
+	VariantName       string             `json:"variant_name"`
+	Sku               pgtype.Text        `json:"sku"`
+	Quantity          pgtype.Numeric     `json:"quantity"`
+	UnitPrice         pgtype.Numeric     `json:"unit_price"`
+	CostPriceSnapshot pgtype.Numeric     `json:"cost_price_snapshot"`
+	TaxRate           pgtype.Numeric     `json:"tax_rate"`
+	TaxAmount         pgtype.Numeric     `json:"tax_amount"`
+	DiscountAmount    pgtype.Numeric     `json:"discount_amount"`
+	LineTotal         pgtype.Numeric     `json:"line_total"`
+	Notes             pgtype.Text        `json:"notes"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Organization struct {
+	ID        pgtype.UUID        `json:"id"`
+	Name      string             `json:"name"`
+	Slug      string             `json:"slug"`
+	Currency  string             `json:"currency"`
+	Timezone  string             `json:"timezone"`
+	Status    string             `json:"status"`
+	Settings  []byte             `json:"settings"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Payment struct {
+	ID              pgtype.UUID        `json:"id"`
+	OrgID           pgtype.UUID        `json:"org_id"`
+	OrderID         pgtype.UUID        `json:"order_id"`
+	PaymentMethodID pgtype.UUID        `json:"payment_method_id"`
+	Amount          pgtype.Numeric     `json:"amount"`
+	Tendered        pgtype.Numeric     `json:"tendered"`
+	ChangeAmount    pgtype.Numeric     `json:"change_amount"`
+	Reference       pgtype.Text        `json:"reference"`
+	Status          string             `json:"status"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
+type PaymentMethod struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	Name      string             `json:"name"`
+	Type      string             `json:"type"`
+	IsActive  bool               `json:"is_active"`
+	SortOrder int32              `json:"sort_order"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
 type Product struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	CategoryID  pgtype.UUID        `json:"category_id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	ImageUrl    pgtype.Text        `json:"image_url"`
+	IsActive    bool               `json:"is_active"`
+	SortOrder   int32              `json:"sort_order"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ProductVariant struct {
 	ID         pgtype.UUID        `json:"id"`
-	OrgID      string             `json:"org_id"`
+	OrgID      pgtype.UUID        `json:"org_id"`
+	ProductID  pgtype.UUID        `json:"product_id"`
 	Name       string             `json:"name"`
-	Sku        string             `json:"sku"`
-	PriceCents int64              `json:"price_cents"`
-	Active     bool               `json:"active"`
+	Sku        pgtype.Text        `json:"sku"`
+	Barcode    pgtype.Text        `json:"barcode"`
+	Price      pgtype.Numeric     `json:"price"`
+	CostPrice  pgtype.Numeric     `json:"cost_price"`
+	TrackStock bool               `json:"track_stock"`
+	IsActive   bool               `json:"is_active"`
+	SortOrder  int32              `json:"sort_order"`
+	DeletedAt  pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
+}
+
+type PurchaseOrder struct {
+	ID           pgtype.UUID        `json:"id"`
+	OrgID        pgtype.UUID        `json:"org_id"`
+	StoreID      pgtype.UUID        `json:"store_id"`
+	UserID       pgtype.UUID        `json:"user_id"`
+	PoNumber     string             `json:"po_number"`
+	SupplierName pgtype.Text        `json:"supplier_name"`
+	Status       string             `json:"status"`
+	Notes        pgtype.Text        `json:"notes"`
+	ExpectedAt   pgtype.Timestamptz `json:"expected_at"`
+	ReceivedAt   pgtype.Timestamptz `json:"received_at"`
+	DeletedAt    pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
+}
+
+type PurchaseOrderItem struct {
+	ID               pgtype.UUID        `json:"id"`
+	OrgID            pgtype.UUID        `json:"org_id"`
+	PurchaseOrderID  pgtype.UUID        `json:"purchase_order_id"`
+	VariantID        pgtype.UUID        `json:"variant_id"`
+	QuantityOrdered  pgtype.Numeric     `json:"quantity_ordered"`
+	QuantityReceived pgtype.Numeric     `json:"quantity_received"`
+	CostPrice        pgtype.Numeric     `json:"cost_price"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
 }
 
 type RefreshToken struct {
@@ -38,13 +195,207 @@ type RefreshToken struct {
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
 
+type Refund struct {
+	ID           pgtype.UUID        `json:"id"`
+	OrgID        pgtype.UUID        `json:"org_id"`
+	StoreID      pgtype.UUID        `json:"store_id"`
+	RegisterID   pgtype.UUID        `json:"register_id"`
+	OrderID      pgtype.UUID        `json:"order_id"`
+	UserID       pgtype.UUID        `json:"user_id"`
+	RefundNumber string             `json:"refund_number"`
+	Amount       pgtype.Numeric     `json:"amount"`
+	Reason       pgtype.Text        `json:"reason"`
+	Status       string             `json:"status"`
+	DeletedAt    pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
+}
+
+type RefundLineItem struct {
+	ID              pgtype.UUID        `json:"id"`
+	OrgID           pgtype.UUID        `json:"org_id"`
+	RefundID        pgtype.UUID        `json:"refund_id"`
+	OrderLineItemID pgtype.UUID        `json:"order_line_item_id"`
+	VariantID       pgtype.UUID        `json:"variant_id"`
+	Quantity        pgtype.Numeric     `json:"quantity"`
+	Amount          pgtype.Numeric     `json:"amount"`
+	Restock         bool               `json:"restock"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Register struct {
+	ID                pgtype.UUID        `json:"id"`
+	OrgID             pgtype.UUID        `json:"org_id"`
+	StoreID           pgtype.UUID        `json:"store_id"`
+	Name              string             `json:"name"`
+	DeviceFingerprint pgtype.Text        `json:"device_fingerprint"`
+	Status            string             `json:"status"`
+	LastSeenAt        pgtype.Timestamptz `json:"last_seen_at"`
+	AppVersion        pgtype.Text        `json:"app_version"`
+	DeletedAt         pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Role struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Permissions []byte             `json:"permissions"`
+	IsSystem    bool               `json:"is_system"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Shift struct {
+	ID             pgtype.UUID        `json:"id"`
+	OrgID          pgtype.UUID        `json:"org_id"`
+	StoreID        pgtype.UUID        `json:"store_id"`
+	RegisterID     pgtype.UUID        `json:"register_id"`
+	UserID         pgtype.UUID        `json:"user_id"`
+	Status         string             `json:"status"`
+	OpeningAmount  pgtype.Numeric     `json:"opening_amount"`
+	ClosingAmount  pgtype.Numeric     `json:"closing_amount"`
+	ExpectedAmount pgtype.Numeric     `json:"expected_amount"`
+	Difference     pgtype.Numeric     `json:"difference"`
+	Notes          pgtype.Text        `json:"notes"`
+	OpenedAt       pgtype.Timestamptz `json:"opened_at"`
+	ClosedAt       pgtype.Timestamptz `json:"closed_at"`
+	DeletedAt      pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+}
+
+type StockCostPrice struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	StoreID   pgtype.UUID        `json:"store_id"`
+	VariantID pgtype.UUID        `json:"variant_id"`
+	Method    string             `json:"method"`
+	AvgCost   pgtype.Numeric     `json:"avg_cost"`
+	LastCost  pgtype.Numeric     `json:"last_cost"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type StockCostPriceTrack struct {
+	ID                pgtype.UUID        `json:"id"`
+	OrgID             pgtype.UUID        `json:"org_id"`
+	StoreID           pgtype.UUID        `json:"store_id"`
+	VariantID         pgtype.UUID        `json:"variant_id"`
+	MovementID        pgtype.UUID        `json:"movement_id"`
+	Direction         string             `json:"direction"`
+	MovementType      string             `json:"movement_type"`
+	Quantity          pgtype.Numeric     `json:"quantity"`
+	UnitCost          pgtype.Numeric     `json:"unit_cost"`
+	TotalCost         pgtype.Numeric     `json:"total_cost"`
+	AvgCostBefore     pgtype.Numeric     `json:"avg_cost_before"`
+	AvgCostAfter      pgtype.Numeric     `json:"avg_cost_after"`
+	StockOnHandBefore pgtype.Numeric     `json:"stock_on_hand_before"`
+	StockOnHandAfter  pgtype.Numeric     `json:"stock_on_hand_after"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+}
+
+type StockMovement struct {
+	ID              pgtype.UUID        `json:"id"`
+	OrgID           pgtype.UUID        `json:"org_id"`
+	StoreID         pgtype.UUID        `json:"store_id"`
+	RegisterID      pgtype.UUID        `json:"register_id"`
+	VariantID       pgtype.UUID        `json:"variant_id"`
+	Direction       string             `json:"direction"`
+	Quantity        pgtype.Numeric     `json:"quantity"`
+	MovementType    string             `json:"movement_type"`
+	ReferenceType   pgtype.Text        `json:"reference_type"`
+	ReferenceID     pgtype.UUID        `json:"reference_id"`
+	TransferStoreID pgtype.UUID        `json:"transfer_store_id"`
+	UserID          pgtype.UUID        `json:"user_id"`
+	Notes           pgtype.Text        `json:"notes"`
+	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
+type StockTake struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	StoreID     pgtype.UUID        `json:"store_id"`
+	UserID      pgtype.UUID        `json:"user_id"`
+	Status      string             `json:"status"`
+	Notes       pgtype.Text        `json:"notes"`
+	CompletedAt pgtype.Timestamptz `json:"completed_at"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type StockTakeItem struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	StockTakeID pgtype.UUID        `json:"stock_take_id"`
+	VariantID   pgtype.UUID        `json:"variant_id"`
+	ExpectedQty pgtype.Numeric     `json:"expected_qty"`
+	CountedQty  pgtype.Numeric     `json:"counted_qty"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Store struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	Name      string             `json:"name"`
+	Address   pgtype.Text        `json:"address"`
+	Phone     pgtype.Text        `json:"phone"`
+	Email     pgtype.Text        `json:"email"`
+	Timezone  pgtype.Text        `json:"timezone"`
+	Status    string             `json:"status"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type StoreConfig struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	StoreID   pgtype.UUID        `json:"store_id"`
+	Key       string             `json:"key"`
+	Value     string             `json:"value"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type TaxRate struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Rate        pgtype.Numeric     `json:"rate"`
+	IsInclusive bool               `json:"is_inclusive"`
+	IsDefault   bool               `json:"is_default"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
 type User struct {
 	ID           pgtype.UUID        `json:"id"`
 	OrgID        pgtype.UUID        `json:"org_id"`
-	Email        string             `json:"email"`
-	PasswordHash string             `json:"password_hash"`
+	RoleID       pgtype.UUID        `json:"role_id"`
 	Name         string             `json:"name"`
-	Role         string             `json:"role"`
+	Email        pgtype.Text        `json:"email"`
+	Phone        pgtype.Text        `json:"phone"`
+	PinHash      pgtype.Text        `json:"pin_hash"`
+	PasswordHash pgtype.Text        `json:"password_hash"`
+	Status       string             `json:"status"`
+	DeletedAt    pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt    pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
+}
+
+type UserStore struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	StoreID   pgtype.UUID        `json:"store_id"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }

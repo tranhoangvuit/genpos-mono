@@ -34,6 +34,18 @@
   --radius-lg: 0.5rem;
   --radius-xl: calc(0.5rem + 4px);
   --radius: 0.5rem;
+
+  --color-sidebar: hsl(0 0% 100%);
+  --color-sidebar-background: hsl(0 0% 100%);
+  --color-sidebar-foreground: hsl(200 4.5% 13.1%);
+  --color-sidebar-primary: hsl(180 1.8% 11.2%);
+  --color-sidebar-primary-foreground: hsl(0 0% 100%);
+  --color-sidebar-accent: hsl(210 22% 96.5%);
+  --color-sidebar-accent-foreground: hsl(200 4.5% 13.1%);
+  --color-sidebar-border: hsl(210 18% 90%);
+  --color-sidebar-ring: hsl(200 4.5% 13.1%);
+  --sidebar-width: 16rem;
+  --sidebar-width-icon: 3rem;
 }
 
 @layer base {

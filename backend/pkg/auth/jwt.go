@@ -10,21 +10,23 @@ import (
 
 // AccessClaims is the JWT payload for the short-lived access token.
 type AccessClaims struct {
-	UserID  string `json:"uid"`
-	OrgID   string `json:"oid"`
-	OrgSlug string `json:"osl"`
-	Role    string `json:"rol"`
+	UserID      string        `json:"uid"`
+	OrgID       string        `json:"oid"`
+	OrgSlug     string        `json:"osl"`
+	Role        string        `json:"rol"`
+	Permissions PermissionSet `json:"prm,omitempty"`
 	jwt.RegisteredClaims
 }
 
 // SignAccessToken returns a signed JWT for the given claims.
-func SignAccessToken(secret []byte, userID, orgID, orgSlug, role string, ttl time.Duration) (string, error) {
+func SignAccessToken(secret []byte, userID, orgID, orgSlug, role string, perms PermissionSet, ttl time.Duration) (string, error) {
 	now := time.Now().UTC()
 	claims := AccessClaims{
-		UserID:  userID,
-		OrgID:   orgID,
-		OrgSlug: orgSlug,
-		Role:    role,
+		UserID:      userID,
+		OrgID:       orgID,
+		OrgSlug:     orgSlug,
+		Role:        role,
+		Permissions: perms,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -41,7 +43,6 @@ func SignAccessToken(secret []byte, userID, orgID, orgSlug, role string, ttl tim
 }
 
 // ParseAccessToken verifies signature + expiry and returns the claims.
-// Returns an Unauthorized error on any failure so callers don't leak details.
 func ParseAccessToken(secret []byte, token string) (*AccessClaims, error) {
 	parsed, err := jwt.ParseWithClaims(token, &AccessClaims{}, func(t *jwt.Token) (any, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {

@@ -11,10 +11,10 @@ import (
 // CreateUserParams carries parameters for creating a user.
 type CreateUserParams struct {
 	OrgID        string
+	RoleID       string
 	Email        string
 	PasswordHash string
 	Name         string
-	Role         string
 }
 
 // UserReader reads users without tenant context (used during auth).

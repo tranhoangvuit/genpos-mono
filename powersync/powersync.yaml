@@ -14,7 +14,8 @@ port: 8080
 sync_rules:
   path: sync-rules.yaml
 
-# Dev auth - replace with proper JWKS in production
+# Dev auth — must match POWERSYNC_JWT_SECRET from backend .env
+# The key below is base64("my-dev-secret-key-for-jwt-signing")
 client_auth:
   jwks:
     keys:

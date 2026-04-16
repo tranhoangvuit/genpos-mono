@@ -37,5 +37,25 @@
     "welcome": "Welcome back, {{name}}",
     "signedInAs": "Signed in as {{email}} at {{domain}}",
     "signOut": "Sign out"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "inventory": "Inventory",
+    "purchaseOrders": "Purchase Orders",
+    "stockTakes": "Stock Takes",
+    "customers": "Customers",
+    "customerGroups": "Groups",
+    "reports": "Reports",
+    "dailySalesReport": "Daily Sale Report",
+    "addons": "Addons",
+    "settings": "Settings",
+    "stores": "Stores",
+    "payments": "Payments",
+    "taxes": "Taxes",
+    "members": "Members",
+    "searchPlaceholder": "Search...",
+    "notifications": "Notifications"
   }
 }

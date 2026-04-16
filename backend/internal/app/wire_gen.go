@@ -31,6 +31,7 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	pool := db.Pool
 	tenantDB := datastore.NewTenantDB(pool)
+	txManager := datastore.NewTxManager(pool)
 
 	// Catalog
 	productReader := datastore.NewProductReader()
@@ -42,9 +43,17 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	userWriter := datastore.NewUserWriter()
 	orgReader := datastore.NewOrgReader()
 	orgWriter := datastore.NewOrgWriter()
+	roleReader := datastore.NewRoleReader()
+	roleWriter := datastore.NewRoleWriter()
 	refreshReader := datastore.NewRefreshTokenReader()
 	refreshWriter := datastore.NewRefreshTokenWriter()
-	authUsecase := usecase.NewAuthUsecase(cfg, userReader, userWriter, orgReader, orgWriter, refreshReader, refreshWriter)
+	authUsecase := usecase.NewAuthUsecase(
+		cfg, txManager,
+		userReader, userWriter,
+		orgReader, orgWriter,
+		roleReader, roleWriter,
+		refreshReader, refreshWriter,
+	)
 	authHandler := grpchandler.NewAuthHandler(cfg, logger, authUsecase)
 
 	return &App{

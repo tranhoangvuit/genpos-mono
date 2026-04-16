@@ -40,11 +40,11 @@ func Test_ProductUsecase_ListProducts(t *testing.T) {
 				pr.EXPECT().
 					ListProducts(gomock.Any(), gateway.ListProductsParams{Limit: 10, Offset: 0}).
 					Return([]*entity.Product{
-						{ID: "p1", OrgID: "org-1", Name: "Widget", SKU: "WGT-1", PriceCents: 1099, Active: true, CreatedAt: now, UpdatedAt: now},
+						{ID: "p1", OrgID: "org-1", Name: "Widget", IsActive: true, SortOrder: 0, CreatedAt: now, UpdatedAt: now},
 					}, nil)
 			},
 			want: []*entity.Product{
-				{ID: "p1", OrgID: "org-1", Name: "Widget", SKU: "WGT-1", PriceCents: 1099, Active: true, CreatedAt: now, UpdatedAt: now},
+				{ID: "p1", OrgID: "org-1", Name: "Widget", IsActive: true, SortOrder: 0, CreatedAt: now, UpdatedAt: now},
 			},
 		},
 		"returns empty list": {
