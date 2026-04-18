@@ -29,34 +29,38 @@ func newAuthTestConfig() *config.Config {
 }
 
 type authMocks struct {
-	ctrl           *gomock.Controller
-	tx             *gatewaymock.MockTxManager
-	users          *gatewaymock.MockUserReader
-	usersW         *gatewaymock.MockUserWriter
-	orgs           *gatewaymock.MockOrgReader
-	orgsW          *gatewaymock.MockOrgWriter
-	roles          *gatewaymock.MockRoleReader
-	rolesW         *gatewaymock.MockRoleWriter
-	storesW        *gatewaymock.MockStoreWriter
-	refreshTokens  *gatewaymock.MockRefreshTokenReader
-	refreshTokensW *gatewaymock.MockRefreshTokenWriter
+	ctrl            *gomock.Controller
+	tx              *gatewaymock.MockTxManager
+	users           *gatewaymock.MockUserReader
+	usersW          *gatewaymock.MockUserWriter
+	orgs            *gatewaymock.MockOrgReader
+	orgsW           *gatewaymock.MockOrgWriter
+	roles           *gatewaymock.MockRoleReader
+	rolesW          *gatewaymock.MockRoleWriter
+	storesW         *gatewaymock.MockStoreWriter
+	categoriesW     *gatewaymock.MockCategoryWriter
+	paymentMethodsW *gatewaymock.MockPaymentMethodWriter
+	refreshTokens   *gatewaymock.MockRefreshTokenReader
+	refreshTokensW  *gatewaymock.MockRefreshTokenWriter
 }
 
 func newAuthMocks(t *testing.T) *authMocks {
 	t.Helper()
 	ctrl := gomock.NewController(t)
 	return &authMocks{
-		ctrl:           ctrl,
-		tx:             gatewaymock.NewMockTxManager(ctrl),
-		users:          gatewaymock.NewMockUserReader(ctrl),
-		usersW:         gatewaymock.NewMockUserWriter(ctrl),
-		orgs:           gatewaymock.NewMockOrgReader(ctrl),
-		orgsW:          gatewaymock.NewMockOrgWriter(ctrl),
-		roles:          gatewaymock.NewMockRoleReader(ctrl),
-		rolesW:         gatewaymock.NewMockRoleWriter(ctrl),
-		storesW:        gatewaymock.NewMockStoreWriter(ctrl),
-		refreshTokens:  gatewaymock.NewMockRefreshTokenReader(ctrl),
-		refreshTokensW: gatewaymock.NewMockRefreshTokenWriter(ctrl),
+		ctrl:            ctrl,
+		tx:              gatewaymock.NewMockTxManager(ctrl),
+		users:           gatewaymock.NewMockUserReader(ctrl),
+		usersW:          gatewaymock.NewMockUserWriter(ctrl),
+		orgs:            gatewaymock.NewMockOrgReader(ctrl),
+		orgsW:           gatewaymock.NewMockOrgWriter(ctrl),
+		roles:           gatewaymock.NewMockRoleReader(ctrl),
+		rolesW:          gatewaymock.NewMockRoleWriter(ctrl),
+		storesW:         gatewaymock.NewMockStoreWriter(ctrl),
+		categoriesW:     gatewaymock.NewMockCategoryWriter(ctrl),
+		paymentMethodsW: gatewaymock.NewMockPaymentMethodWriter(ctrl),
+		refreshTokens:   gatewaymock.NewMockRefreshTokenReader(ctrl),
+		refreshTokensW:  gatewaymock.NewMockRefreshTokenWriter(ctrl),
 	}
 }
 
@@ -68,6 +72,7 @@ func (m *authMocks) newUsecase() usecase.AuthUsecase {
 		m.orgs, m.orgsW,
 		m.roles, m.rolesW,
 		m.storesW,
+		m.categoriesW, m.paymentMethodsW,
 		m.refreshTokens, m.refreshTokensW,
 	)
 }
@@ -129,6 +134,12 @@ func Test_AuthUsecase_SignUp(t *testing.T) {
 				m.storesW.EXPECT().
 					Create(gomock.Any(), gateway.CreateStoreParams{OrgID: "org-1", Name: "Main Store"}).
 					Return(&entity.Store{ID: "store-1", OrgID: "org-1", Name: "Main Store"}, nil)
+				m.categoriesW.EXPECT().
+					Create(gomock.Any(), gateway.CreateCategoryParams{OrgID: "org-1", Name: "Uncategorized"}).
+					Return(&entity.Category{ID: "cat-1", OrgID: "org-1", Name: "Uncategorized"}, nil)
+				m.paymentMethodsW.EXPECT().
+					Create(gomock.Any(), gateway.CreatePaymentMethodParams{OrgID: "org-1", Name: "Cash", Type: "cash", IsActive: true}).
+					Return(&entity.PaymentMethod{ID: "pm-1", OrgID: "org-1", Name: "Cash", Type: "cash", IsActive: true}, nil)
 				m.refreshTokensW.EXPECT().
 					Create(gomock.Any(), gomock.AssignableToTypeOf(gateway.CreateRefreshTokenParams{})).
 					Return(&entity.RefreshToken{ID: "rt-1"}, nil)

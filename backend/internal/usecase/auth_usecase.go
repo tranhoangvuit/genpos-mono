@@ -38,17 +38,19 @@ type AuthUsecase interface {
 }
 
 type authUsecase struct {
-	cfg            config.AuthConfig
-	tx             gateway.TxManager
-	users          gateway.UserReader
-	usersW         gateway.UserWriter
-	orgs           gateway.OrgReader
-	orgsW          gateway.OrgWriter
-	roles          gateway.RoleReader
-	rolesW         gateway.RoleWriter
-	storesW        gateway.StoreWriter
-	refreshTokens  gateway.RefreshTokenReader
-	refreshTokensW gateway.RefreshTokenWriter
+	cfg              config.AuthConfig
+	tx               gateway.TxManager
+	users            gateway.UserReader
+	usersW           gateway.UserWriter
+	orgs             gateway.OrgReader
+	orgsW            gateway.OrgWriter
+	roles            gateway.RoleReader
+	rolesW           gateway.RoleWriter
+	storesW          gateway.StoreWriter
+	categoriesW      gateway.CategoryWriter
+	paymentMethodsW  gateway.PaymentMethodWriter
+	refreshTokens    gateway.RefreshTokenReader
+	refreshTokensW   gateway.RefreshTokenWriter
 }
 
 // NewAuthUsecase constructs an AuthUsecase.
@@ -62,21 +64,25 @@ func NewAuthUsecase(
 	roles gateway.RoleReader,
 	rolesW gateway.RoleWriter,
 	storesW gateway.StoreWriter,
+	categoriesW gateway.CategoryWriter,
+	paymentMethodsW gateway.PaymentMethodWriter,
 	refreshTokens gateway.RefreshTokenReader,
 	refreshTokensW gateway.RefreshTokenWriter,
 ) AuthUsecase {
 	return &authUsecase{
-		cfg:            cfg.Auth,
-		tx:             tx,
-		users:          users,
-		usersW:         usersW,
-		orgs:           orgs,
-		orgsW:          orgsW,
-		roles:          roles,
-		rolesW:         rolesW,
-		storesW:        storesW,
-		refreshTokens:  refreshTokens,
-		refreshTokensW: refreshTokensW,
+		cfg:             cfg.Auth,
+		tx:              tx,
+		users:           users,
+		usersW:          usersW,
+		orgs:            orgs,
+		orgsW:           orgsW,
+		roles:           roles,
+		rolesW:          rolesW,
+		storesW:         storesW,
+		categoriesW:     categoriesW,
+		paymentMethodsW: paymentMethodsW,
+		refreshTokens:   refreshTokens,
+		refreshTokensW:  refreshTokensW,
 	}
 }
 
@@ -156,6 +162,22 @@ func (u *authUsecase) SignUp(ctx context.Context, in input.SignUpInput) (*AuthSe
 			Name:  "Main Store",
 		}); txErr != nil {
 			return errors.Wrap(txErr, "create default store")
+		}
+
+		if _, txErr = u.categoriesW.Create(txCtx, gateway.CreateCategoryParams{
+			OrgID: org.ID,
+			Name:  "Uncategorized",
+		}); txErr != nil {
+			return errors.Wrap(txErr, "create default category")
+		}
+
+		if _, txErr = u.paymentMethodsW.Create(txCtx, gateway.CreatePaymentMethodParams{
+			OrgID:    org.ID,
+			Name:     "Cash",
+			Type:     "cash",
+			IsActive: true,
+		}); txErr != nil {
+			return errors.Wrap(txErr, "create default payment method")
 		}
 
 		user.RoleName = adminRole.Name

@@ -111,6 +111,7 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		orgReader, orgWriter,
 		roleReader, roleWriter,
 		storeWriter,
+		categoryWriter, pmWriter,
 		refreshReader, refreshWriter,
 	)
 	authHandler := grpchandler.NewAuthHandler(cfg, logger, authUsecase)
