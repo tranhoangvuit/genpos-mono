@@ -124,6 +124,10 @@ func DefaultProcedurePermissions() map[string]ProcedurePermission {
 		"/genpos.v1.MemberService/UpdateMember": {Resource: "users", Action: "write"},
 		"/genpos.v1.MemberService/DeleteMember": {Resource: "users", Action: "write"},
 
+		// Orders (reports)
+		"/genpos.v1.OrderService/ListOrders": {Resource: "orders", Action: "read"},
+		"/genpos.v1.OrderService/GetOrder":   {Resource: "orders", Action: "read"},
+
 		// Stock takes
 		"/genpos.v1.StockTakeService/ListStockTakes":        {Resource: "inventory", Action: "read"},
 		"/genpos.v1.StockTakeService/GetStockTake":          {Resource: "inventory", Action: "read"},

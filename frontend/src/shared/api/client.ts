@@ -16,6 +16,7 @@ import {
   SupplierService,
 } from '@/gen/genpos/v1/inventory_pb'
 import { MemberService } from '@/gen/genpos/v1/member_pb'
+import { OrderService } from '@/gen/genpos/v1/order_pb'
 import { PaymentMethodService } from '@/gen/genpos/v1/payment_pb'
 import { StockTakeService } from '@/gen/genpos/v1/stock_take_pb'
 import { StoreService } from '@/gen/genpos/v1/store_pb'
@@ -97,3 +98,4 @@ export const storeClient = createClient(StoreService, transport)
 export const paymentMethodClient = createClient(PaymentMethodService, transport)
 export const taxRateClient = createClient(TaxRateService, transport)
 export const memberClient = createClient(MemberService, transport)
+export const orderClient = createClient(OrderService, transport)

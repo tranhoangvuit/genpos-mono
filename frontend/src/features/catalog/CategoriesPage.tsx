@@ -5,6 +5,13 @@ import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/shared/ui/button'
 import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui/dialog'
 
 import { CategoryDialog } from './CategoryDialog'
 import { useCategories, useDeleteCategory } from './hooks'
@@ -18,6 +25,7 @@ export function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<CategoryRow | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<CategoryRow | null>(null)
 
   const list = categories ?? []
   const parents = list
@@ -27,13 +35,20 @@ export function CategoriesPage() {
     setDialogOpen(true)
   }
 
-  const onDelete = async (row: CategoryRow) => {
-    if (!confirm(t('catalog.confirmDeleteCategory', { name: row.name }))) return
+  const onDelete = (row: CategoryRow) => {
     setDeleteError(null)
+    setPendingDelete(row)
+  }
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
+    const row = pendingDelete
     try {
       await deleteMut.mutateAsync(row.id)
+      setPendingDelete(null)
     } catch (err) {
       setDeleteError(ConnectError.from(err).rawMessage)
+      setPendingDelete(null)
     }
   }
 
@@ -128,6 +143,42 @@ export function CategoriesPage() {
         existing={editing}
         parents={parents}
       />
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null)
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('common.delete')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-[color:var(--color-muted-foreground)]">
+            {pendingDelete
+              ? t('catalog.confirmDeleteCategory', { name: pendingDelete.name })
+              : ''}
+          </p>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingDelete(null)}
+              disabled={deleteMut.isPending}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMut.isPending}
+            >
+              {deleteMut.isPending ? t('common.saving') : t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

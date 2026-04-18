@@ -67,6 +67,10 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	poUsecase := usecase.NewPurchaseOrderUsecase(tenantDB, poReader, poWriter, stockMovementWriter)
 	poHandler := grpchandler.NewPurchaseOrderHandler(logger, poUsecase)
 
+	orderReader := datastore.NewOrderReader()
+	orderUsecase := usecase.NewOrderUsecase(tenantDB, orderReader)
+	orderHandler := grpchandler.NewOrderHandler(logger, orderUsecase)
+
 	stockTakeReader := datastore.NewStockTakeReader()
 	stockTakeWriter := datastore.NewStockTakeWriter()
 	stockTakeUsecase := usecase.NewStockTakeUsecase(tenantDB, stockTakeReader, stockTakeWriter, stockMovementWriter)
@@ -124,6 +128,7 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		CustomerHandler:      customerHandler,
 		SupplierHandler:      supplierHandler,
 		PurchaseOrderHandler: poHandler,
+		OrderHandler:         orderHandler,
 		StockTakeHandler:     stockTakeHandler,
 		StoreHandler:         storeHandler,
 		PaymentMethodHandler: pmHandler,

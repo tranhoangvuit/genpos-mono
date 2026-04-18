@@ -23,6 +23,7 @@ type App struct {
 	CustomerHandler      *grpchandler.CustomerHandler
 	SupplierHandler      *grpchandler.SupplierHandler
 	PurchaseOrderHandler *grpchandler.PurchaseOrderHandler
+	OrderHandler         *grpchandler.OrderHandler
 	StockTakeHandler     *grpchandler.StockTakeHandler
 	StoreHandler         *grpchandler.StoreHandler
 	PaymentMethodHandler *grpchandler.PaymentMethodHandler
@@ -59,6 +60,9 @@ func (a *App) NewHTTPHandler() http.Handler {
 
 	poPath, poHTTP := genposv1connect.NewPurchaseOrderServiceHandler(a.PurchaseOrderHandler, interceptors)
 	mux.Handle(poPath, poHTTP)
+
+	orderPath, orderHTTP := genposv1connect.NewOrderServiceHandler(a.OrderHandler, interceptors)
+	mux.Handle(orderPath, orderHTTP)
 
 	stPath, stHTTP := genposv1connect.NewStockTakeServiceHandler(a.StockTakeHandler, interceptors)
 	mux.Handle(stPath, stHTTP)

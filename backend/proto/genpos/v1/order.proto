@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- OrderService ----------------------------------------------------------
+service OrderService {
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+}
+
+message OrderSummary {
+  string                    id              = 1;
+  string                    order_number    = 2;
+  string                    status          = 3;
+  string                    subtotal        = 4;
+  string                    tax_total       = 5;
+  string                    discount_total  = 6;
+  string                    total           = 7;
+  string                    store_id        = 8;
+  string                    store_name      = 9;
+  string                    register_id     = 10;
+  string                    user_id         = 11;
+  string                    user_name       = 12;
+  string                    customer_id     = 13;
+  string                    customer_name   = 14;
+  google.protobuf.Timestamp created_at      = 15;
+}
+
+message ListOrdersRequest {
+  string                    store_id  = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+}
+
+message ListOrdersResponse {
+  repeated OrderSummary orders = 1;
+}
+
+// ----- Order detail ----------------------------------------------------------
+message OrderLineItem {
+  string id               = 1;
+  string variant_id       = 2;
+  string product_name     = 3;
+  string variant_name     = 4;
+  string sku              = 5;
+  string quantity         = 6; // decimal string
+  string unit_price       = 7;
+  string tax_rate         = 8;
+  string tax_amount       = 9;
+  string discount_amount  = 10;
+  string line_total       = 11;
+  string notes            = 12;
+}
+
+message OrderPayment {
+  string                    id                  = 1;
+  string                    payment_method_id   = 2;
+  string                    payment_method_name = 3;
+  string                    amount              = 4;
+  string                    tendered            = 5;
+  string                    change_amount       = 6;
+  string                    reference           = 7;
+  string                    status              = 8;
+  google.protobuf.Timestamp created_at          = 9;
+}
+
+message Order {
+  string                     id              = 1;
+  string                     order_number    = 2;
+  string                     status          = 3;
+  string                     subtotal        = 4;
+  string                     tax_total       = 5;
+  string                     discount_total  = 6;
+  string                     total           = 7;
+  string                     notes           = 8;
+  string                     store_id        = 9;
+  string                     store_name      = 10;
+  string                     register_id     = 11;
+  string                     user_id         = 12;
+  string                     user_name       = 13;
+  string                     customer_id     = 14;
+  string                     customer_name   = 15;
+  google.protobuf.Timestamp  created_at      = 16;
+  google.protobuf.Timestamp  completed_at    = 17;
+  repeated OrderLineItem     line_items      = 18;
+  repeated OrderPayment      payments        = 19;
+}
+
+message GetOrderRequest  { string id = 1; }
+message GetOrderResponse { Order order = 1; }

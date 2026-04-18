@@ -75,6 +75,12 @@ type PurchaseOrderUsecase interface {
 	DeletePurchaseOrder(ctx context.Context, in input.DeletePurchaseOrderInput) error
 }
 
+// OrderUsecase is the service contract consumed by the OrderService handler.
+type OrderUsecase interface {
+	ListOrders(ctx context.Context, in input.ListDailySalesInput) ([]*entity.OrderSummary, error)
+	GetOrder(ctx context.Context, in input.GetOrderInput) (*entity.Order, error)
+}
+
 // CustomerUsecase is the service contract consumed by the CustomerService handler.
 type CustomerUsecase interface {
 	// Customers
