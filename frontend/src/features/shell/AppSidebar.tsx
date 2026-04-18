@@ -46,6 +46,7 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.products',
     icon: Package,
     children: [
+      { labelKey: 'nav.allProducts', to: '/products' },
       { labelKey: 'nav.categories', to: '/products/categories' },
     ],
   },
@@ -53,15 +54,17 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.inventory',
     icon: Warehouse,
     children: [
-      { labelKey: 'nav.purchaseOrders', to: '/purchase-orders' },
-      { labelKey: 'nav.stockTakes', to: '/stock-takes' },
+      { labelKey: 'nav.suppliers', to: '/inventory/suppliers' },
+      { labelKey: 'nav.purchaseOrders', to: '/inventory/purchase-orders' },
+      { labelKey: 'nav.stockTakes', to: '/inventory/stock-takes' },
     ],
   },
   {
     labelKey: 'nav.customers',
     icon: Users,
     children: [
-      { labelKey: 'nav.customerGroups', to: '/customer-groups' },
+      { labelKey: 'nav.allCustomers', to: '/customers' },
+      { labelKey: 'nav.customerGroups', to: '/customers/groups' },
     ],
   },
   {

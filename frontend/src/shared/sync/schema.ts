@@ -74,6 +74,153 @@ const products = new Table({
   updated_at: column.text,
 })
 
+const product_variants = new Table({
+  org_id: column.text,
+  product_id: column.text,
+  name: column.text,
+  sku: column.text,
+  barcode: column.text,
+  price: column.text,
+  cost_price: column.text,
+  track_stock: column.integer,
+  is_active: column.integer,
+  sort_order: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const product_options = new Table({
+  org_id: column.text,
+  product_id: column.text,
+  name: column.text,
+  sort_order: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const product_option_values = new Table({
+  org_id: column.text,
+  option_id: column.text,
+  value: column.text,
+  sort_order: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const product_variant_option_values = new Table({
+  org_id: column.text,
+  variant_id: column.text,
+  option_value_id: column.text,
+  created_at: column.text,
+})
+
+const product_images = new Table({
+  org_id: column.text,
+  product_id: column.text,
+  variant_id: column.text,
+  url: column.text,
+  sort_order: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const customers = new Table({
+  org_id: column.text,
+  name: column.text,
+  email: column.text,
+  phone: column.text,
+  notes: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const customer_groups = new Table({
+  org_id: column.text,
+  name: column.text,
+  description: column.text,
+  discount_type: column.text,
+  discount_value: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const customer_group_members = new Table({
+  org_id: column.text,
+  group_id: column.text,
+  customer_id: column.text,
+  created_at: column.text,
+})
+
+const suppliers = new Table({
+  org_id: column.text,
+  name: column.text,
+  contact_name: column.text,
+  email: column.text,
+  phone: column.text,
+  address: column.text,
+  notes: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const purchase_orders = new Table({
+  org_id: column.text,
+  store_id: column.text,
+  user_id: column.text,
+  po_number: column.text,
+  supplier_name: column.text,
+  status: column.text,
+  notes: column.text,
+  expected_at: column.text,
+  received_at: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const purchase_order_items = new Table({
+  org_id: column.text,
+  purchase_order_id: column.text,
+  variant_id: column.text,
+  quantity_ordered: column.text,
+  quantity_received: column.text,
+  cost_price: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const stock_movements = new Table({
+  org_id: column.text,
+  store_id: column.text,
+  variant_id: column.text,
+  direction: column.text,
+  quantity: column.text,
+  movement_type: column.text,
+  reference_type: column.text,
+  reference_id: column.text,
+  created_at: column.text,
+})
+
+const stock_takes = new Table({
+  org_id: column.text,
+  store_id: column.text,
+  user_id: column.text,
+  status: column.text,
+  notes: column.text,
+  completed_at: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const stock_take_items = new Table({
+  org_id: column.text,
+  stock_take_id: column.text,
+  variant_id: column.text,
+  expected_qty: column.text,
+  counted_qty: column.text,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
 export const appSchema = new Schema({
   organizations,
   stores,
@@ -82,4 +229,18 @@ export const appSchema = new Schema({
   users,
   categories,
   products,
+  product_variants,
+  product_options,
+  product_option_values,
+  product_variant_option_values,
+  product_images,
+  customers,
+  customer_groups,
+  customer_group_members,
+  suppliers,
+  purchase_orders,
+  purchase_order_items,
+  stock_movements,
+  stock_takes,
+  stock_take_items,
 })

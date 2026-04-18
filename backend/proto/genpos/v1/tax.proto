@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- TaxRateService --------------------------------------------------------
+service TaxRateService {
+  rpc ListTaxRates(ListTaxRatesRequest) returns (ListTaxRatesResponse) {}
+  rpc CreateTaxRate(CreateTaxRateRequest) returns (CreateTaxRateResponse) {}
+  rpc UpdateTaxRate(UpdateTaxRateRequest) returns (UpdateTaxRateResponse) {}
+  rpc DeleteTaxRate(DeleteTaxRateRequest) returns (DeleteTaxRateResponse) {}
+}
+
+message TaxRate {
+  string                    id           = 1;
+  string                    org_id       = 2;
+  string                    name         = 3;
+  // Decimal string, fraction form (e.g. "0.1000" = 10%).
+  string                    rate         = 4;
+  bool                      is_inclusive = 5;
+  bool                      is_default   = 6;
+  google.protobuf.Timestamp created_at   = 7;
+  google.protobuf.Timestamp updated_at   = 8;
+}
+
+message TaxRateInput {
+  string name         = 1;
+  // Decimal string, fraction form (e.g. "0.1000" = 10%).
+  string rate         = 2;
+  bool   is_inclusive = 3;
+  bool   is_default   = 4;
+}
+
+message ListTaxRatesRequest {}
+message ListTaxRatesResponse {
+  repeated TaxRate rates = 1;
+}
+
+message CreateTaxRateRequest { TaxRateInput rate = 1; }
+message CreateTaxRateResponse { TaxRate rate = 1; }
+
+message UpdateTaxRateRequest {
+  string       id   = 1;
+  TaxRateInput rate = 2;
+}
+message UpdateTaxRateResponse { TaxRate rate = 1; }
+
+message DeleteTaxRateRequest { string id = 1; }
+message DeleteTaxRateResponse {}

@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- StockTakeService ------------------------------------------------------
+service StockTakeService {
+  rpc ListStockTakes(ListStockTakesRequest) returns (ListStockTakesResponse) {}
+  rpc GetStockTake(GetStockTakeRequest) returns (GetStockTakeResponse) {}
+  rpc CreateStockTake(CreateStockTakeRequest) returns (CreateStockTakeResponse) {}
+  rpc SaveStockTakeProgress(SaveStockTakeProgressRequest) returns (SaveStockTakeProgressResponse) {}
+  rpc FinalizeStockTake(FinalizeStockTakeRequest) returns (FinalizeStockTakeResponse) {}
+  rpc CancelStockTake(CancelStockTakeRequest) returns (CancelStockTakeResponse) {}
+  rpc DeleteStockTake(DeleteStockTakeRequest) returns (DeleteStockTakeResponse) {}
+}
+
+message StockTakeListItem {
+  string                    id             = 1;
+  string                    store_name     = 2;
+  string                    status         = 3;
+  int32                     item_count     = 4;
+  int32                     variance_lines = 5;
+  google.protobuf.Timestamp created_at     = 6;
+  google.protobuf.Timestamp completed_at   = 7;
+}
+
+message ListStockTakesRequest {}
+message ListStockTakesResponse {
+  repeated StockTakeListItem stock_takes = 1;
+}
+
+message StockTakeItem {
+  string id           = 1;
+  string variant_id   = 2;
+  string variant_name = 3;
+  string product_name = 4;
+  string expected_qty = 5; // decimal string
+  string counted_qty  = 6;
+}
+
+message StockTake {
+  string                    id           = 1;
+  string                    org_id       = 2;
+  string                    store_id     = 3;
+  string                    status       = 4; // in_progress|completed|cancelled
+  string                    notes        = 5;
+  google.protobuf.Timestamp completed_at = 6;
+  repeated StockTakeItem    items        = 7;
+  google.protobuf.Timestamp created_at   = 8;
+  google.protobuf.Timestamp updated_at   = 9;
+}
+
+message GetStockTakeRequest { string id = 1; }
+message GetStockTakeResponse { StockTake stock_take = 1; }
+
+message CreateStockTakeRequest {
+  string store_id = 1;
+  string notes    = 2;
+}
+message CreateStockTakeResponse { StockTake stock_take = 1; }
+
+message StockTakeLineInput {
+  string item_id     = 1;
+  string counted_qty = 2;
+}
+
+message SaveStockTakeProgressRequest {
+  string                       id    = 1;
+  string                       notes = 2;
+  repeated StockTakeLineInput  lines = 3;
+}
+message SaveStockTakeProgressResponse { StockTake stock_take = 1; }
+
+message FinalizeStockTakeRequest { string id = 1; }
+message FinalizeStockTakeResponse { StockTake stock_take = 1; }
+
+message CancelStockTakeRequest { string id = 1; }
+message CancelStockTakeResponse { StockTake stock_take = 1; }
+
+message DeleteStockTakeRequest { string id = 1; }
+message DeleteStockTakeResponse {}

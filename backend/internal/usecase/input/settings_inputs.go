@@ -1,0 +1,77 @@
+package input
+
+// ----- Payment methods ------------------------------------------------------
+
+type PaymentMethodInput struct {
+	Name      string
+	Type      string
+	IsActive  bool
+	SortOrder int32
+}
+
+type CreatePaymentMethodInput struct {
+	OrgID  string
+	Method PaymentMethodInput
+}
+
+type UpdatePaymentMethodInput struct {
+	ID     string
+	OrgID  string
+	Method PaymentMethodInput
+}
+
+type DeletePaymentMethodInput struct {
+	ID    string
+	OrgID string
+}
+
+// ----- Tax rates ------------------------------------------------------------
+
+type TaxRateInput struct {
+	Name        string
+	Rate        string
+	IsInclusive bool
+	IsDefault   bool
+}
+
+type CreateTaxRateInput struct {
+	OrgID string
+	Rate  TaxRateInput
+}
+
+type UpdateTaxRateInput struct {
+	ID    string
+	OrgID string
+	Rate  TaxRateInput
+}
+
+type DeleteTaxRateInput struct {
+	ID    string
+	OrgID string
+}
+
+// ----- Members --------------------------------------------------------------
+
+type CreateMemberInput struct {
+	OrgID    string
+	Name     string
+	Email    string
+	Phone    string
+	RoleID   string
+	Password string
+}
+
+type UpdateMemberInput struct {
+	ID     string
+	OrgID  string
+	Name   string
+	Phone  string
+	RoleID string
+	Status string
+}
+
+type DeleteMemberInput struct {
+	ID            string
+	OrgID         string
+	CurrentUserID string
+}

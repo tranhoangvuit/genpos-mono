@@ -9,7 +9,7 @@ package genposv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -102,210 +102,6 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
-type ListProductsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListProductsRequest) Reset() {
-	*x = ListProductsRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListProductsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListProductsRequest) ProtoMessage() {}
-
-func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListProductsRequest.ProtoReflect.Descriptor instead.
-func (*ListProductsRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ListProductsRequest) GetOrgId() string {
-	if x != nil {
-		return x.OrgId
-	}
-	return ""
-}
-
-func (x *ListProductsRequest) GetPageSize() int32 {
-	if x != nil {
-		return x.PageSize
-	}
-	return 0
-}
-
-func (x *ListProductsRequest) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-type ListProductsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Products      []*Product             `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListProductsResponse) Reset() {
-	*x = ListProductsResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListProductsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListProductsResponse) ProtoMessage() {}
-
-func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListProductsResponse.ProtoReflect.Descriptor instead.
-func (*ListProductsResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ListProductsResponse) GetProducts() []*Product {
-	if x != nil {
-		return x.Products
-	}
-	return nil
-}
-
-type Product struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrgId         string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Sku           string                 `protobuf:"bytes,4,opt,name=sku,proto3" json:"sku,omitempty"`
-	PriceCents    int64                  `protobuf:"varint,5,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
-	Active        bool                   `protobuf:"varint,6,opt,name=active,proto3" json:"active,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Product) Reset() {
-	*x = Product{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Product) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Product) ProtoMessage() {}
-
-func (x *Product) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Product.ProtoReflect.Descriptor instead.
-func (*Product) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Product) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Product) GetOrgId() string {
-	if x != nil {
-		return x.OrgId
-	}
-	return ""
-}
-
-func (x *Product) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Product) GetSku() string {
-	if x != nil {
-		return x.Sku
-	}
-	return ""
-}
-
-func (x *Product) GetPriceCents() int64 {
-	if x != nil {
-		return x.PriceCents
-	}
-	return 0
-}
-
-func (x *Product) GetActive() bool {
-	if x != nil {
-		return x.Active
-	}
-	return false
-}
-
-func (x *Product) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Product) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
 type AuthUser struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -320,7 +116,7 @@ type AuthUser struct {
 
 func (x *AuthUser) Reset() {
 	*x = AuthUser{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[5]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -332,7 +128,7 @@ func (x *AuthUser) String() string {
 func (*AuthUser) ProtoMessage() {}
 
 func (x *AuthUser) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[5]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -345,7 +141,7 @@ func (x *AuthUser) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthUser.ProtoReflect.Descriptor instead.
 func (*AuthUser) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{5}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AuthUser) GetId() string {
@@ -402,7 +198,7 @@ type SignUpRequest struct {
 
 func (x *SignUpRequest) Reset() {
 	*x = SignUpRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[6]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +210,7 @@ func (x *SignUpRequest) String() string {
 func (*SignUpRequest) ProtoMessage() {}
 
 func (x *SignUpRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[6]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +223,7 @@ func (x *SignUpRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpRequest.ProtoReflect.Descriptor instead.
 func (*SignUpRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{6}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SignUpRequest) GetDomain() string {
@@ -460,7 +256,7 @@ type SignUpResponse struct {
 
 func (x *SignUpResponse) Reset() {
 	*x = SignUpResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[7]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -472,7 +268,7 @@ func (x *SignUpResponse) String() string {
 func (*SignUpResponse) ProtoMessage() {}
 
 func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[7]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -485,7 +281,7 @@ func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpResponse.ProtoReflect.Descriptor instead.
 func (*SignUpResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{7}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SignUpResponse) GetUser() *AuthUser {
@@ -506,7 +302,7 @@ type SignInRequest struct {
 
 func (x *SignInRequest) Reset() {
 	*x = SignInRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[8]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -518,7 +314,7 @@ func (x *SignInRequest) String() string {
 func (*SignInRequest) ProtoMessage() {}
 
 func (x *SignInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[8]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +327,7 @@ func (x *SignInRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignInRequest.ProtoReflect.Descriptor instead.
 func (*SignInRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{8}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SignInRequest) GetEmail() string {
@@ -564,7 +360,7 @@ type SignInResponse struct {
 
 func (x *SignInResponse) Reset() {
 	*x = SignInResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[9]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -576,7 +372,7 @@ func (x *SignInResponse) String() string {
 func (*SignInResponse) ProtoMessage() {}
 
 func (x *SignInResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[9]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -589,7 +385,7 @@ func (x *SignInResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignInResponse.ProtoReflect.Descriptor instead.
 func (*SignInResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{9}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *SignInResponse) GetUser() *AuthUser {
@@ -607,7 +403,7 @@ type SignOutRequest struct {
 
 func (x *SignOutRequest) Reset() {
 	*x = SignOutRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[10]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -619,7 +415,7 @@ func (x *SignOutRequest) String() string {
 func (*SignOutRequest) ProtoMessage() {}
 
 func (x *SignOutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[10]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -632,7 +428,7 @@ func (x *SignOutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignOutRequest.ProtoReflect.Descriptor instead.
 func (*SignOutRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{10}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{7}
 }
 
 type SignOutResponse struct {
@@ -643,7 +439,7 @@ type SignOutResponse struct {
 
 func (x *SignOutResponse) Reset() {
 	*x = SignOutResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[11]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -655,7 +451,7 @@ func (x *SignOutResponse) String() string {
 func (*SignOutResponse) ProtoMessage() {}
 
 func (x *SignOutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[11]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -668,7 +464,7 @@ func (x *SignOutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignOutResponse.ProtoReflect.Descriptor instead.
 func (*SignOutResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{11}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{8}
 }
 
 type RefreshRequest struct {
@@ -679,7 +475,7 @@ type RefreshRequest struct {
 
 func (x *RefreshRequest) Reset() {
 	*x = RefreshRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[12]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -691,7 +487,7 @@ func (x *RefreshRequest) String() string {
 func (*RefreshRequest) ProtoMessage() {}
 
 func (x *RefreshRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[12]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,7 +500,7 @@ func (x *RefreshRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshRequest.ProtoReflect.Descriptor instead.
 func (*RefreshRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{12}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{9}
 }
 
 type RefreshResponse struct {
@@ -716,7 +512,7 @@ type RefreshResponse struct {
 
 func (x *RefreshResponse) Reset() {
 	*x = RefreshResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[13]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -728,7 +524,7 @@ func (x *RefreshResponse) String() string {
 func (*RefreshResponse) ProtoMessage() {}
 
 func (x *RefreshResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[13]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +537,7 @@ func (x *RefreshResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshResponse.ProtoReflect.Descriptor instead.
 func (*RefreshResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{13}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RefreshResponse) GetUser() *AuthUser {
@@ -759,7 +555,7 @@ type MeRequest struct {
 
 func (x *MeRequest) Reset() {
 	*x = MeRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[14]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -771,7 +567,7 @@ func (x *MeRequest) String() string {
 func (*MeRequest) ProtoMessage() {}
 
 func (x *MeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[14]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -784,7 +580,7 @@ func (x *MeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MeRequest.ProtoReflect.Descriptor instead.
 func (*MeRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{14}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{11}
 }
 
 type MeResponse struct {
@@ -796,7 +592,7 @@ type MeResponse struct {
 
 func (x *MeResponse) Reset() {
 	*x = MeResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[15]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -808,7 +604,7 @@ func (x *MeResponse) String() string {
 func (*MeResponse) ProtoMessage() {}
 
 func (x *MeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[15]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -821,7 +617,7 @@ func (x *MeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MeResponse.ProtoReflect.Descriptor instead.
 func (*MeResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{15}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *MeResponse) GetUser() *AuthUser {
@@ -839,7 +635,7 @@ type GetSyncTokenRequest struct {
 
 func (x *GetSyncTokenRequest) Reset() {
 	*x = GetSyncTokenRequest{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[16]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -851,7 +647,7 @@ func (x *GetSyncTokenRequest) String() string {
 func (*GetSyncTokenRequest) ProtoMessage() {}
 
 func (x *GetSyncTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[16]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -864,7 +660,7 @@ func (x *GetSyncTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTokenRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTokenRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{16}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{13}
 }
 
 type GetSyncTokenResponse struct {
@@ -878,7 +674,7 @@ type GetSyncTokenResponse struct {
 
 func (x *GetSyncTokenResponse) Reset() {
 	*x = GetSyncTokenResponse{}
-	mi := &file_genpos_v1_genpos_proto_msgTypes[17]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -890,7 +686,7 @@ func (x *GetSyncTokenResponse) String() string {
 func (*GetSyncTokenResponse) ProtoMessage() {}
 
 func (x *GetSyncTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_genpos_proto_msgTypes[17]
+	mi := &file_genpos_v1_genpos_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -903,7 +699,7 @@ func (x *GetSyncTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTokenResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTokenResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{17}
+	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetSyncTokenResponse) GetToken() string {
@@ -934,25 +730,7 @@ const file_genpos_v1_genpos_proto_rawDesc = "" +
 	"\x16genpos/v1/genpos.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\r\n" +
 	"\vPingRequest\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"a\n" +
-	"\x13ListProductsRequest\x12\x15\n" +
-	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x1b\n" +
-	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\"F\n" +
-	"\x14ListProductsResponse\x12.\n" +
-	"\bproducts\x18\x01 \x03(\v2\x12.genpos.v1.ProductR\bproducts\"\x85\x02\n" +
-	"\aProduct\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
-	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12\x10\n" +
-	"\x03sku\x18\x04 \x01(\tR\x03sku\x12\x1f\n" +
-	"\vprice_cents\x18\x05 \x01(\x03R\n" +
-	"priceCents\x12\x16\n" +
-	"\x06active\x18\x06 \x01(\bR\x06active\x129\n" +
-	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
-	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x8a\x01\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\x8a\x01\n" +
 	"\bAuthUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x19\n" +
@@ -987,10 +765,9 @@ const file_genpos_v1_genpos_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
 	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\x03R\texpiresAt2\x9d\x01\n" +
+	"expires_at\x18\x03 \x01(\x03R\texpiresAt2J\n" +
 	"\rGenposService\x129\n" +
-	"\x04Ping\x12\x16.genpos.v1.PingRequest\x1a\x17.genpos.v1.PingResponse\"\x00\x12Q\n" +
-	"\fListProducts\x12\x1e.genpos.v1.ListProductsRequest\x1a\x1f.genpos.v1.ListProductsResponse\"\x002\x9f\x03\n" +
+	"\x04Ping\x12\x16.genpos.v1.PingRequest\x1a\x17.genpos.v1.PingResponse\"\x002\x9f\x03\n" +
 	"\vAuthService\x12?\n" +
 	"\x06SignUp\x12\x18.genpos.v1.SignUpRequest\x1a\x19.genpos.v1.SignUpResponse\"\x00\x12?\n" +
 	"\x06SignIn\x12\x18.genpos.v1.SignInRequest\x1a\x19.genpos.v1.SignInResponse\"\x00\x12B\n" +
@@ -1013,57 +790,48 @@ func file_genpos_v1_genpos_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_genpos_proto_rawDescData
 }
 
-var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_genpos_v1_genpos_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_genpos_v1_genpos_proto_goTypes = []any{
-	(*PingRequest)(nil),           // 0: genpos.v1.PingRequest
-	(*PingResponse)(nil),          // 1: genpos.v1.PingResponse
-	(*ListProductsRequest)(nil),   // 2: genpos.v1.ListProductsRequest
-	(*ListProductsResponse)(nil),  // 3: genpos.v1.ListProductsResponse
-	(*Product)(nil),               // 4: genpos.v1.Product
-	(*AuthUser)(nil),              // 5: genpos.v1.AuthUser
-	(*SignUpRequest)(nil),         // 6: genpos.v1.SignUpRequest
-	(*SignUpResponse)(nil),        // 7: genpos.v1.SignUpResponse
-	(*SignInRequest)(nil),         // 8: genpos.v1.SignInRequest
-	(*SignInResponse)(nil),        // 9: genpos.v1.SignInResponse
-	(*SignOutRequest)(nil),        // 10: genpos.v1.SignOutRequest
-	(*SignOutResponse)(nil),       // 11: genpos.v1.SignOutResponse
-	(*RefreshRequest)(nil),        // 12: genpos.v1.RefreshRequest
-	(*RefreshResponse)(nil),       // 13: genpos.v1.RefreshResponse
-	(*MeRequest)(nil),             // 14: genpos.v1.MeRequest
-	(*MeResponse)(nil),            // 15: genpos.v1.MeResponse
-	(*GetSyncTokenRequest)(nil),   // 16: genpos.v1.GetSyncTokenRequest
-	(*GetSyncTokenResponse)(nil),  // 17: genpos.v1.GetSyncTokenResponse
-	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
+	(*PingRequest)(nil),          // 0: genpos.v1.PingRequest
+	(*PingResponse)(nil),         // 1: genpos.v1.PingResponse
+	(*AuthUser)(nil),             // 2: genpos.v1.AuthUser
+	(*SignUpRequest)(nil),        // 3: genpos.v1.SignUpRequest
+	(*SignUpResponse)(nil),       // 4: genpos.v1.SignUpResponse
+	(*SignInRequest)(nil),        // 5: genpos.v1.SignInRequest
+	(*SignInResponse)(nil),       // 6: genpos.v1.SignInResponse
+	(*SignOutRequest)(nil),       // 7: genpos.v1.SignOutRequest
+	(*SignOutResponse)(nil),      // 8: genpos.v1.SignOutResponse
+	(*RefreshRequest)(nil),       // 9: genpos.v1.RefreshRequest
+	(*RefreshResponse)(nil),      // 10: genpos.v1.RefreshResponse
+	(*MeRequest)(nil),            // 11: genpos.v1.MeRequest
+	(*MeResponse)(nil),           // 12: genpos.v1.MeResponse
+	(*GetSyncTokenRequest)(nil),  // 13: genpos.v1.GetSyncTokenRequest
+	(*GetSyncTokenResponse)(nil), // 14: genpos.v1.GetSyncTokenResponse
 }
 var file_genpos_v1_genpos_proto_depIdxs = []int32{
-	4,  // 0: genpos.v1.ListProductsResponse.products:type_name -> genpos.v1.Product
-	18, // 1: genpos.v1.Product.created_at:type_name -> google.protobuf.Timestamp
-	18, // 2: genpos.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
-	5,  // 3: genpos.v1.SignUpResponse.user:type_name -> genpos.v1.AuthUser
-	5,  // 4: genpos.v1.SignInResponse.user:type_name -> genpos.v1.AuthUser
-	5,  // 5: genpos.v1.RefreshResponse.user:type_name -> genpos.v1.AuthUser
-	5,  // 6: genpos.v1.MeResponse.user:type_name -> genpos.v1.AuthUser
-	0,  // 7: genpos.v1.GenposService.Ping:input_type -> genpos.v1.PingRequest
-	2,  // 8: genpos.v1.GenposService.ListProducts:input_type -> genpos.v1.ListProductsRequest
-	6,  // 9: genpos.v1.AuthService.SignUp:input_type -> genpos.v1.SignUpRequest
-	8,  // 10: genpos.v1.AuthService.SignIn:input_type -> genpos.v1.SignInRequest
-	10, // 11: genpos.v1.AuthService.SignOut:input_type -> genpos.v1.SignOutRequest
-	12, // 12: genpos.v1.AuthService.Refresh:input_type -> genpos.v1.RefreshRequest
-	14, // 13: genpos.v1.AuthService.Me:input_type -> genpos.v1.MeRequest
-	16, // 14: genpos.v1.AuthService.GetSyncToken:input_type -> genpos.v1.GetSyncTokenRequest
-	1,  // 15: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
-	3,  // 16: genpos.v1.GenposService.ListProducts:output_type -> genpos.v1.ListProductsResponse
-	7,  // 17: genpos.v1.AuthService.SignUp:output_type -> genpos.v1.SignUpResponse
-	9,  // 18: genpos.v1.AuthService.SignIn:output_type -> genpos.v1.SignInResponse
-	11, // 19: genpos.v1.AuthService.SignOut:output_type -> genpos.v1.SignOutResponse
-	13, // 20: genpos.v1.AuthService.Refresh:output_type -> genpos.v1.RefreshResponse
-	15, // 21: genpos.v1.AuthService.Me:output_type -> genpos.v1.MeResponse
-	17, // 22: genpos.v1.AuthService.GetSyncToken:output_type -> genpos.v1.GetSyncTokenResponse
-	15, // [15:23] is the sub-list for method output_type
-	7,  // [7:15] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	2,  // 0: genpos.v1.SignUpResponse.user:type_name -> genpos.v1.AuthUser
+	2,  // 1: genpos.v1.SignInResponse.user:type_name -> genpos.v1.AuthUser
+	2,  // 2: genpos.v1.RefreshResponse.user:type_name -> genpos.v1.AuthUser
+	2,  // 3: genpos.v1.MeResponse.user:type_name -> genpos.v1.AuthUser
+	0,  // 4: genpos.v1.GenposService.Ping:input_type -> genpos.v1.PingRequest
+	3,  // 5: genpos.v1.AuthService.SignUp:input_type -> genpos.v1.SignUpRequest
+	5,  // 6: genpos.v1.AuthService.SignIn:input_type -> genpos.v1.SignInRequest
+	7,  // 7: genpos.v1.AuthService.SignOut:input_type -> genpos.v1.SignOutRequest
+	9,  // 8: genpos.v1.AuthService.Refresh:input_type -> genpos.v1.RefreshRequest
+	11, // 9: genpos.v1.AuthService.Me:input_type -> genpos.v1.MeRequest
+	13, // 10: genpos.v1.AuthService.GetSyncToken:input_type -> genpos.v1.GetSyncTokenRequest
+	1,  // 11: genpos.v1.GenposService.Ping:output_type -> genpos.v1.PingResponse
+	4,  // 12: genpos.v1.AuthService.SignUp:output_type -> genpos.v1.SignUpResponse
+	6,  // 13: genpos.v1.AuthService.SignIn:output_type -> genpos.v1.SignInResponse
+	8,  // 14: genpos.v1.AuthService.SignOut:output_type -> genpos.v1.SignOutResponse
+	10, // 15: genpos.v1.AuthService.Refresh:output_type -> genpos.v1.RefreshResponse
+	12, // 16: genpos.v1.AuthService.Me:output_type -> genpos.v1.MeResponse
+	14, // 17: genpos.v1.AuthService.GetSyncToken:output_type -> genpos.v1.GetSyncTokenResponse
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_genpos_v1_genpos_proto_init() }
@@ -1077,7 +845,7 @@ func file_genpos_v1_genpos_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_genpos_proto_rawDesc), len(file_genpos_v1_genpos_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

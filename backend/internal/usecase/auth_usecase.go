@@ -46,6 +46,7 @@ type authUsecase struct {
 	orgsW          gateway.OrgWriter
 	roles          gateway.RoleReader
 	rolesW         gateway.RoleWriter
+	storesW        gateway.StoreWriter
 	refreshTokens  gateway.RefreshTokenReader
 	refreshTokensW gateway.RefreshTokenWriter
 }
@@ -60,6 +61,7 @@ func NewAuthUsecase(
 	orgsW gateway.OrgWriter,
 	roles gateway.RoleReader,
 	rolesW gateway.RoleWriter,
+	storesW gateway.StoreWriter,
 	refreshTokens gateway.RefreshTokenReader,
 	refreshTokensW gateway.RefreshTokenWriter,
 ) AuthUsecase {
@@ -72,6 +74,7 @@ func NewAuthUsecase(
 		orgsW:          orgsW,
 		roles:          roles,
 		rolesW:         rolesW,
+		storesW:        storesW,
 		refreshTokens:  refreshTokens,
 		refreshTokensW: refreshTokensW,
 	}
@@ -146,6 +149,13 @@ func (u *authUsecase) SignUp(ctx context.Context, in input.SignUpInput) (*AuthSe
 		})
 		if txErr != nil {
 			return errors.Wrap(txErr, "create user")
+		}
+
+		if _, txErr = u.storesW.Create(txCtx, gateway.CreateStoreParams{
+			OrgID: org.ID,
+			Name:  "Main Store",
+		}); txErr != nil {
+			return errors.Wrap(txErr, "create default store")
 		}
 
 		user.RoleName = adminRole.Name

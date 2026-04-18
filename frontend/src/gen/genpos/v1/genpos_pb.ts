@@ -4,7 +4,6 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -12,7 +11,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/genpos.proto.
  */
 export const file_genpos_v1_genpos: GenFile = /*@__PURE__*/
-  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiSAoTTGlzdFByb2R1Y3RzUmVxdWVzdBIOCgZvcmdfaWQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEg4KBm9mZnNldBgDIAEoBSI8ChRMaXN0UHJvZHVjdHNSZXNwb25zZRIkCghwcm9kdWN0cxgBIAMoCzISLmdlbnBvcy52MS5Qcm9kdWN0IsUBCgdQcm9kdWN0EgoKAmlkGAEgASgJEg4KBm9yZ19pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgsKA3NrdRgEIAEoCRITCgtwcmljZV9jZW50cxgFIAEoAxIOCgZhY3RpdmUYBiABKAgSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIzCg5TaWduVXBSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIkUKDVNpZ25JblJlcXVlc3QSDQoFZW1haWwYASABKAkSEAoIcGFzc3dvcmQYAiABKAkSEwoLcmVtZW1iZXJfbWUYAyABKAgiMwoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIQCg5TaWduT3V0UmVxdWVzdCIRCg9TaWduT3V0UmVzcG9uc2UiEAoOUmVmcmVzaFJlcXVlc3QiNAoPUmVmcmVzaFJlc3BvbnNlEiEKBHVzZXIYASABKAsyEy5nZW5wb3MudjEuQXV0aFVzZXIiCwoJTWVSZXF1ZXN0Ii8KCk1lUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIVChNHZXRTeW5jVG9rZW5SZXF1ZXN0IksKFEdldFN5bmNUb2tlblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEhIKCmV4cGlyZXNfYXQYAyABKAMynQEKDUdlbnBvc1NlcnZpY2USOQoEUGluZxIWLmdlbnBvcy52MS5QaW5nUmVxdWVzdBoXLmdlbnBvcy52MS5QaW5nUmVzcG9uc2UiABJRCgxMaXN0UHJvZHVjdHMSHi5nZW5wb3MudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBofLmdlbnBvcy52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIAMp8DCgtBdXRoU2VydmljZRI/CgZTaWduVXASGC5nZW5wb3MudjEuU2lnblVwUmVxdWVzdBoZLmdlbnBvcy52MS5TaWduVXBSZXNwb25zZSIAEj8KBlNpZ25JbhIYLmdlbnBvcy52MS5TaWduSW5SZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25JblJlc3BvbnNlIgASQgoHU2lnbk91dBIZLmdlbnBvcy52MS5TaWduT3V0UmVxdWVzdBoaLmdlbnBvcy52MS5TaWduT3V0UmVzcG9uc2UiABJCCgdSZWZyZXNoEhkuZ2VucG9zLnYxLlJlZnJlc2hSZXF1ZXN0GhouZ2VucG9zLnYxLlJlZnJlc2hSZXNwb25zZSIAEjMKAk1lEhQuZ2VucG9zLnYxLk1lUmVxdWVzdBoVLmdlbnBvcy52MS5NZVJlc3BvbnNlIgASUQoMR2V0U3luY1Rva2VuEh4uZ2VucG9zLnYxLkdldFN5bmNUb2tlblJlcXVlc3QaHy5nZW5wb3MudjEuR2V0U3luY1Rva2VuUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIzCg5TaWduVXBSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIkUKDVNpZ25JblJlcXVlc3QSDQoFZW1haWwYASABKAkSEAoIcGFzc3dvcmQYAiABKAkSEwoLcmVtZW1iZXJfbWUYAyABKAgiMwoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIQCg5TaWduT3V0UmVxdWVzdCIRCg9TaWduT3V0UmVzcG9uc2UiEAoOUmVmcmVzaFJlcXVlc3QiNAoPUmVmcmVzaFJlc3BvbnNlEiEKBHVzZXIYASABKAsyEy5nZW5wb3MudjEuQXV0aFVzZXIiCwoJTWVSZXF1ZXN0Ii8KCk1lUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIVChNHZXRTeW5jVG9rZW5SZXF1ZXN0IksKFEdldFN5bmNUb2tlblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEhIKCmV4cGlyZXNfYXQYAyABKAMySgoNR2VucG9zU2VydmljZRI5CgRQaW5nEhYuZ2VucG9zLnYxLlBpbmdSZXF1ZXN0GhcuZ2VucG9zLnYxLlBpbmdSZXNwb25zZSIAMp8DCgtBdXRoU2VydmljZRI/CgZTaWduVXASGC5nZW5wb3MudjEuU2lnblVwUmVxdWVzdBoZLmdlbnBvcy52MS5TaWduVXBSZXNwb25zZSIAEj8KBlNpZ25JbhIYLmdlbnBvcy52MS5TaWduSW5SZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25JblJlc3BvbnNlIgASQgoHU2lnbk91dBIZLmdlbnBvcy52MS5TaWduT3V0UmVxdWVzdBoaLmdlbnBvcy52MS5TaWduT3V0UmVzcG9uc2UiABJCCgdSZWZyZXNoEhkuZ2VucG9zLnYxLlJlZnJlc2hSZXF1ZXN0GhouZ2VucG9zLnYxLlJlZnJlc2hSZXNwb25zZSIAEjMKAk1lEhQuZ2VucG9zLnYxLk1lUmVxdWVzdBoVLmdlbnBvcy52MS5NZVJlc3BvbnNlIgASUQoMR2V0U3luY1Rva2VuEh4uZ2VucG9zLnYxLkdldFN5bmNUb2tlblJlcXVlc3QaHy5nZW5wb3MudjEuR2V0U3luY1Rva2VuUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.PingRequest
@@ -43,102 +42,6 @@ export type PingResponse = Message<"genpos.v1.PingResponse"> & {
  */
 export const PingResponseSchema: GenMessage<PingResponse> = /*@__PURE__*/
   messageDesc(file_genpos_v1_genpos, 1);
-
-/**
- * @generated from message genpos.v1.ListProductsRequest
- */
-export type ListProductsRequest = Message<"genpos.v1.ListProductsRequest"> & {
-  /**
-   * @generated from field: string org_id = 1;
-   */
-  orgId: string;
-
-  /**
-   * @generated from field: int32 page_size = 2;
-   */
-  pageSize: number;
-
-  /**
-   * @generated from field: int32 offset = 3;
-   */
-  offset: number;
-};
-
-/**
- * Describes the message genpos.v1.ListProductsRequest.
- * Use `create(ListProductsRequestSchema)` to create a new message.
- */
-export const ListProductsRequestSchema: GenMessage<ListProductsRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 2);
-
-/**
- * @generated from message genpos.v1.ListProductsResponse
- */
-export type ListProductsResponse = Message<"genpos.v1.ListProductsResponse"> & {
-  /**
-   * @generated from field: repeated genpos.v1.Product products = 1;
-   */
-  products: Product[];
-};
-
-/**
- * Describes the message genpos.v1.ListProductsResponse.
- * Use `create(ListProductsResponseSchema)` to create a new message.
- */
-export const ListProductsResponseSchema: GenMessage<ListProductsResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 3);
-
-/**
- * @generated from message genpos.v1.Product
- */
-export type Product = Message<"genpos.v1.Product"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: string org_id = 2;
-   */
-  orgId: string;
-
-  /**
-   * @generated from field: string name = 3;
-   */
-  name: string;
-
-  /**
-   * @generated from field: string sku = 4;
-   */
-  sku: string;
-
-  /**
-   * @generated from field: int64 price_cents = 5;
-   */
-  priceCents: bigint;
-
-  /**
-   * @generated from field: bool active = 6;
-   */
-  active: boolean;
-
-  /**
-   * @generated from field: google.protobuf.Timestamp created_at = 7;
-   */
-  createdAt?: Timestamp;
-
-  /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 8;
-   */
-  updatedAt?: Timestamp;
-};
-
-/**
- * Describes the message genpos.v1.Product.
- * Use `create(ProductSchema)` to create a new message.
- */
-export const ProductSchema: GenMessage<Product> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 4);
 
 /**
  * @generated from message genpos.v1.AuthUser
@@ -180,7 +83,7 @@ export type AuthUser = Message<"genpos.v1.AuthUser"> & {
  * Use `create(AuthUserSchema)` to create a new message.
  */
 export const AuthUserSchema: GenMessage<AuthUser> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 5);
+  messageDesc(file_genpos_v1_genpos, 2);
 
 /**
  * @generated from message genpos.v1.SignUpRequest
@@ -209,7 +112,7 @@ export type SignUpRequest = Message<"genpos.v1.SignUpRequest"> & {
  * Use `create(SignUpRequestSchema)` to create a new message.
  */
 export const SignUpRequestSchema: GenMessage<SignUpRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 6);
+  messageDesc(file_genpos_v1_genpos, 3);
 
 /**
  * @generated from message genpos.v1.SignUpResponse
@@ -226,7 +129,7 @@ export type SignUpResponse = Message<"genpos.v1.SignUpResponse"> & {
  * Use `create(SignUpResponseSchema)` to create a new message.
  */
 export const SignUpResponseSchema: GenMessage<SignUpResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 7);
+  messageDesc(file_genpos_v1_genpos, 4);
 
 /**
  * @generated from message genpos.v1.SignInRequest
@@ -253,7 +156,7 @@ export type SignInRequest = Message<"genpos.v1.SignInRequest"> & {
  * Use `create(SignInRequestSchema)` to create a new message.
  */
 export const SignInRequestSchema: GenMessage<SignInRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 8);
+  messageDesc(file_genpos_v1_genpos, 5);
 
 /**
  * @generated from message genpos.v1.SignInResponse
@@ -270,7 +173,7 @@ export type SignInResponse = Message<"genpos.v1.SignInResponse"> & {
  * Use `create(SignInResponseSchema)` to create a new message.
  */
 export const SignInResponseSchema: GenMessage<SignInResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 9);
+  messageDesc(file_genpos_v1_genpos, 6);
 
 /**
  * @generated from message genpos.v1.SignOutRequest
@@ -283,7 +186,7 @@ export type SignOutRequest = Message<"genpos.v1.SignOutRequest"> & {
  * Use `create(SignOutRequestSchema)` to create a new message.
  */
 export const SignOutRequestSchema: GenMessage<SignOutRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 10);
+  messageDesc(file_genpos_v1_genpos, 7);
 
 /**
  * @generated from message genpos.v1.SignOutResponse
@@ -296,7 +199,7 @@ export type SignOutResponse = Message<"genpos.v1.SignOutResponse"> & {
  * Use `create(SignOutResponseSchema)` to create a new message.
  */
 export const SignOutResponseSchema: GenMessage<SignOutResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 11);
+  messageDesc(file_genpos_v1_genpos, 8);
 
 /**
  * @generated from message genpos.v1.RefreshRequest
@@ -309,7 +212,7 @@ export type RefreshRequest = Message<"genpos.v1.RefreshRequest"> & {
  * Use `create(RefreshRequestSchema)` to create a new message.
  */
 export const RefreshRequestSchema: GenMessage<RefreshRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 12);
+  messageDesc(file_genpos_v1_genpos, 9);
 
 /**
  * @generated from message genpos.v1.RefreshResponse
@@ -326,7 +229,7 @@ export type RefreshResponse = Message<"genpos.v1.RefreshResponse"> & {
  * Use `create(RefreshResponseSchema)` to create a new message.
  */
 export const RefreshResponseSchema: GenMessage<RefreshResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 13);
+  messageDesc(file_genpos_v1_genpos, 10);
 
 /**
  * @generated from message genpos.v1.MeRequest
@@ -339,7 +242,7 @@ export type MeRequest = Message<"genpos.v1.MeRequest"> & {
  * Use `create(MeRequestSchema)` to create a new message.
  */
 export const MeRequestSchema: GenMessage<MeRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 14);
+  messageDesc(file_genpos_v1_genpos, 11);
 
 /**
  * @generated from message genpos.v1.MeResponse
@@ -356,7 +259,7 @@ export type MeResponse = Message<"genpos.v1.MeResponse"> & {
  * Use `create(MeResponseSchema)` to create a new message.
  */
 export const MeResponseSchema: GenMessage<MeResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 15);
+  messageDesc(file_genpos_v1_genpos, 12);
 
 /**
  * @generated from message genpos.v1.GetSyncTokenRequest
@@ -369,7 +272,7 @@ export type GetSyncTokenRequest = Message<"genpos.v1.GetSyncTokenRequest"> & {
  * Use `create(GetSyncTokenRequestSchema)` to create a new message.
  */
 export const GetSyncTokenRequestSchema: GenMessage<GetSyncTokenRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 16);
+  messageDesc(file_genpos_v1_genpos, 13);
 
 /**
  * @generated from message genpos.v1.GetSyncTokenResponse
@@ -396,7 +299,7 @@ export type GetSyncTokenResponse = Message<"genpos.v1.GetSyncTokenResponse"> & {
  * Use `create(GetSyncTokenResponseSchema)` to create a new message.
  */
 export const GetSyncTokenResponseSchema: GenMessage<GetSyncTokenResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_genpos, 17);
+  messageDesc(file_genpos_v1_genpos, 14);
 
 /**
  * @generated from service genpos.v1.GenposService
@@ -409,14 +312,6 @@ export const GenposService: GenService<{
     methodKind: "unary";
     input: typeof PingRequestSchema;
     output: typeof PingResponseSchema;
-  },
-  /**
-   * @generated from rpc genpos.v1.GenposService.ListProducts
-   */
-  listProducts: {
-    methodKind: "unary";
-    input: typeof ListProductsRequestSchema;
-    output: typeof ListProductsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_genpos_v1_genpos, 0);

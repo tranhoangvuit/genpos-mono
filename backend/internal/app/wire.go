@@ -22,10 +22,6 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		providePool,
 		datastore.NewTenantDB,
 		wire.Bind(new(gateway.TenantDB), new(*datastore.TenantDB)),
-		datastore.NewProductReader,
-		wire.Bind(new(gateway.ProductReader), new(*datastore.ProductReader)),
-		usecase.NewProductUsecase,
-		wire.Bind(new(usecase.ProductUsecase), new(*usecase.ProductUsecaseImpl)),
 		handler.NewServer,
 		wire.Struct(new(App), "*"),
 	)

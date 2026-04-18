@@ -8,7 +8,18 @@ import {
 } from '@connectrpc/connect'
 import { createConnectTransport } from '@connectrpc/connect-web'
 
+import { CatalogService } from '@/gen/genpos/v1/catalog_pb'
+import { CustomerService } from '@/gen/genpos/v1/customer_pb'
 import { AuthService, GenposService } from '@/gen/genpos/v1/genpos_pb'
+import {
+  PurchaseOrderService,
+  SupplierService,
+} from '@/gen/genpos/v1/inventory_pb'
+import { MemberService } from '@/gen/genpos/v1/member_pb'
+import { PaymentMethodService } from '@/gen/genpos/v1/payment_pb'
+import { StockTakeService } from '@/gen/genpos/v1/stock_take_pb'
+import { StoreService } from '@/gen/genpos/v1/store_pb'
+import { TaxRateService } from '@/gen/genpos/v1/tax_pb'
 
 const baseUrl =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
@@ -77,3 +88,12 @@ const transport = createConnectTransport({
 
 export const authClient = createClient(AuthService, transport)
 export const genposClient = createClient(GenposService, transport)
+export const catalogClient = createClient(CatalogService, transport)
+export const customerClient = createClient(CustomerService, transport)
+export const supplierClient = createClient(SupplierService, transport)
+export const purchaseOrderClient = createClient(PurchaseOrderService, transport)
+export const stockTakeClient = createClient(StockTakeService, transport)
+export const storeClient = createClient(StoreService, transport)
+export const paymentMethodClient = createClient(PaymentMethodService, transport)
+export const taxRateClient = createClient(TaxRateService, transport)
+export const memberClient = createClient(MemberService, transport)

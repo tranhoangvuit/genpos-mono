@@ -33,6 +33,26 @@ type Customer struct {
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
+type CustomerGroup struct {
+	ID            pgtype.UUID        `json:"id"`
+	OrgID         pgtype.UUID        `json:"org_id"`
+	Name          string             `json:"name"`
+	Description   pgtype.Text        `json:"description"`
+	DiscountType  pgtype.Text        `json:"discount_type"`
+	DiscountValue pgtype.Numeric     `json:"discount_value"`
+	DeletedAt     pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
+type CustomerGroupMember struct {
+	ID         pgtype.UUID        `json:"id"`
+	OrgID      pgtype.UUID        `json:"org_id"`
+	GroupID    pgtype.UUID        `json:"group_id"`
+	CustomerID pgtype.UUID        `json:"customer_id"`
+	CreatedAt  pgtype.Timestamptz `json:"created_at"`
+}
+
 type Discount struct {
 	ID        pgtype.UUID        `json:"id"`
 	OrgID     pgtype.UUID        `json:"org_id"`
@@ -139,6 +159,37 @@ type Product struct {
 	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
+type ProductImage struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	ProductID pgtype.UUID        `json:"product_id"`
+	VariantID pgtype.UUID        `json:"variant_id"`
+	Url       string             `json:"url"`
+	SortOrder int32              `json:"sort_order"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ProductOption struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	ProductID pgtype.UUID        `json:"product_id"`
+	Name      string             `json:"name"`
+	SortOrder int32              `json:"sort_order"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ProductOptionValue struct {
+	ID        pgtype.UUID        `json:"id"`
+	OrgID     pgtype.UUID        `json:"org_id"`
+	OptionID  pgtype.UUID        `json:"option_id"`
+	Value     string             `json:"value"`
+	SortOrder int32              `json:"sort_order"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
 type ProductVariant struct {
 	ID         pgtype.UUID        `json:"id"`
 	OrgID      pgtype.UUID        `json:"org_id"`
@@ -154,6 +205,14 @@ type ProductVariant struct {
 	DeletedAt  pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ProductVariantOptionValue struct {
+	ID            pgtype.UUID        `json:"id"`
+	OrgID         pgtype.UUID        `json:"org_id"`
+	VariantID     pgtype.UUID        `json:"variant_id"`
+	OptionValueID pgtype.UUID        `json:"option_value_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
 }
 
 type PurchaseOrder struct {
@@ -363,6 +422,20 @@ type StoreConfig struct {
 	Value     string             `json:"value"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type Supplier struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	ContactName pgtype.Text        `json:"contact_name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Address     pgtype.Text        `json:"address"`
+	Notes       pgtype.Text        `json:"notes"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 type TaxRate struct {

@@ -1,15 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+
+import { PaymentMethodsPage } from '@/features/settings/payments/PaymentMethodsPage'
 
 export const Route = createFileRoute('/_auth/settings/payments')({
-  component: PaymentsPage,
+  component: PaymentMethodsPage,
 })
-
-function PaymentsPage() {
-  const { t } = useTranslation()
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold">{t('nav.payments')}</h1>
-    </div>
-  )
-}

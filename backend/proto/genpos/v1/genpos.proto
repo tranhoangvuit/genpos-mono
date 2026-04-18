@@ -10,34 +10,12 @@ import "google/protobuf/timestamp.proto";
 
 service GenposService {
   rpc Ping(PingRequest) returns (PingResponse) {}
-  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {}
 }
 
 message PingRequest {}
 
 message PingResponse {
   string message = 1;
-}
-
-message ListProductsRequest {
-  string org_id    = 1;
-  int32  page_size = 2;
-  int32  offset    = 3;
-}
-
-message ListProductsResponse {
-  repeated Product products = 1;
-}
-
-message Product {
-  string                    id          = 1;
-  string                    org_id      = 2;
-  string                    name        = 3;
-  string                    sku         = 4;
-  int64                     price_cents = 5;
-  bool                      active      = 6;
-  google.protobuf.Timestamp created_at  = 7;
-  google.protobuf.Timestamp updated_at  = 8;
 }
 
 // ----- AuthService -----------------------------------------------------------

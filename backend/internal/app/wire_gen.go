@@ -33,10 +33,68 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	tenantDB := datastore.NewTenantDB(pool)
 	txManager := datastore.NewTxManager(pool)
 
+	server := handler.NewServer(logger)
+
 	// Catalog
-	productReader := datastore.NewProductReader()
-	productUsecase := usecase.NewProductUsecase(tenantDB, productReader)
-	server := handler.NewServer(logger, productUsecase)
+	categoryReader := datastore.NewCategoryReader()
+	categoryWriter := datastore.NewCategoryWriter()
+	productDetailReader := datastore.NewProductDetailReader()
+	productWriter := datastore.NewProductWriter()
+	catalogUsecase := usecase.NewCatalogUsecase(
+		tenantDB, categoryReader, categoryWriter, productDetailReader, productWriter,
+	)
+	catalogHandler := grpchandler.NewCatalogHandler(logger, catalogUsecase)
+
+	// Customers
+	customerReader := datastore.NewCustomerReader()
+	customerWriter := datastore.NewCustomerWriter()
+	customerGroupReader := datastore.NewCustomerGroupReader()
+	customerGroupWriter := datastore.NewCustomerGroupWriter()
+	customerUsecase := usecase.NewCustomerUsecase(
+		tenantDB, customerReader, customerWriter, customerGroupReader, customerGroupWriter,
+	)
+	customerHandler := grpchandler.NewCustomerHandler(logger, customerUsecase)
+
+	// Inventory — suppliers + purchase orders
+	supplierReader := datastore.NewSupplierReader()
+	supplierWriter := datastore.NewSupplierWriter()
+	supplierUsecase := usecase.NewSupplierUsecase(tenantDB, supplierReader, supplierWriter)
+	supplierHandler := grpchandler.NewSupplierHandler(logger, supplierUsecase)
+
+	poReader := datastore.NewPurchaseOrderReader()
+	poWriter := datastore.NewPurchaseOrderWriter()
+	stockMovementWriter := datastore.NewStockMovementWriter()
+	poUsecase := usecase.NewPurchaseOrderUsecase(tenantDB, poReader, poWriter, stockMovementWriter)
+	poHandler := grpchandler.NewPurchaseOrderHandler(logger, poUsecase)
+
+	stockTakeReader := datastore.NewStockTakeReader()
+	stockTakeWriter := datastore.NewStockTakeWriter()
+	stockTakeUsecase := usecase.NewStockTakeUsecase(tenantDB, stockTakeReader, stockTakeWriter, stockMovementWriter)
+	stockTakeHandler := grpchandler.NewStockTakeHandler(logger, stockTakeUsecase)
+
+	// Stores (settings)
+	storeReader := datastore.NewStoreReader()
+	storeWriter := datastore.NewStoreWriter()
+	storeUsecase := usecase.NewStoreUsecase(tenantDB, storeReader, storeWriter)
+	storeHandler := grpchandler.NewStoreHandler(logger, storeUsecase)
+
+	// Payment methods (settings)
+	pmReader := datastore.NewPaymentMethodReader()
+	pmWriter := datastore.NewPaymentMethodWriter()
+	pmUsecase := usecase.NewPaymentMethodUsecase(tenantDB, pmReader, pmWriter)
+	pmHandler := grpchandler.NewPaymentMethodHandler(logger, pmUsecase)
+
+	// Tax rates (settings)
+	trReader := datastore.NewTaxRateReader()
+	trWriter := datastore.NewTaxRateWriter()
+	trUsecase := usecase.NewTaxRateUsecase(tenantDB, trReader, trWriter)
+	trHandler := grpchandler.NewTaxRateHandler(logger, trUsecase)
+
+	// Members (users)
+	memberReader := datastore.NewMemberReader()
+	memberWriter := datastore.NewMemberWriter()
+	memberUsecase := usecase.NewMemberUsecase(tenantDB, memberReader, memberWriter)
+	memberHandler := grpchandler.NewMemberHandler(logger, memberUsecase)
 
 	// Auth
 	userReader := datastore.NewUserReader()
@@ -52,15 +110,25 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		userReader, userWriter,
 		orgReader, orgWriter,
 		roleReader, roleWriter,
+		storeWriter,
 		refreshReader, refreshWriter,
 	)
 	authHandler := grpchandler.NewAuthHandler(cfg, logger, authUsecase)
 
 	return &App{
-		Logger:      logger,
-		Server:      server,
-		AuthHandler: authHandler,
-		DB:          db,
-		Config:      cfg,
+		Logger:               logger,
+		Server:               server,
+		AuthHandler:          authHandler,
+		CatalogHandler:       catalogHandler,
+		CustomerHandler:      customerHandler,
+		SupplierHandler:      supplierHandler,
+		PurchaseOrderHandler: poHandler,
+		StockTakeHandler:     stockTakeHandler,
+		StoreHandler:         storeHandler,
+		PaymentMethodHandler: pmHandler,
+		TaxRateHandler:       trHandler,
+		MemberHandler:        memberHandler,
+		DB:                   db,
+		Config:               cfg,
 	}, nil
 }

@@ -25,14 +25,15 @@ func (t *tenantDB) WithTenant(ctx context.Context, clientID string, fn func(ctx 
 	}
 	defer conn.Release()
 
-	// Transaction-scoped (true) — GUC resets when tx ends
-	if _, err := conn.Exec(ctx, "SELECT set_config('app.current_org_id', $1, true)", clientID); err != nil {
-		return errors.Wrap(err, "set tenant context")
-	}
-
 	tx, err := conn.Begin(ctx)
 	if err != nil {
 		return errors.Wrap(err, "begin transaction")
+	}
+
+	// Transaction-local GUC — scoped to this tx only, resets on commit/rollback.
+	if _, err := tx.Exec(ctx, "SELECT set_config('app.current_org_id', $1, true)", clientID); err != nil {
+		_ = tx.Rollback(ctx)
+		return errors.Wrap(err, "set tenant context")
 	}
 
 	txCtx := WithDBTX(ctx, tx)

@@ -5,24 +5,20 @@ import (
 	"log/slog"
 
 	"connectrpc.com/connect"
+
 	genposv1 "github.com/genpick/genpos-mono/backend/gen/genpos/v1"
 	"github.com/genpick/genpos-mono/backend/gen/genpos/v1/genposv1connect"
-	"github.com/genpick/genpos-mono/backend/internal/usecase"
 )
 
 // Server implements GenposServiceHandler.
 type Server struct {
 	genposv1connect.UnimplementedGenposServiceHandler
-	logger         *slog.Logger
-	productUsecase usecase.ProductUsecase
+	logger *slog.Logger
 }
 
 // NewServer creates a Server with all required dependencies.
-func NewServer(logger *slog.Logger, productUsecase usecase.ProductUsecase) *Server {
-	return &Server{
-		logger:         logger,
-		productUsecase: productUsecase,
-	}
+func NewServer(logger *slog.Logger) *Server {
+	return &Server{logger: logger}
 }
 
 func (s *Server) Ping(

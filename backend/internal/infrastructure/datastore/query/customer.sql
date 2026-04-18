@@ -1,0 +1,66 @@
+-- name: ListCustomerSummaries :many
+SELECT c.id,
+       c.name,
+       c.email,
+       c.phone,
+       COALESCE(STRING_AGG(g.name, ', ' ORDER BY g.name), '') AS group_names
+FROM customers c
+LEFT JOIN customer_group_members m
+       ON m.customer_id = c.id
+LEFT JOIN customer_groups g
+       ON g.id = m.group_id AND g.deleted_at IS NULL
+WHERE c.deleted_at IS NULL
+GROUP BY c.id, c.name, c.email, c.phone, c.created_at
+ORDER BY c.name ASC;
+
+-- name: GetCustomerByID :one
+SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+FROM customers
+WHERE id = sqlc.arg('id') AND deleted_at IS NULL;
+
+-- name: GetCustomerByEmail :one
+SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+FROM customers
+WHERE email = sqlc.arg('email') AND deleted_at IS NULL
+LIMIT 1;
+
+-- name: GetCustomerByPhone :one
+SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+FROM customers
+WHERE phone = sqlc.arg('phone') AND deleted_at IS NULL
+LIMIT 1;
+
+-- name: CreateCustomer :one
+INSERT INTO customers (org_id, name, email, phone, notes)
+VALUES (sqlc.arg('org_id'), sqlc.arg('name'), sqlc.narg('email'),
+        sqlc.narg('phone'), sqlc.narg('notes'))
+RETURNING id, org_id, name, email, phone, notes, created_at, updated_at;
+
+-- name: UpdateCustomer :one
+UPDATE customers
+SET name       = sqlc.arg('name'),
+    email      = sqlc.narg('email'),
+    phone      = sqlc.narg('phone'),
+    notes      = sqlc.narg('notes'),
+    updated_at = now()
+WHERE id = sqlc.arg('id') AND deleted_at IS NULL
+RETURNING id, org_id, name, email, phone, notes, created_at, updated_at;
+
+-- name: SoftDeleteCustomer :exec
+UPDATE customers
+SET deleted_at = now(), updated_at = now()
+WHERE id = sqlc.arg('id') AND deleted_at IS NULL;
+
+-- name: ListCustomerGroupMembersByCustomer :many
+SELECT id, org_id, group_id, customer_id, created_at
+FROM customer_group_members
+WHERE customer_id = sqlc.arg('customer_id');
+
+-- name: DeleteCustomerGroupMembersByCustomer :exec
+DELETE FROM customer_group_members
+WHERE customer_id = sqlc.arg('customer_id');
+
+-- name: InsertCustomerGroupMember :exec
+INSERT INTO customer_group_members (org_id, group_id, customer_id)
+VALUES (sqlc.arg('org_id'), sqlc.arg('group_id'), sqlc.arg('customer_id'))
+ON CONFLICT (group_id, customer_id) DO NOTHING;

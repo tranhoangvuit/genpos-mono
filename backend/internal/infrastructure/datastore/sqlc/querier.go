@@ -11,19 +11,111 @@ import (
 )
 
 type Querier interface {
+	AddPurchaseOrderItemReceived(ctx context.Context, arg AddPurchaseOrderItemReceivedParams) error
+	ClearDefaultTaxRates(ctx context.Context) error
+	CountPurchaseOrdersForPrefix(ctx context.Context, arg CountPurchaseOrdersForPrefixParams) (int32, error)
+	CreateCategory(ctx context.Context, arg CreateCategoryParams) (CreateCategoryRow, error)
+	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (CreateCustomerRow, error)
+	CreateCustomerGroup(ctx context.Context, arg CreateCustomerGroupParams) (CreateCustomerGroupRow, error)
+	CreateMember(ctx context.Context, arg CreateMemberParams) (pgtype.UUID, error)
 	CreateOrg(ctx context.Context, arg CreateOrgParams) (CreateOrgRow, error)
+	CreatePaymentMethod(ctx context.Context, arg CreatePaymentMethodParams) (CreatePaymentMethodRow, error)
+	CreateProduct(ctx context.Context, arg CreateProductParams) (CreateProductRow, error)
+	CreatePurchaseOrder(ctx context.Context, arg CreatePurchaseOrderParams) (CreatePurchaseOrderRow, error)
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
 	CreateRole(ctx context.Context, arg CreateRoleParams) (CreateRoleRow, error)
+	CreateStockTake(ctx context.Context, arg CreateStockTakeParams) (CreateStockTakeRow, error)
+	CreateStore(ctx context.Context, arg CreateStoreParams) (CreateStoreRow, error)
+	CreateSupplier(ctx context.Context, arg CreateSupplierParams) (CreateSupplierRow, error)
+	CreateTaxRate(ctx context.Context, arg CreateTaxRateParams) (CreateTaxRateRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	DeleteCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) error
+	DeleteProductImagesByProduct(ctx context.Context, productID pgtype.UUID) error
+	DeleteProductOptionsByProduct(ctx context.Context, productID pgtype.UUID) error
+	DeletePurchaseOrderItemsByPO(ctx context.Context, purchaseOrderID pgtype.UUID) error
+	GetCategoryByID(ctx context.Context, id pgtype.UUID) (GetCategoryByIDRow, error)
+	GetCategoryByName(ctx context.Context, name string) (GetCategoryByNameRow, error)
+	GetCustomerByEmail(ctx context.Context, email pgtype.Text) (GetCustomerByEmailRow, error)
+	GetCustomerByID(ctx context.Context, id pgtype.UUID) (GetCustomerByIDRow, error)
+	GetCustomerByPhone(ctx context.Context, phone pgtype.Text) (GetCustomerByPhoneRow, error)
+	GetCustomerGroupByID(ctx context.Context, id pgtype.UUID) (GetCustomerGroupByIDRow, error)
+	GetCustomerGroupByName(ctx context.Context, name string) (GetCustomerGroupByNameRow, error)
+	GetFirstStoreForOrg(ctx context.Context, orgID pgtype.UUID) (GetFirstStoreForOrgRow, error)
+	GetMemberByID(ctx context.Context, id pgtype.UUID) (GetMemberByIDRow, error)
 	GetOrgByID(ctx context.Context, id pgtype.UUID) (GetOrgByIDRow, error)
 	GetOrgBySlug(ctx context.Context, slug string) (GetOrgBySlugRow, error)
+	GetProductByID(ctx context.Context, id pgtype.UUID) (GetProductByIDRow, error)
+	GetProductByName(ctx context.Context, name string) (GetProductByNameRow, error)
+	GetPurchaseOrderByID(ctx context.Context, id pgtype.UUID) (GetPurchaseOrderByIDRow, error)
+	GetPurchaseOrderItemByID(ctx context.Context, id pgtype.UUID) (PurchaseOrderItem, error)
 	GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error)
 	GetRoleByOrgAndName(ctx context.Context, arg GetRoleByOrgAndNameParams) (GetRoleByOrgAndNameRow, error)
+	GetStockTakeByID(ctx context.Context, id pgtype.UUID) (GetStockTakeByIDRow, error)
+	GetSupplierByID(ctx context.Context, id pgtype.UUID) (GetSupplierByIDRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error)
+	InsertCustomerGroupMember(ctx context.Context, arg InsertCustomerGroupMemberParams) error
+	InsertProductImage(ctx context.Context, arg InsertProductImageParams) (ProductImage, error)
+	InsertProductOption(ctx context.Context, arg InsertProductOptionParams) (ProductOption, error)
+	InsertProductOptionValue(ctx context.Context, arg InsertProductOptionValueParams) (ProductOptionValue, error)
+	InsertProductVariant(ctx context.Context, arg InsertProductVariantParams) (InsertProductVariantRow, error)
+	InsertProductVariantOptionValue(ctx context.Context, arg InsertProductVariantOptionValueParams) error
+	InsertPurchaseOrderItem(ctx context.Context, arg InsertPurchaseOrderItemParams) (PurchaseOrderItem, error)
+	InsertStockMovement(ctx context.Context, arg InsertStockMovementParams) (pgtype.UUID, error)
+	InsertStockTakeItem(ctx context.Context, arg InsertStockTakeItemParams) (StockTakeItem, error)
+	ListCategories(ctx context.Context) ([]ListCategoriesRow, error)
+	ListCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) ([]CustomerGroupMember, error)
+	ListCustomerGroups(ctx context.Context) ([]ListCustomerGroupsRow, error)
+	ListCustomerSummaries(ctx context.Context) ([]ListCustomerSummariesRow, error)
+	ListMembers(ctx context.Context) ([]ListMembersRow, error)
+	ListPaymentMethods(ctx context.Context) ([]ListPaymentMethodsRow, error)
+	ListProductImages(ctx context.Context, productID pgtype.UUID) ([]ProductImage, error)
+	ListProductOptionValues(ctx context.Context, productID pgtype.UUID) ([]ProductOptionValue, error)
+	ListProductOptions(ctx context.Context, productID pgtype.UUID) ([]ProductOption, error)
+	ListProductSummaries(ctx context.Context) ([]ListProductSummariesRow, error)
+	ListProductVariantOptionValues(ctx context.Context, productID pgtype.UUID) ([]ListProductVariantOptionValuesRow, error)
+	ListProductVariants(ctx context.Context, productID pgtype.UUID) ([]ListProductVariantsRow, error)
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error)
+	ListPurchaseOrderItems(ctx context.Context, purchaseOrderID pgtype.UUID) ([]ListPurchaseOrderItemsRow, error)
+	ListPurchaseOrderSummaries(ctx context.Context) ([]ListPurchaseOrderSummariesRow, error)
 	ListRolesByOrg(ctx context.Context, orgID pgtype.UUID) ([]ListRolesByOrgRow, error)
+	ListStockTakeItems(ctx context.Context, stockTakeID pgtype.UUID) ([]ListStockTakeItemsRow, error)
+	ListStockTakeSummaries(ctx context.Context) ([]ListStockTakeSummariesRow, error)
+	ListStoreRefs(ctx context.Context) ([]ListStoreRefsRow, error)
+	ListStores(ctx context.Context) ([]ListStoresRow, error)
+	ListSuppliers(ctx context.Context) ([]ListSuppliersRow, error)
+	ListTaxRates(ctx context.Context) ([]ListTaxRatesRow, error)
+	ListVariantPickerItems(ctx context.Context) ([]ListVariantPickerItemsRow, error)
 	RevokeRefreshToken(ctx context.Context, arg RevokeRefreshTokenParams) error
+	// Seeds stock_take_items from current on-hand for all active variants in the
+	// given store. Expected qty comes from SUM of stock_movements (in - out).
+	SeedStockTakeItemsFromOnHand(ctx context.Context, arg SeedStockTakeItemsFromOnHandParams) error
+	SoftDeleteCategory(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteCustomer(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteCustomerGroup(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteMember(ctx context.Context, id pgtype.UUID) (int64, error)
+	SoftDeletePaymentMethod(ctx context.Context, id pgtype.UUID) (int64, error)
+	SoftDeleteProduct(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteProductVariantsByProduct(ctx context.Context, productID pgtype.UUID) error
+	SoftDeletePurchaseOrder(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteStockTake(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteStore(ctx context.Context, id pgtype.UUID) (int64, error)
+	SoftDeleteSupplier(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteTaxRate(ctx context.Context, id pgtype.UUID) (int64, error)
+	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (UpdateCategoryRow, error)
+	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (UpdateCustomerRow, error)
+	UpdateCustomerGroup(ctx context.Context, arg UpdateCustomerGroupParams) (UpdateCustomerGroupRow, error)
+	UpdateMember(ctx context.Context, arg UpdateMemberParams) (int64, error)
+	UpdatePaymentMethod(ctx context.Context, arg UpdatePaymentMethodParams) (UpdatePaymentMethodRow, error)
+	UpdateProduct(ctx context.Context, arg UpdateProductParams) (UpdateProductRow, error)
+	UpdatePurchaseOrder(ctx context.Context, arg UpdatePurchaseOrderParams) (UpdatePurchaseOrderRow, error)
+	UpdatePurchaseOrderStatus(ctx context.Context, arg UpdatePurchaseOrderStatusParams) error
+	UpdateStockTakeItemCount(ctx context.Context, arg UpdateStockTakeItemCountParams) error
+	UpdateStockTakeNotes(ctx context.Context, arg UpdateStockTakeNotesParams) error
+	UpdateStockTakeStatus(ctx context.Context, arg UpdateStockTakeStatusParams) error
+	UpdateStore(ctx context.Context, arg UpdateStoreParams) (UpdateStoreRow, error)
+	UpdateSupplier(ctx context.Context, arg UpdateSupplierParams) (UpdateSupplierRow, error)
+	UpdateTaxRate(ctx context.Context, arg UpdateTaxRateParams) (UpdateTaxRateRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

@@ -23,6 +23,9 @@ importers:
       '@journeyapps/wa-sqlite':
         specifier: ^1.6.0
         version: 1.6.0
+      '@powersync/react':
+        specifier: ^1.10.0
+        version: 1.10.0(@powersync/common@1.52.0)(react@19.2.5)
       '@powersync/web':
         specifier: ^1.37.2
         version: 1.37.2(@journeyapps/wa-sqlite@1.6.0)(@powersync/common@1.52.0)
@@ -528,6 +531,12 @@ packages:
 
   '@powersync/common@1.52.0':
     resolution: {integrity: sha512-rs50iEPcUSjLdKjnQZ4VbtK3U5+MTaY/YVCruN0hGmDMIn6wlT+EDsNFosAUAh6waLDEDfuKbvtHRhPKdBQ/Qg==}
+
+  '@powersync/react@1.10.0':
+    resolution: {integrity: sha512-orM29qocbF8zYTBM27j9nPNztyplpbNVaw8djpqxl8N2wESqHTbHOKpatg+Fa5aofgjzmrkiGwevJvCbiWYYWQ==}
+    peerDependencies:
+      '@powersync/common': ^1.51.0
+      react: '*'
 
   '@powersync/web@1.37.2':
     resolution: {integrity: sha512-czCY8QFm3LGXAB8LD0O2D0dW2PAx+HZjuEPFMb+Y9MfsWBz124d4q//oJtChBXORfFIW/N6Bc9bxKod/OMXBxg==}
@@ -2363,6 +2372,11 @@ snapshots:
   '@powersync/common@1.52.0':
     dependencies:
       event-iterator: 2.0.0
+
+  '@powersync/react@1.10.0(@powersync/common@1.52.0)(react@19.2.5)':
+    dependencies:
+      '@powersync/common': 1.52.0
+      react: 19.2.5
 
   '@powersync/web@1.37.2(@journeyapps/wa-sqlite@1.6.0)(@powersync/common@1.52.0)':
     dependencies:

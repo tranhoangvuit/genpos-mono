@@ -1,0 +1,183 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- SupplierService -------------------------------------------------------
+service SupplierService {
+  rpc ListSuppliers(ListSuppliersRequest) returns (ListSuppliersResponse) {}
+  rpc CreateSupplier(CreateSupplierRequest) returns (CreateSupplierResponse) {}
+  rpc UpdateSupplier(UpdateSupplierRequest) returns (UpdateSupplierResponse) {}
+  rpc DeleteSupplier(DeleteSupplierRequest) returns (DeleteSupplierResponse) {}
+}
+
+message ListSuppliersRequest {}
+message ListSuppliersResponse {
+  repeated Supplier suppliers = 1;
+}
+
+message Supplier {
+  string                    id          = 1;
+  string                    org_id      = 2;
+  string                    name        = 3;
+  string                    contact_name = 4;
+  string                    email       = 5;
+  string                    phone       = 6;
+  string                    address     = 7;
+  string                    notes       = 8;
+  google.protobuf.Timestamp created_at  = 9;
+  google.protobuf.Timestamp updated_at  = 10;
+}
+
+message SupplierInput {
+  string name         = 1;
+  string contact_name = 2;
+  string email        = 3;
+  string phone        = 4;
+  string address      = 5;
+  string notes        = 6;
+}
+
+message CreateSupplierRequest { SupplierInput supplier = 1; }
+message CreateSupplierResponse { Supplier supplier = 1; }
+
+message UpdateSupplierRequest {
+  string        id       = 1;
+  SupplierInput supplier = 2;
+}
+message UpdateSupplierResponse { Supplier supplier = 1; }
+
+message DeleteSupplierRequest { string id = 1; }
+message DeleteSupplierResponse {}
+
+// ----- PurchaseOrderService --------------------------------------------------
+service PurchaseOrderService {
+  rpc ListPurchaseOrders(ListPurchaseOrdersRequest) returns (ListPurchaseOrdersResponse) {}
+  rpc GetPurchaseOrder(GetPurchaseOrderRequest) returns (GetPurchaseOrderResponse) {}
+  rpc CreatePurchaseOrder(CreatePurchaseOrderRequest) returns (CreatePurchaseOrderResponse) {}
+  rpc UpdatePurchaseOrder(UpdatePurchaseOrderRequest) returns (UpdatePurchaseOrderResponse) {}
+  rpc SubmitPurchaseOrder(SubmitPurchaseOrderRequest) returns (SubmitPurchaseOrderResponse) {}
+  rpc ReceivePurchaseOrder(ReceivePurchaseOrderRequest) returns (ReceivePurchaseOrderResponse) {}
+  rpc CancelPurchaseOrder(CancelPurchaseOrderRequest) returns (CancelPurchaseOrderResponse) {}
+  rpc DeletePurchaseOrder(DeletePurchaseOrderRequest) returns (DeletePurchaseOrderResponse) {}
+
+  // Helpers consumed by the PO UI.
+  rpc ListStores(ListStoresRequest) returns (ListStoresResponse) {}
+  rpc ListVariantsForPicker(ListVariantsForPickerRequest) returns (ListVariantsForPickerResponse) {}
+}
+
+message PurchaseOrderListItem {
+  string                    id            = 1;
+  string                    po_number     = 2;
+  string                    supplier_name = 3;
+  string                    status        = 4;
+  string                    store_name    = 5;
+  google.protobuf.Timestamp expected_at   = 6;
+  int32                     item_count    = 7;
+  string                    total         = 8; // decimal string
+  google.protobuf.Timestamp created_at    = 9;
+}
+
+message ListPurchaseOrdersRequest {}
+message ListPurchaseOrdersResponse {
+  repeated PurchaseOrderListItem purchase_orders = 1;
+}
+
+message StoreRef {
+  string id   = 1;
+  string name = 2;
+}
+
+message ListStoresRequest {}
+message ListStoresResponse {
+  repeated StoreRef stores = 1;
+}
+
+message VariantPickerItem {
+  string id           = 1;
+  string product_name = 2;
+  string variant_name = 3;
+  string sku          = 4;
+  string price        = 5;
+  string cost_price   = 6;
+}
+
+message ListVariantsForPickerRequest {}
+message ListVariantsForPickerResponse {
+  repeated VariantPickerItem variants = 1;
+}
+
+message PurchaseOrderItem {
+  string id                = 1;
+  string variant_id        = 2;
+  string variant_name      = 3; // denormalized for display
+  string product_name      = 4; // denormalized for display
+  string quantity_ordered  = 5; // decimal string
+  string quantity_received = 6;
+  string cost_price        = 7;
+}
+
+message PurchaseOrder {
+  string                    id            = 1;
+  string                    org_id        = 2;
+  string                    store_id      = 3;
+  string                    po_number     = 4;
+  string                    supplier_name = 5;
+  string                    status        = 6; // draft|submitted|partial|received|cancelled
+  string                    notes         = 7;
+  google.protobuf.Timestamp expected_at   = 8;
+  google.protobuf.Timestamp received_at   = 9;
+  repeated PurchaseOrderItem items        = 10;
+  google.protobuf.Timestamp created_at    = 11;
+  google.protobuf.Timestamp updated_at    = 12;
+}
+
+message PurchaseOrderItemInput {
+  string variant_id       = 1;
+  string quantity_ordered = 2;
+  string cost_price       = 3;
+}
+
+message PurchaseOrderInput {
+  string                          store_id      = 1;
+  string                          supplier_name = 2;
+  string                          notes         = 3;
+  google.protobuf.Timestamp       expected_at   = 4;
+  repeated PurchaseOrderItemInput items         = 5;
+}
+
+message GetPurchaseOrderRequest { string id = 1; }
+message GetPurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message CreatePurchaseOrderRequest { PurchaseOrderInput purchase_order = 1; }
+message CreatePurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message UpdatePurchaseOrderRequest {
+  string             id             = 1;
+  PurchaseOrderInput purchase_order = 2;
+}
+message UpdatePurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message SubmitPurchaseOrderRequest { string id = 1; }
+message SubmitPurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message ReceivePurchaseOrderLine {
+  string item_id              = 1;
+  // Quantity to receive now (delta, not cumulative).
+  string quantity_to_receive  = 2;
+}
+
+message ReceivePurchaseOrderRequest {
+  string                            id    = 1;
+  repeated ReceivePurchaseOrderLine lines = 2;
+}
+message ReceivePurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message CancelPurchaseOrderRequest { string id = 1; }
+message CancelPurchaseOrderResponse { PurchaseOrder purchase_order = 1; }
+
+message DeletePurchaseOrderRequest { string id = 1; }
+message DeletePurchaseOrderResponse {}

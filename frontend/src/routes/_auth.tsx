@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 
 import { bootstrapAuth } from '@/shared/auth/bootstrap'
 import { useAuthStore } from '@/shared/auth/store'
+import { SyncProvider } from '@/shared/sync/provider'
 import { SidebarProvider } from '@/shared/ui/sidebar'
 import { TopNavbar } from '@/features/shell/TopNavbar'
 import { AppSidebar } from '@/features/shell/AppSidebar'
@@ -38,16 +39,18 @@ function AuthLayout() {
   if (!checked || !user) return null
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-svh w-full flex-col">
-        <TopNavbar />
-        <div className="flex flex-1 overflow-hidden">
-          <AppSidebar />
-          <main className="flex-1 overflow-y-auto p-6">
-            <Outlet />
-          </main>
+    <SyncProvider>
+      <SidebarProvider>
+        <div className="flex min-h-svh w-full flex-col">
+          <TopNavbar />
+          <div className="flex flex-1 overflow-hidden">
+            <AppSidebar />
+            <main className="flex-1 overflow-y-auto p-6">
+              <Outlet />
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </SyncProvider>
   )
 }

@@ -11,6 +11,62 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const listProductSummaries = `-- name: ListProductSummaries :many
+SELECT p.id,
+       p.name,
+       p.category_id,
+       c.name  AS category_name,
+       COALESCE(MIN(v.price)::TEXT, '0') AS price,
+       COUNT(v.id)::INTEGER AS variant_count,
+       p.is_active
+FROM products p
+LEFT JOIN categories c
+       ON c.id = p.category_id AND c.deleted_at IS NULL
+LEFT JOIN product_variants v
+       ON v.product_id = p.id AND v.deleted_at IS NULL
+WHERE p.deleted_at IS NULL
+GROUP BY p.id, p.name, p.category_id, c.name, p.is_active, p.sort_order, p.created_at
+ORDER BY p.sort_order ASC, p.created_at DESC
+`
+
+type ListProductSummariesRow struct {
+	ID           pgtype.UUID `json:"id"`
+	Name         string      `json:"name"`
+	CategoryID   pgtype.UUID `json:"category_id"`
+	CategoryName pgtype.Text `json:"category_name"`
+	Price        interface{} `json:"price"`
+	VariantCount int32       `json:"variant_count"`
+	IsActive     bool        `json:"is_active"`
+}
+
+func (q *Queries) ListProductSummaries(ctx context.Context) ([]ListProductSummariesRow, error) {
+	rows, err := q.db.Query(ctx, listProductSummaries)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListProductSummariesRow{}
+	for rows.Next() {
+		var i ListProductSummariesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.CategoryID,
+			&i.CategoryName,
+			&i.Price,
+			&i.VariantCount,
+			&i.IsActive,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listProducts = `-- name: ListProducts :many
 SELECT id, org_id, category_id, name, description, image_url, is_active, sort_order, created_at, updated_at
 FROM products

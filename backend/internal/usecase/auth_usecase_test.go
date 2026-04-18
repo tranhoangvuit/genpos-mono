@@ -37,6 +37,7 @@ type authMocks struct {
 	orgsW          *gatewaymock.MockOrgWriter
 	roles          *gatewaymock.MockRoleReader
 	rolesW         *gatewaymock.MockRoleWriter
+	storesW        *gatewaymock.MockStoreWriter
 	refreshTokens  *gatewaymock.MockRefreshTokenReader
 	refreshTokensW *gatewaymock.MockRefreshTokenWriter
 }
@@ -53,6 +54,7 @@ func newAuthMocks(t *testing.T) *authMocks {
 		orgsW:          gatewaymock.NewMockOrgWriter(ctrl),
 		roles:          gatewaymock.NewMockRoleReader(ctrl),
 		rolesW:         gatewaymock.NewMockRoleWriter(ctrl),
+		storesW:        gatewaymock.NewMockStoreWriter(ctrl),
 		refreshTokens:  gatewaymock.NewMockRefreshTokenReader(ctrl),
 		refreshTokensW: gatewaymock.NewMockRefreshTokenWriter(ctrl),
 	}
@@ -65,6 +67,7 @@ func (m *authMocks) newUsecase() usecase.AuthUsecase {
 		m.users, m.usersW,
 		m.orgs, m.orgsW,
 		m.roles, m.rolesW,
+		m.storesW,
 		m.refreshTokens, m.refreshTokensW,
 	)
 }
@@ -123,6 +126,9 @@ func Test_AuthUsecase_SignUp(t *testing.T) {
 							Email: p.Email, PasswordHash: p.PasswordHash, Name: p.Name,
 						}, nil
 					})
+				m.storesW.EXPECT().
+					Create(gomock.Any(), gateway.CreateStoreParams{OrgID: "org-1", Name: "Main Store"}).
+					Return(&entity.Store{ID: "store-1", OrgID: "org-1", Name: "Main Store"}, nil)
 				m.refreshTokensW.EXPECT().
 					Create(gomock.Any(), gomock.AssignableToTypeOf(gateway.CreateRefreshTokenParams{})).
 					Return(&entity.RefreshToken{ID: "rt-1"}, nil)

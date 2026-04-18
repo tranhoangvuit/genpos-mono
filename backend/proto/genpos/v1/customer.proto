@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- CustomerService -------------------------------------------------------
+service CustomerService {
+  // Customers
+  rpc ListCustomers(ListCustomersRequest) returns (ListCustomersResponse) {}
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse) {}
+  rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse) {}
+  rpc UpdateCustomer(UpdateCustomerRequest) returns (UpdateCustomerResponse) {}
+  rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse) {}
+
+  // Customer groups
+  rpc ListCustomerGroups(ListCustomerGroupsRequest) returns (ListCustomerGroupsResponse) {}
+  rpc CreateCustomerGroup(CreateCustomerGroupRequest) returns (CreateCustomerGroupResponse) {}
+  rpc UpdateCustomerGroup(UpdateCustomerGroupRequest) returns (UpdateCustomerGroupResponse) {}
+  rpc DeleteCustomerGroup(DeleteCustomerGroupRequest) returns (DeleteCustomerGroupResponse) {}
+
+  // CSV import
+  rpc ParseImportCustomerCsv(ParseImportCustomerCsvRequest) returns (ParseImportCustomerCsvResponse) {}
+  rpc ImportCustomers(ImportCustomersRequest) returns (ImportCustomersResponse) {}
+}
+
+message CustomerListItem {
+  string id           = 1;
+  string name         = 2;
+  string email        = 3;
+  string phone        = 4;
+  string group_names  = 5; // comma-separated group labels
+}
+
+message ListCustomersRequest {}
+message ListCustomersResponse {
+  repeated CustomerListItem customers = 1;
+}
+
+message GetCustomerRequest { string id = 1; }
+message GetCustomerResponse { Customer customer = 1; }
+
+message ListCustomerGroupsRequest {}
+message ListCustomerGroupsResponse {
+  repeated CustomerGroup groups = 1;
+}
+
+// ----- Customer types --------------------------------------------------------
+
+message Customer {
+  string                    id         = 1;
+  string                    org_id     = 2;
+  string                    name       = 3;
+  string                    email      = 4;
+  string                    phone      = 5;
+  string                    notes      = 6;
+  repeated string           group_ids  = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message CustomerInput {
+  string          name       = 1;
+  string          email      = 2;
+  string          phone      = 3;
+  string          notes      = 4;
+  repeated string group_ids  = 5;
+}
+
+message CreateCustomerRequest { CustomerInput customer = 1; }
+message CreateCustomerResponse { Customer customer = 1; }
+
+message UpdateCustomerRequest {
+  string        id       = 1;
+  CustomerInput customer = 2;
+}
+message UpdateCustomerResponse { Customer customer = 1; }
+
+message DeleteCustomerRequest { string id = 1; }
+message DeleteCustomerResponse {}
+
+// ----- Customer group types --------------------------------------------------
+
+message CustomerGroup {
+  string                    id             = 1;
+  string                    org_id         = 2;
+  string                    name           = 3;
+  string                    description    = 4;
+  // "percentage" | "fixed" | "" (none)
+  string                    discount_type  = 5;
+  string                    discount_value = 6; // decimal string
+  google.protobuf.Timestamp created_at     = 7;
+  google.protobuf.Timestamp updated_at     = 8;
+}
+
+message CustomerGroupInput {
+  string name           = 1;
+  string description    = 2;
+  string discount_type  = 3;
+  string discount_value = 4;
+}
+
+message CreateCustomerGroupRequest { CustomerGroupInput group = 1; }
+message CreateCustomerGroupResponse { CustomerGroup group = 1; }
+
+message UpdateCustomerGroupRequest {
+  string             id    = 1;
+  CustomerGroupInput group = 2;
+}
+message UpdateCustomerGroupResponse { CustomerGroup group = 1; }
+
+message DeleteCustomerGroupRequest { string id = 1; }
+message DeleteCustomerGroupResponse {}
+
+// ----- CSV import ------------------------------------------------------------
+
+message CsvCustomerRow {
+  string          name        = 1;
+  string          email       = 2;
+  string          phone       = 3;
+  string          notes       = 4;
+  // Comma-separated group names; resolved server-side against customer_groups.
+  string          groups      = 5;
+  repeated string errors      = 6;
+  bool            exists      = 7;
+  string          existing_id = 8;
+}
+
+message ParseImportCustomerCsvRequest {
+  bytes csv_data = 1;
+}
+message ParseImportCustomerCsvResponse {
+  repeated CsvCustomerRow rows        = 1;
+  int32                   valid_count = 2;
+  int32                   error_count = 3;
+  repeated string         warnings    = 4;
+}
+
+message ImportCustomerItem {
+  CsvCustomerRow row               = 1;
+  bool           override_existing = 2;
+  string         existing_id       = 3;
+}
+
+message ImportCustomersRequest {
+  repeated ImportCustomerItem items = 1;
+}
+message ImportCustomersResponse {
+  int32           created = 1;
+  int32           updated = 2;
+  int32           skipped = 3;
+  repeated string errors  = 4;
+}

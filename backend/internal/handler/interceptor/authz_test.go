@@ -23,7 +23,7 @@ func Test_Interceptor_PermissionInterceptor(t *testing.T) {
 	t.Parallel()
 
 	rules := map[string]interceptor.ProcedurePermission{
-		"/genpos.v1.GenposService/ListProducts": {Resource: "products", Action: "read"},
+		"/genpos.v1.CatalogService/ListProducts": {Resource: "products", Action: "read"},
 	}
 
 	cases := map[string]struct {
@@ -32,17 +32,17 @@ func Test_Interceptor_PermissionInterceptor(t *testing.T) {
 		wantAllow bool
 	}{
 		"admin wildcard allowed": {
-			procedure: "/genpos.v1.GenposService/ListProducts",
+			procedure: "/genpos.v1.CatalogService/ListProducts",
 			perms:     auth.PermissionSet{"*": "*"},
 			wantAllow: true,
 		},
 		"exact permission allowed": {
-			procedure: "/genpos.v1.GenposService/ListProducts",
+			procedure: "/genpos.v1.CatalogService/ListProducts",
 			perms:     auth.PermissionSet{"products": "read"},
 			wantAllow: true,
 		},
 		"wrong permission denied": {
-			procedure: "/genpos.v1.GenposService/ListProducts",
+			procedure: "/genpos.v1.CatalogService/ListProducts",
 			perms:     auth.PermissionSet{"orders": "create"},
 			wantAllow: false,
 		},

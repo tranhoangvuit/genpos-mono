@@ -16,11 +16,20 @@ import (
 
 // App holds the running application state.
 type App struct {
-	Logger      *slog.Logger
-	Server      *handler.Server
-	AuthHandler *grpchandler.AuthHandler
-	DB          *database.PostgresDB
-	Config      *config.Config
+	Logger               *slog.Logger
+	Server               *handler.Server
+	AuthHandler          *grpchandler.AuthHandler
+	CatalogHandler       *grpchandler.CatalogHandler
+	CustomerHandler      *grpchandler.CustomerHandler
+	SupplierHandler      *grpchandler.SupplierHandler
+	PurchaseOrderHandler *grpchandler.PurchaseOrderHandler
+	StockTakeHandler     *grpchandler.StockTakeHandler
+	StoreHandler         *grpchandler.StoreHandler
+	PaymentMethodHandler *grpchandler.PaymentMethodHandler
+	TaxRateHandler       *grpchandler.TaxRateHandler
+	MemberHandler        *grpchandler.MemberHandler
+	DB                   *database.PostgresDB
+	Config               *config.Config
 }
 
 // NewHTTPHandler builds the HTTP mux with all ConnectRPC handlers registered.
@@ -38,6 +47,33 @@ func (a *App) NewHTTPHandler() http.Handler {
 
 	authPath, authHTTP := genposv1connect.NewAuthServiceHandler(a.AuthHandler, interceptors)
 	mux.Handle(authPath, authHTTP)
+
+	catalogPath, catalogHTTP := genposv1connect.NewCatalogServiceHandler(a.CatalogHandler, interceptors)
+	mux.Handle(catalogPath, catalogHTTP)
+
+	customerPath, customerHTTP := genposv1connect.NewCustomerServiceHandler(a.CustomerHandler, interceptors)
+	mux.Handle(customerPath, customerHTTP)
+
+	supplierPath, supplierHTTP := genposv1connect.NewSupplierServiceHandler(a.SupplierHandler, interceptors)
+	mux.Handle(supplierPath, supplierHTTP)
+
+	poPath, poHTTP := genposv1connect.NewPurchaseOrderServiceHandler(a.PurchaseOrderHandler, interceptors)
+	mux.Handle(poPath, poHTTP)
+
+	stPath, stHTTP := genposv1connect.NewStockTakeServiceHandler(a.StockTakeHandler, interceptors)
+	mux.Handle(stPath, stHTTP)
+
+	storePath, storeHTTP := genposv1connect.NewStoreServiceHandler(a.StoreHandler, interceptors)
+	mux.Handle(storePath, storeHTTP)
+
+	pmPath, pmHTTP := genposv1connect.NewPaymentMethodServiceHandler(a.PaymentMethodHandler, interceptors)
+	mux.Handle(pmPath, pmHTTP)
+
+	trPath, trHTTP := genposv1connect.NewTaxRateServiceHandler(a.TaxRateHandler, interceptors)
+	mux.Handle(trPath, trHTTP)
+
+	memPath, memHTTP := genposv1connect.NewMemberServiceHandler(a.MemberHandler, interceptors)
+	mux.Handle(memPath, memHTTP)
 
 	return withCORS(a.Config.Auth.FrontendOrigin, mux)
 }

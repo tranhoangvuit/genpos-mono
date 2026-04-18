@@ -18,41 +18,376 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockProductUsecase is a mock of ProductUsecase interface.
-type MockProductUsecase struct {
+// MockCustomerUsecase is a mock of CustomerUsecase interface.
+type MockCustomerUsecase struct {
 	ctrl     *gomock.Controller
-	recorder *MockProductUsecaseMockRecorder
+	recorder *MockCustomerUsecaseMockRecorder
 	isgomock struct{}
 }
 
-// MockProductUsecaseMockRecorder is the mock recorder for MockProductUsecase.
-type MockProductUsecaseMockRecorder struct {
-	mock *MockProductUsecase
+// MockCustomerUsecaseMockRecorder is the mock recorder for MockCustomerUsecase.
+type MockCustomerUsecaseMockRecorder struct {
+	mock *MockCustomerUsecase
 }
 
-// NewMockProductUsecase creates a new mock instance.
-func NewMockProductUsecase(ctrl *gomock.Controller) *MockProductUsecase {
-	mock := &MockProductUsecase{ctrl: ctrl}
-	mock.recorder = &MockProductUsecaseMockRecorder{mock}
+// NewMockCustomerUsecase creates a new mock instance.
+func NewMockCustomerUsecase(ctrl *gomock.Controller) *MockCustomerUsecase {
+	mock := &MockCustomerUsecase{ctrl: ctrl}
+	mock.recorder = &MockCustomerUsecaseMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockProductUsecase) EXPECT() *MockProductUsecaseMockRecorder {
+func (m *MockCustomerUsecase) EXPECT() *MockCustomerUsecaseMockRecorder {
 	return m.recorder
 }
 
-// ListProducts mocks base method.
-func (m *MockProductUsecase) ListProducts(ctx context.Context, in input.ListProductsInput) ([]*entity.Product, error) {
+// ListCustomers mocks base method.
+func (m *MockCustomerUsecase) ListCustomers(ctx context.Context, orgID string) ([]*entity.CustomerListItem, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListProducts", ctx, in)
-	ret0, _ := ret[0].([]*entity.Product)
+	ret := m.ctrl.Call(m, "ListCustomers", ctx, orgID)
+	ret0, _ := ret[0].([]*entity.CustomerListItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCustomers indicates an expected call of ListCustomers.
+func (mr *MockCustomerUsecaseMockRecorder) ListCustomers(ctx, orgID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCustomers", reflect.TypeOf((*MockCustomerUsecase)(nil).ListCustomers), ctx, orgID)
+}
+
+// GetCustomer mocks base method.
+func (m *MockCustomerUsecase) GetCustomer(ctx context.Context, in input.GetCustomerInput) (*entity.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCustomer", ctx, in)
+	ret0, _ := ret[0].(*entity.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCustomer indicates an expected call of GetCustomer.
+func (mr *MockCustomerUsecaseMockRecorder) GetCustomer(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCustomer", reflect.TypeOf((*MockCustomerUsecase)(nil).GetCustomer), ctx, in)
+}
+
+// ListCustomerGroups mocks base method.
+func (m *MockCustomerUsecase) ListCustomerGroups(ctx context.Context, orgID string) ([]*entity.CustomerGroup, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListCustomerGroups", ctx, orgID)
+	ret0, _ := ret[0].([]*entity.CustomerGroup)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCustomerGroups indicates an expected call of ListCustomerGroups.
+func (mr *MockCustomerUsecaseMockRecorder) ListCustomerGroups(ctx, orgID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCustomerGroups", reflect.TypeOf((*MockCustomerUsecase)(nil).ListCustomerGroups), ctx, orgID)
+}
+
+// CreateCustomer mocks base method.
+func (m *MockCustomerUsecase) CreateCustomer(ctx context.Context, in input.CreateCustomerInput) (*entity.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCustomer", ctx, in)
+	ret0, _ := ret[0].(*entity.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCustomer indicates an expected call of CreateCustomer.
+func (mr *MockCustomerUsecaseMockRecorder) CreateCustomer(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCustomer", reflect.TypeOf((*MockCustomerUsecase)(nil).CreateCustomer), ctx, in)
+}
+
+// CreateCustomerGroup mocks base method.
+func (m *MockCustomerUsecase) CreateCustomerGroup(ctx context.Context, in input.CreateCustomerGroupInput) (*entity.CustomerGroup, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCustomerGroup", ctx, in)
+	ret0, _ := ret[0].(*entity.CustomerGroup)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCustomerGroup indicates an expected call of CreateCustomerGroup.
+func (mr *MockCustomerUsecaseMockRecorder) CreateCustomerGroup(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCustomerGroup", reflect.TypeOf((*MockCustomerUsecase)(nil).CreateCustomerGroup), ctx, in)
+}
+
+// DeleteCustomer mocks base method.
+func (m *MockCustomerUsecase) DeleteCustomer(ctx context.Context, in input.DeleteCustomerInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteCustomer", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCustomer indicates an expected call of DeleteCustomer.
+func (mr *MockCustomerUsecaseMockRecorder) DeleteCustomer(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCustomer", reflect.TypeOf((*MockCustomerUsecase)(nil).DeleteCustomer), ctx, in)
+}
+
+// DeleteCustomerGroup mocks base method.
+func (m *MockCustomerUsecase) DeleteCustomerGroup(ctx context.Context, in input.DeleteCustomerGroupInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteCustomerGroup", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCustomerGroup indicates an expected call of DeleteCustomerGroup.
+func (mr *MockCustomerUsecaseMockRecorder) DeleteCustomerGroup(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCustomerGroup", reflect.TypeOf((*MockCustomerUsecase)(nil).DeleteCustomerGroup), ctx, in)
+}
+
+// ImportCustomers mocks base method.
+func (m *MockCustomerUsecase) ImportCustomers(ctx context.Context, in input.ImportCustomersInput) (*input.ImportCustomersResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ImportCustomers", ctx, in)
+	ret0, _ := ret[0].(*input.ImportCustomersResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ImportCustomers indicates an expected call of ImportCustomers.
+func (mr *MockCustomerUsecaseMockRecorder) ImportCustomers(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImportCustomers", reflect.TypeOf((*MockCustomerUsecase)(nil).ImportCustomers), ctx, in)
+}
+
+// ParseImportCustomerCsv mocks base method.
+func (m *MockCustomerUsecase) ParseImportCustomerCsv(ctx context.Context, in input.ParseImportCustomerCsvInput) (*input.ParseImportCustomerCsvResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseImportCustomerCsv", ctx, in)
+	ret0, _ := ret[0].(*input.ParseImportCustomerCsvResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseImportCustomerCsv indicates an expected call of ParseImportCustomerCsv.
+func (mr *MockCustomerUsecaseMockRecorder) ParseImportCustomerCsv(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseImportCustomerCsv", reflect.TypeOf((*MockCustomerUsecase)(nil).ParseImportCustomerCsv), ctx, in)
+}
+
+// UpdateCustomer mocks base method.
+func (m *MockCustomerUsecase) UpdateCustomer(ctx context.Context, in input.UpdateCustomerInput) (*entity.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCustomer", ctx, in)
+	ret0, _ := ret[0].(*entity.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCustomer indicates an expected call of UpdateCustomer.
+func (mr *MockCustomerUsecaseMockRecorder) UpdateCustomer(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCustomer", reflect.TypeOf((*MockCustomerUsecase)(nil).UpdateCustomer), ctx, in)
+}
+
+// UpdateCustomerGroup mocks base method.
+func (m *MockCustomerUsecase) UpdateCustomerGroup(ctx context.Context, in input.UpdateCustomerGroupInput) (*entity.CustomerGroup, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCustomerGroup", ctx, in)
+	ret0, _ := ret[0].(*entity.CustomerGroup)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCustomerGroup indicates an expected call of UpdateCustomerGroup.
+func (mr *MockCustomerUsecaseMockRecorder) UpdateCustomerGroup(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCustomerGroup", reflect.TypeOf((*MockCustomerUsecase)(nil).UpdateCustomerGroup), ctx, in)
+}
+
+// MockCatalogUsecase is a mock of CatalogUsecase interface.
+type MockCatalogUsecase struct {
+	ctrl     *gomock.Controller
+	recorder *MockCatalogUsecaseMockRecorder
+	isgomock struct{}
+}
+
+// MockCatalogUsecaseMockRecorder is the mock recorder for MockCatalogUsecase.
+type MockCatalogUsecaseMockRecorder struct {
+	mock *MockCatalogUsecase
+}
+
+// NewMockCatalogUsecase creates a new mock instance.
+func NewMockCatalogUsecase(ctrl *gomock.Controller) *MockCatalogUsecase {
+	mock := &MockCatalogUsecase{ctrl: ctrl}
+	mock.recorder = &MockCatalogUsecaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCatalogUsecase) EXPECT() *MockCatalogUsecaseMockRecorder {
+	return m.recorder
+}
+
+// CreateCategory mocks base method.
+func (m *MockCatalogUsecase) CreateCategory(ctx context.Context, in input.CreateCategoryInput) (*entity.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCategory", ctx, in)
+	ret0, _ := ret[0].(*entity.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCategory indicates an expected call of CreateCategory.
+func (mr *MockCatalogUsecaseMockRecorder) CreateCategory(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCategory", reflect.TypeOf((*MockCatalogUsecase)(nil).CreateCategory), ctx, in)
+}
+
+// CreateProduct mocks base method.
+func (m *MockCatalogUsecase) CreateProduct(ctx context.Context, in input.CreateProductInput) (*entity.ProductDetail, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateProduct", ctx, in)
+	ret0, _ := ret[0].(*entity.ProductDetail)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateProduct indicates an expected call of CreateProduct.
+func (mr *MockCatalogUsecaseMockRecorder) CreateProduct(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateProduct", reflect.TypeOf((*MockCatalogUsecase)(nil).CreateProduct), ctx, in)
+}
+
+// DeleteCategory mocks base method.
+func (m *MockCatalogUsecase) DeleteCategory(ctx context.Context, in input.DeleteCategoryInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteCategory", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCategory indicates an expected call of DeleteCategory.
+func (mr *MockCatalogUsecaseMockRecorder) DeleteCategory(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCategory", reflect.TypeOf((*MockCatalogUsecase)(nil).DeleteCategory), ctx, in)
+}
+
+// DeleteProduct mocks base method.
+func (m *MockCatalogUsecase) DeleteProduct(ctx context.Context, in input.DeleteProductInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteProduct", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteProduct indicates an expected call of DeleteProduct.
+func (mr *MockCatalogUsecaseMockRecorder) DeleteProduct(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProduct", reflect.TypeOf((*MockCatalogUsecase)(nil).DeleteProduct), ctx, in)
+}
+
+// GetProduct mocks base method.
+func (m *MockCatalogUsecase) GetProduct(ctx context.Context, in input.GetProductInput) (*entity.ProductDetail, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProduct", ctx, in)
+	ret0, _ := ret[0].(*entity.ProductDetail)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetProduct indicates an expected call of GetProduct.
+func (mr *MockCatalogUsecaseMockRecorder) GetProduct(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProduct", reflect.TypeOf((*MockCatalogUsecase)(nil).GetProduct), ctx, in)
+}
+
+// ImportProducts mocks base method.
+func (m *MockCatalogUsecase) ImportProducts(ctx context.Context, in input.ImportProductsInput) (*input.ImportProductsResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ImportProducts", ctx, in)
+	ret0, _ := ret[0].(*input.ImportProductsResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ImportProducts indicates an expected call of ImportProducts.
+func (mr *MockCatalogUsecaseMockRecorder) ImportProducts(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImportProducts", reflect.TypeOf((*MockCatalogUsecase)(nil).ImportProducts), ctx, in)
+}
+
+// ListProducts mocks base method.
+func (m *MockCatalogUsecase) ListProducts(ctx context.Context, orgID string) ([]*entity.ProductListItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListProducts", ctx, orgID)
+	ret0, _ := ret[0].([]*entity.ProductListItem)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListProducts indicates an expected call of ListProducts.
-func (mr *MockProductUsecaseMockRecorder) ListProducts(ctx, in any) *gomock.Call {
+func (mr *MockCatalogUsecaseMockRecorder) ListProducts(ctx, orgID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListProducts", reflect.TypeOf((*MockProductUsecase)(nil).ListProducts), ctx, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListProducts", reflect.TypeOf((*MockCatalogUsecase)(nil).ListProducts), ctx, orgID)
+}
+
+// ListCategories mocks base method.
+func (m *MockCatalogUsecase) ListCategories(ctx context.Context, orgID string) ([]*entity.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListCategories", ctx, orgID)
+	ret0, _ := ret[0].([]*entity.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCategories indicates an expected call of ListCategories.
+func (mr *MockCatalogUsecaseMockRecorder) ListCategories(ctx, orgID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCategories", reflect.TypeOf((*MockCatalogUsecase)(nil).ListCategories), ctx, orgID)
+}
+
+// ParseImportCsv mocks base method.
+func (m *MockCatalogUsecase) ParseImportCsv(ctx context.Context, in input.ParseImportCsvInput) (*input.ParseImportCsvResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseImportCsv", ctx, in)
+	ret0, _ := ret[0].(*input.ParseImportCsvResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseImportCsv indicates an expected call of ParseImportCsv.
+func (mr *MockCatalogUsecaseMockRecorder) ParseImportCsv(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseImportCsv", reflect.TypeOf((*MockCatalogUsecase)(nil).ParseImportCsv), ctx, in)
+}
+
+// UpdateCategory mocks base method.
+func (m *MockCatalogUsecase) UpdateCategory(ctx context.Context, in input.UpdateCategoryInput) (*entity.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCategory", ctx, in)
+	ret0, _ := ret[0].(*entity.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCategory indicates an expected call of UpdateCategory.
+func (mr *MockCatalogUsecaseMockRecorder) UpdateCategory(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCategory", reflect.TypeOf((*MockCatalogUsecase)(nil).UpdateCategory), ctx, in)
+}
+
+// UpdateProduct mocks base method.
+func (m *MockCatalogUsecase) UpdateProduct(ctx context.Context, in input.UpdateProductInput) (*entity.ProductDetail, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateProduct", ctx, in)
+	ret0, _ := ret[0].(*entity.ProductDetail)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateProduct indicates an expected call of UpdateProduct.
+func (mr *MockCatalogUsecaseMockRecorder) UpdateProduct(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateProduct", reflect.TypeOf((*MockCatalogUsecase)(nil).UpdateProduct), ctx, in)
 }
