@@ -124,6 +124,26 @@ const product_images = new Table({
   updated_at: column.text,
 })
 
+const tax_rates = new Table({
+  org_id: column.text,
+  name: column.text,
+  rate: column.text,
+  is_inclusive: column.integer,
+  is_default: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
+const payment_methods = new Table({
+  org_id: column.text,
+  name: column.text,
+  type: column.text,
+  is_active: column.integer,
+  sort_order: column.integer,
+  created_at: column.text,
+  updated_at: column.text,
+})
+
 const customers = new Table({
   org_id: column.text,
   name: column.text,
@@ -234,6 +254,8 @@ export const appSchema = new Schema({
   product_option_values,
   product_variant_option_values,
   product_images,
+  tax_rates,
+  payment_methods,
   customers,
   customer_groups,
   customer_group_members,
