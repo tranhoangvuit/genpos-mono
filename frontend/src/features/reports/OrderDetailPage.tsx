@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
 
 import { useOrder, useOrgTimezone } from './hooks'
@@ -203,9 +204,11 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
 
 function BackLink() {
   const { t } = useTranslation()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
   return (
     <Link
-      to="/daily-sales-report"
+      to="/$subdomain/daily-sales-report"
+      params={{ subdomain }}
       className="inline-flex items-center text-sm text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-foreground)]"
     >
       <ArrowLeft className="mr-1 h-4 w-4" />

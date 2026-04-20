@@ -12,10 +12,16 @@ function IndexRedirect() {
   const navigate = useNavigate()
   useEffect(() => {
     void bootstrapAuth().finally(() => {
-      void navigate({
-        to: useAuthStore.getState().user ? '/dashboard' : '/signin',
-        replace: true,
-      })
+      const user = useAuthStore.getState().user
+      if (user?.orgSlug) {
+        void navigate({
+          to: '/$subdomain/dashboard',
+          params: { subdomain: user.orgSlug },
+          replace: true,
+        })
+      } else {
+        void navigate({ to: '/signin', replace: true })
+      }
     })
   }, [navigate])
   return null

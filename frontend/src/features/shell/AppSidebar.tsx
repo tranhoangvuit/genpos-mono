@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import {
   Sidebar,
   SidebarContent,
@@ -40,53 +41,53 @@ const NAV_ITEMS: NavItem[] = [
   {
     labelKey: 'nav.home',
     icon: LayoutDashboard,
-    to: '/dashboard',
+    to: '/$subdomain/dashboard',
   },
   {
     labelKey: 'nav.products',
     icon: Package,
     children: [
-      { labelKey: 'nav.allProducts', to: '/products' },
-      { labelKey: 'nav.categories', to: '/products/categories' },
+      { labelKey: 'nav.allProducts', to: '/$subdomain/products' },
+      { labelKey: 'nav.categories', to: '/$subdomain/products/categories' },
     ],
   },
   {
     labelKey: 'nav.inventory',
     icon: Warehouse,
     children: [
-      { labelKey: 'nav.suppliers', to: '/inventory/suppliers' },
-      { labelKey: 'nav.purchaseOrders', to: '/inventory/purchase-orders' },
-      { labelKey: 'nav.stockTakes', to: '/inventory/stock-takes' },
+      { labelKey: 'nav.suppliers', to: '/$subdomain/inventory/suppliers' },
+      { labelKey: 'nav.purchaseOrders', to: '/$subdomain/inventory/purchase-orders' },
+      { labelKey: 'nav.stockTakes', to: '/$subdomain/inventory/stock-takes' },
     ],
   },
   {
     labelKey: 'nav.customers',
     icon: Users,
     children: [
-      { labelKey: 'nav.allCustomers', to: '/customers' },
-      { labelKey: 'nav.customerGroups', to: '/customers/groups' },
+      { labelKey: 'nav.allCustomers', to: '/$subdomain/customers' },
+      { labelKey: 'nav.customerGroups', to: '/$subdomain/customers/groups' },
     ],
   },
   {
     labelKey: 'nav.reports',
     icon: BarChart3,
     children: [
-      { labelKey: 'nav.dailySalesReport', to: '/daily-sales-report' },
+      { labelKey: 'nav.dailySalesReport', to: '/$subdomain/daily-sales-report' },
     ],
   },
   {
     labelKey: 'nav.addons',
     icon: Puzzle,
-    to: '/addons',
+    to: '/$subdomain/addons',
   },
   {
     labelKey: 'nav.settings',
     icon: Settings,
     children: [
-      { labelKey: 'nav.stores', to: '/settings/stores' },
-      { labelKey: 'nav.payments', to: '/settings/payments' },
-      { labelKey: 'nav.taxes', to: '/settings/taxes' },
-      { labelKey: 'nav.members', to: '/settings/members' },
+      { labelKey: 'nav.stores', to: '/$subdomain/settings/stores' },
+      { labelKey: 'nav.payments', to: '/$subdomain/settings/payments' },
+      { labelKey: 'nav.taxes', to: '/$subdomain/settings/taxes' },
+      { labelKey: 'nav.members', to: '/$subdomain/settings/members' },
     ],
   },
 ]
@@ -94,6 +95,9 @@ const NAV_ITEMS: NavItem[] = [
 export function AppSidebar() {
   const { t } = useTranslation()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
+
+  const resolve = (to: string) => to.replace('$subdomain', subdomain)
 
   return (
     <Sidebar>
@@ -103,7 +107,8 @@ export function AppSidebar() {
             <SidebarMenu>
               {NAV_ITEMS.map((item) => {
                 if (!item.children) {
-                  const active = pathname === item.to
+                  const resolved = resolve(item.to!)
+                  const active = pathname === resolved
                   return (
                     <SidebarMenuItem key={item.labelKey}>
                       <SidebarMenuButton
@@ -111,7 +116,7 @@ export function AppSidebar() {
                         isActive={active}
                         tooltip={t(item.labelKey)}
                       >
-                        <Link to={item.to!}>
+                        <Link to={item.to!} params={{ subdomain }}>
                           <item.icon />
                           <span>{t(item.labelKey)}</span>
                         </Link>
@@ -121,7 +126,7 @@ export function AppSidebar() {
                 }
 
                 const isGroupActive = item.children.some((c) =>
-                  pathname.startsWith(c.to)
+                  pathname.startsWith(resolve(c.to))
                 )
 
                 return (
@@ -141,18 +146,21 @@ export function AppSidebar() {
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <SidebarMenuSub>
-                          {item.children.map((child) => (
-                            <SidebarMenuSubItem key={child.to}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={pathname === child.to}
-                              >
-                                <Link to={child.to}>
-                                  <span>{t(child.labelKey)}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
+                          {item.children.map((child) => {
+                            const resolved = resolve(child.to)
+                            return (
+                              <SidebarMenuSubItem key={child.to}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === resolved}
+                                >
+                                  <Link to={child.to} params={{ subdomain }}>
+                                    <span>{t(child.labelKey)}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            )
+                          })}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>

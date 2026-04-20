@@ -8,42 +8,6 @@ import { useTranslation } from 'react-i18next'
 import { useSignIn } from '@/shared/auth/hooks'
 import { signInSchema, type SignInValues } from '@/shared/auth/schemas'
 
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-      <path
-        fill="#4285F4"
-        d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2c-.3 1.5-1.1 2.7-2.3 3.5v2.9h3.8c2.2-2 3.3-5 3.3-8.6z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 24c3.1 0 5.7-1 7.7-2.8l-3.8-2.9c-1 .7-2.4 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.6v3C3.6 21.4 7.5 24 12 24z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.6 14.7a7.2 7.2 0 0 1 0-4.6V7.1H1.6a12 12 0 0 0 0 9.8l4-3.1z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3C17.6 1.2 15 0 12 0 7.5 0 3.6 2.6 1.6 6.4l4 3.1C6.5 6.8 9 4.8 12 4.8z"
-      />
-    </svg>
-  )
-}
-
-function AppleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-4 w-4"
-      aria-hidden
-    >
-      <path d="M16.365 1.43c0 1.14-.49 2.27-1.28 3.08-.78.8-2.04 1.4-3.06 1.3-.14-1.1.46-2.28 1.22-3.06.86-.88 2.3-1.52 3.12-1.32zM20.92 17.2c-.56 1.28-.82 1.85-1.54 2.98-1.01 1.58-2.43 3.54-4.18 3.56-1.56.02-1.96-1.02-4.08-1-2.12.02-2.56 1.02-4.12 1-1.76-.02-3.1-1.8-4.11-3.38C.99 16.98.7 11.52 3.18 8.62c1.78-2.06 4.58-3.28 7.22-3.28 2.68 0 4.36 1.47 6.58 1.47 2.14 0 3.45-1.47 6.55-1.47 2.33 0 4.8 1.27 6.56 3.46-5.78 3.17-4.85 11.4-5.33 12.4z" />
-    </svg>
-  )
-}
-
 export function LoginCard() {
   const { t } = useTranslation()
   const signIn = useSignIn()
@@ -80,27 +44,6 @@ export function LoginCard() {
           {serverMessage}
         </div>
       )}
-
-      <div className="mb-4 grid grid-cols-2 gap-2.5">
-        <button
-          type="button"
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[hsl(214.3_31.8%_91.4%)] bg-white text-[13px] font-medium text-[hsl(222.2_84%_4.9%)] transition-colors hover:border-[hsl(215_16%_47%_/_0.3)] hover:bg-[hsl(210_40%_96%)]"
-        >
-          <GoogleIcon />
-          Google
-        </button>
-        <button
-          type="button"
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[hsl(214.3_31.8%_91.4%)] bg-white text-[13px] font-medium text-[hsl(222.2_84%_4.9%)] transition-colors hover:border-[hsl(215_16%_47%_/_0.3)] hover:bg-[hsl(210_40%_96%)]"
-        >
-          <AppleIcon />
-          Apple
-        </button>
-      </div>
-
-      <div className="my-[18px] flex items-center gap-2.5 text-[11px] uppercase tracking-[0.1em] text-[hsl(215.4_16.3%_46.9%)] before:h-px before:flex-1 before:bg-[hsl(214.3_31.8%_91.4%)] before:content-[''] after:h-px after:flex-1 after:bg-[hsl(214.3_31.8%_91.4%)] after:content-['']">
-        or use email
-      </div>
 
       <form onSubmit={onSubmit} noValidate>
         <div className="mb-3.5">

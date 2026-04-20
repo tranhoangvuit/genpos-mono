@@ -19,6 +19,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
+
 import { ImportProductDialog } from './ImportProductDialog'
 import { useProductList } from './hooks'
 import type { ProductListRow } from './types'
@@ -53,6 +55,7 @@ const ICON_COLORS = [
 
 export function ProductsPage() {
   const { t } = useTranslation()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
   const { data: products, isLoading } = useProductList()
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState<TabKey>('all')
@@ -154,7 +157,8 @@ export function ProductsPage() {
             <ChevronDown className="h-3.5 w-3.5" style={{ color: MUTED_FG }} />
           </MoreBtn>
           <Link
-            to="/products/new"
+            to="/$subdomain/products/new"
+            params={{ subdomain }}
             className="inline-flex h-9 items-center gap-1.5 rounded-md px-3.5 text-[13px] font-medium text-white transition"
             style={{ background: 'hsl(222.2 47.4% 11.2%)' }}
             onMouseEnter={(e) => {
@@ -418,6 +422,7 @@ export function ProductsPage() {
                   key={p.id}
                   p={p}
                   i={pageStart + i}
+                  subdomain={subdomain}
                   checked={selected.has(p.id)}
                   onToggle={() => toggle(p.id)}
                 />
@@ -701,11 +706,13 @@ function Check({
 function Row({
   p,
   i,
+  subdomain,
   checked,
   onToggle,
 }: {
   p: ProductListRow
   i: number
+  subdomain: string
   checked: boolean
   onToggle: () => void
 }) {
@@ -726,8 +733,8 @@ function Row({
       </Td>
       <Td>
         <Link
-          to="/products/$id"
-          params={{ id: p.id }}
+          to="/$subdomain/products/$id"
+          params={{ subdomain, id: p.id }}
           className="font-medium hover:underline"
           style={{ color: FG, textDecorationColor: MUTED_FG }}
         >

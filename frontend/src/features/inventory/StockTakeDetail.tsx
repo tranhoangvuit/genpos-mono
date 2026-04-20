@@ -4,6 +4,7 @@ import { Ban, CheckCircle2, Save, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -31,6 +32,7 @@ type Props = { takeId: string }
 export function StockTakeDetail({ takeId }: Props) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
 
   const { data: takeRows } = useStockTakeRow(takeId)
   const { data: itemRows } = useStockTakeItems(takeId)
@@ -143,7 +145,10 @@ export function StockTakeDetail({ takeId }: Props) {
     setActionError(null)
     try {
       await del.mutateAsync(take.id)
-      void navigate({ to: '/inventory/stock-takes' })
+      void navigate({
+        to: '/$subdomain/inventory/stock-takes',
+        params: { subdomain },
+      })
     } catch (err) {
       setActionError(ConnectError.from(err).rawMessage)
     }

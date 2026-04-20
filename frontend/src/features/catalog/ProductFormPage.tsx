@@ -4,6 +4,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import { Button } from '@/shared/ui/button'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { Input } from '@/shared/ui/input'
@@ -45,6 +46,9 @@ const defaultValues = (): ProductFormValues => ({
 export function ProductFormPage(props: Props) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
+  const toProducts = () =>
+    navigate({ to: '/$subdomain/products', params: { subdomain } })
 
   const { data: categories } = useCategories()
   const createMut = useCreateProduct()
@@ -166,7 +170,7 @@ export function ProductFormPage(props: Props) {
       } else {
         await updateMut.mutateAsync({ id: props.productId, ...req })
       }
-      void navigate({ to: '/products' })
+      void toProducts()
     } catch (err) {
       setErrorMessage(ConnectError.from(err).rawMessage)
     }
@@ -177,7 +181,7 @@ export function ProductFormPage(props: Props) {
     if (!confirm(t('catalog.confirmDelete'))) return
     try {
       await deleteMut.mutateAsync(props.productId)
-      void navigate({ to: '/products' })
+      void toProducts()
     } catch (err) {
       setErrorMessage(ConnectError.from(err).rawMessage)
     }
@@ -206,7 +210,7 @@ export function ProductFormPage(props: Props) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate({ to: '/products' })}
+            onClick={() => toProducts()}
             disabled={mutationPending}
           >
             {t('common.cancel')}

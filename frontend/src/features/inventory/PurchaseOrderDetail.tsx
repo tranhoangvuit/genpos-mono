@@ -4,6 +4,7 @@ import { Ban, PackageCheck, Send, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import { Button } from '@/shared/ui/button'
 
 import { PurchaseOrderForm } from './PurchaseOrderForm'
@@ -29,6 +30,12 @@ type Props = { poId: string }
 export function PurchaseOrderDetail({ poId }: Props) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
+  const toList = () =>
+    navigate({
+      to: '/$subdomain/inventory/purchase-orders',
+      params: { subdomain },
+    })
   const { data: po } = usePurchaseOrder(poId)
   const itemRows = po?.items ?? []
   const { data: variants } = useVariantPicker()
@@ -63,7 +70,7 @@ export function PurchaseOrderDetail({ poId }: Props) {
             setActionError(null)
             try {
               await deleteMut.mutateAsync(po.id)
-              void navigate({ to: '/inventory/purchase-orders' })
+              void toList()
             } catch (err) {
               setActionError(ConnectError.from(err).rawMessage)
             }
@@ -145,7 +152,7 @@ export function PurchaseOrderDetail({ poId }: Props) {
                 setActionError(null)
                 try {
                   await deleteMut.mutateAsync(po.id)
-                  void navigate({ to: '/inventory/purchase-orders' })
+                  void toList()
                 } catch (err) {
                   setActionError(ConnectError.from(err).rawMessage)
                 }

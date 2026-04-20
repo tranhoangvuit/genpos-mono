@@ -16,6 +16,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
 import { Button } from '@/shared/ui/button'
 import {
   Dialog,
@@ -78,6 +79,7 @@ function formatDate(ts: StockTakeListRow['createdAt']) {
 export function StockTakesPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
   const { data: takes, isLoading } = useStockTakes()
   const { data: stores } = useStores()
   const create = useCreateStockTake()
@@ -188,8 +190,8 @@ export function StockTakesPage() {
       setDialogOpen(false)
       if (res.stockTake?.id) {
         void navigate({
-          to: '/inventory/stock-takes/$id',
-          params: { id: res.stockTake.id },
+          to: '/$subdomain/inventory/stock-takes/$id',
+          params: { subdomain, id: res.stockTake.id },
         })
       }
     } catch (err) {
@@ -415,6 +417,7 @@ export function StockTakesPage() {
                 <Row
                   key={r.id}
                   r={r}
+                  subdomain={subdomain}
                   checked={selected.has(r.id)}
                   onToggle={() => toggle(r.id)}
                   statusText={t(`inventory.takeStatus_${r.status}`, r.status)}
@@ -515,11 +518,13 @@ export function StockTakesPage() {
 
 function Row({
   r,
+  subdomain,
   checked,
   onToggle,
   statusText,
 }: {
   r: StockTakeListRow
+  subdomain: string
   checked: boolean
   onToggle: () => void
   statusText: string
@@ -532,8 +537,8 @@ function Row({
       </Td>
       <Td>
         <Link
-          to="/inventory/stock-takes/$id"
-          params={{ id: r.id }}
+          to="/$subdomain/inventory/stock-takes/$id"
+          params={{ subdomain, id: r.id }}
           className="font-semibold hover:underline"
           style={{ color: FG }}
         >

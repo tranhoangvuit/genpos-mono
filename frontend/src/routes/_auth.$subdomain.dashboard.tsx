@@ -17,7 +17,7 @@ import { useMemo, useState } from 'react'
 
 import { useAuthStore } from '@/shared/auth/store'
 
-export const Route = createFileRoute('/_auth/dashboard')({
+export const Route = createFileRoute('/_auth/$subdomain/dashboard')({
   component: DashboardPage,
 })
 

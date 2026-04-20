@@ -2,6 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { PaymentMethodsPage } from '@/features/settings/payments/PaymentMethodsPage'
 
-export const Route = createFileRoute('/_auth/settings/payments')({
+export const Route = createFileRoute('/_auth/$subdomain/settings/payments')({
   component: PaymentMethodsPage,
 })

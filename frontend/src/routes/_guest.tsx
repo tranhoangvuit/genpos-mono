@@ -19,8 +19,13 @@ function GuestLayout() {
     let cancelled = false
     void bootstrapAuth().finally(() => {
       if (cancelled) return
-      if (useAuthStore.getState().user) {
-        void navigate({ to: '/dashboard', replace: true })
+      const user = useAuthStore.getState().user
+      if (user?.orgSlug) {
+        void navigate({
+          to: '/$subdomain/dashboard',
+          params: { subdomain: user.orgSlug },
+          replace: true,
+        })
       }
     })
     return () => {

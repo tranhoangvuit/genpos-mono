@@ -15,6 +15,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/shared/auth/store'
+
 import { usePurchaseOrders } from './hooks'
 import type { PurchaseOrderListRow } from './types'
 
@@ -89,6 +91,7 @@ function formatMoney(value: string) {
 
 export function PurchaseOrdersPage() {
   const { t } = useTranslation()
+  const subdomain = useAuthStore((s) => s.user?.orgSlug ?? '')
   const { data: orders, isLoading } = usePurchaseOrders()
   const [tab, setTab] = useState<TabKey>('all')
   const [query, setQuery] = useState('')
@@ -180,7 +183,8 @@ export function PurchaseOrdersPage() {
         </h1>
         <div className="flex gap-2">
           <Link
-            to="/inventory/purchase-orders/new"
+            to="/$subdomain/inventory/purchase-orders/new"
+            params={{ subdomain }}
             className="inline-flex h-9 items-center gap-1.5 rounded-md px-3.5 text-[13px] font-medium text-white no-underline transition"
             style={{ background: 'hsl(222.2 47.4% 11.2%)' }}
             onMouseEnter={(e) => {
@@ -386,6 +390,7 @@ export function PurchaseOrdersPage() {
                 <Row
                   key={r.id}
                   r={r}
+                  subdomain={subdomain}
                   checked={selected.has(r.id)}
                   onToggle={() => toggle(r.id)}
                 />
@@ -428,10 +433,12 @@ export function PurchaseOrdersPage() {
 
 function Row({
   r,
+  subdomain,
   checked,
   onToggle,
 }: {
   r: PurchaseOrderListRow
+  subdomain: string
   checked: boolean
   onToggle: () => void
 }) {
@@ -443,8 +450,8 @@ function Row({
       </Td>
       <Td>
         <Link
-          to="/inventory/purchase-orders/$id"
-          params={{ id: r.id }}
+          to="/$subdomain/inventory/purchase-orders/$id"
+          params={{ subdomain, id: r.id }}
           className="font-semibold tabular-nums hover:underline"
           style={{ color: FG }}
         >

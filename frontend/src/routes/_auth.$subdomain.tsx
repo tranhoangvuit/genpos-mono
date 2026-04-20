@@ -2,6 +2,7 @@ import {
   Outlet,
   createFileRoute,
   useNavigate,
+  useParams,
 } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
@@ -12,12 +13,13 @@ import { SidebarProvider } from '@/shared/ui/sidebar'
 import { TopNavbar } from '@/features/shell/TopNavbar'
 import { AppSidebar } from '@/features/shell/AppSidebar'
 
-export const Route = createFileRoute('/_auth')({
+export const Route = createFileRoute('/_auth/$subdomain')({
   component: AuthLayout,
 })
 
 function AuthLayout() {
   const user = useAuthStore((s) => s.user)
+  const { subdomain } = useParams({ from: '/_auth/$subdomain' })
   const navigate = useNavigate()
   const [checked, setChecked] = useState(false)
 
@@ -25,16 +27,25 @@ function AuthLayout() {
     let cancelled = false
     void bootstrapAuth().finally(() => {
       if (cancelled) return
-      if (!useAuthStore.getState().user) {
+      const current = useAuthStore.getState().user
+      if (!current) {
         void navigate({ to: '/signin', replace: true })
-      } else {
-        setChecked(true)
+        return
       }
+      if (current.orgSlug && subdomain !== current.orgSlug) {
+        void navigate({
+          to: '/$subdomain/dashboard',
+          params: { subdomain: current.orgSlug },
+          replace: true,
+        })
+        return
+      }
+      setChecked(true)
     })
     return () => {
       cancelled = true
     }
-  }, [navigate])
+  }, [navigate, subdomain])
 
   if (!checked || !user) return null
 

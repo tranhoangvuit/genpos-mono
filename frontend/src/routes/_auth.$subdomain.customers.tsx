@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/inventory/purchase-orders')({
+export const Route = createFileRoute('/_auth/$subdomain/customers')({
   component: () => <Outlet />,
 })

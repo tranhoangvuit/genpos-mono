@@ -52,7 +52,8 @@ export function CategoryDialog({ open, onOpenChange, existing, parents }: Props)
       create.reset()
       update.reset()
     }
-  }, [open, existing, form, create, update])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, existing])
 
   const submitting = create.isPending || update.isPending
   const serverError = create.error ?? update.error

@@ -17,7 +17,13 @@ export function useSignIn() {
     }) => authClient.signIn(input),
     onSuccess: (res) => {
       setUser(res.user ?? null)
-      void navigate({ to: '/dashboard' })
+      const slug = res.user?.orgSlug
+      if (slug) {
+        void navigate({
+          to: '/$subdomain/dashboard',
+          params: { subdomain: slug },
+        })
+      }
     },
   })
 }
@@ -33,7 +39,13 @@ export function useSignUp() {
     }) => authClient.signUp(input),
     onSuccess: (res) => {
       setUser(res.user ?? null)
-      void navigate({ to: '/dashboard' })
+      const slug = res.user?.orgSlug
+      if (slug) {
+        void navigate({
+          to: '/$subdomain/dashboard',
+          params: { subdomain: slug },
+        })
+      }
     },
   })
 }
