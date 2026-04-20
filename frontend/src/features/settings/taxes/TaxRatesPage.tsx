@@ -1,15 +1,40 @@
 import { ConnectError } from '@connectrpc/connect'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Percent, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/shared/ui/button'
-import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui/dialog'
+import {
+  AllTab,
+  Avatar,
+  Check,
+  DeleteBanner,
+  IconBtn,
+  LP_FG,
+  LP_MUTED,
+  LP_MUTED_FG,
+  ListHeader,
+  ListPageShell,
+  ListPagination,
+  ListSection,
+  PrimaryBtn,
+  Td,
+  Th,
+} from '@/shared/ui/list-page'
 
 import { TaxRateDialog } from './TaxRateDialog'
 import { useDeleteTaxRate, useTaxRates } from './hooks'
 import { fractionToPercent } from './schemas'
 import type { TaxRateRow } from './types'
+
+const PAGE_SIZE = 15
 
 export function TaxRatesPage() {
   const { t } = useTranslation()
@@ -19,107 +44,218 @@ export function TaxRatesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<TaxRateRow | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<TaxRateRow | null>(null)
+  const [page, setPage] = useState(0)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
-  const onEdit = (r: TaxRateRow) => {
-    setEditing(r)
-    setDialogOpen(true)
+  const list = rates ?? []
+
+  const pageStart = page * PAGE_SIZE
+  const pageRows = list.slice(pageStart, pageStart + PAGE_SIZE)
+  const pageEnd = pageStart + pageRows.length
+  const allSelectedOnPage =
+    pageRows.length > 0 && pageRows.every((r) => selected.has(r.id))
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+  function toggleAll() {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (allSelectedOnPage) pageRows.forEach((r) => next.delete(r.id))
+      else pageRows.forEach((r) => next.add(r.id))
+      return next
+    })
   }
 
-  const onDelete = async (r: TaxRateRow) => {
-    if (!confirm(t('taxes.confirmDelete', { name: r.name }))) return
-    setDeleteError(null)
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
     try {
-      await deleteMut.mutateAsync(r.id)
+      await deleteMut.mutateAsync(pendingDelete.id)
+      setPendingDelete(null)
     } catch (err) {
       setDeleteError(ConnectError.from(err).rawMessage)
+      setPendingDelete(null)
     }
   }
 
-  const columns: DataTableColumn<TaxRateRow>[] = [
-    {
-      id: 'name',
-      header: t('taxes.name'),
-      cell: (r) => (
-        <span className="font-medium">
-          {r.name}
-          {r.isDefault && (
-            <span className="ml-2 rounded bg-[color:var(--color-muted)] px-1.5 py-0.5 text-xs">
-              {t('taxes.defaultBadge')}
-            </span>
-          )}
-        </span>
-      ),
-    },
-    {
-      id: 'rate',
-      header: t('taxes.rate'),
-      cell: (r) => `${fractionToPercent(r.rate)}%`,
-      headerClassName: 'w-28',
-    },
-    {
-      id: 'inclusive',
-      header: t('taxes.isInclusive'),
-      cell: (r) => (r.isInclusive ? t('common.yes') : t('common.no')),
-      headerClassName: 'w-28',
-    },
-    {
-      id: 'actions',
-      header: '',
-      headerClassName: 'w-24',
-      cell: (r) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(r)} aria-label={t('common.edit')}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(r)}
-            disabled={deleteMut.isPending}
-            aria-label={t('common.delete')}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ]
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('nav.taxes')}</h1>
-          <p className="text-sm text-[color:var(--color-muted-foreground)]">
-            {t('taxes.subtitle')}
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditing(null)
-            setDialogOpen(true)
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          {t('taxes.newRate')}
-        </Button>
-      </div>
-
-      {deleteError && (
-        <div className="rounded-md border border-[color:var(--color-destructive)]/30 bg-[color:var(--color-destructive)]/10 px-3 py-2 text-sm text-[color:var(--color-destructive)]">
-          {deleteError}
-        </div>
-      )}
-
-      <DataTable
-        columns={columns}
-        data={rates ?? []}
-        isLoading={isLoading}
-        rowKey={(r) => r.id}
-        emptyMessage={t('taxes.noRates')}
+    <ListPageShell>
+      <ListHeader
+        icon={<Percent className="h-[18px] w-[18px]" strokeWidth={2} />}
+        title={t('nav.taxes')}
+        count={list.length}
+        actions={
+          <PrimaryBtn
+            onClick={() => {
+              setEditing(null)
+              setDialogOpen(true)
+            }}
+          >
+            {t('taxes.newRate')}
+          </PrimaryBtn>
+        }
       />
 
+      <DeleteBanner message={deleteError} />
+
+      <ListSection>
+        <AllTab count={list.length} />
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full border-collapse" style={{ minWidth: 780 }}>
+            <colgroup>
+              <col style={{ width: 44 }} />
+              <col style={{ width: 48 }} />
+              <col />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 140 }} />
+              <col style={{ width: 88 }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <Th>
+                  <Check checked={allSelectedOnPage} onClick={toggleAll} />
+                </Th>
+                <Th />
+                <Th>{t('taxes.name')}</Th>
+                <Th align="right">{t('taxes.rate')}</Th>
+                <Th>{t('taxes.isInclusive')}</Th>
+                <Th />
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('common.loading')}
+                  </td>
+                </tr>
+              )}
+              {!isLoading && pageRows.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('taxes.noRates')}
+                  </td>
+                </tr>
+              )}
+              {pageRows.map((r, i) => (
+                <tr key={r.id} className="group transition hover:bg-[hsl(210_40%_96%_/_0.3)]">
+                  <Td>
+                    <Check checked={selected.has(r.id)} onClick={() => toggle(r.id)} />
+                  </Td>
+                  <Td>
+                    <Avatar name={r.name} index={pageStart + i} />
+                  </Td>
+                  <Td>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(r)
+                        setDialogOpen(true)
+                      }}
+                      className="inline-flex items-center gap-2 font-medium hover:underline"
+                      style={{ color: LP_FG, textDecorationColor: LP_MUTED_FG }}
+                    >
+                      {r.name}
+                      {r.isDefault && (
+                        <span
+                          className="rounded px-1.5 py-0.5 text-[11px] font-medium"
+                          style={{ background: LP_MUTED, color: LP_MUTED_FG }}
+                        >
+                          {t('taxes.defaultBadge')}
+                        </span>
+                      )}
+                    </button>
+                  </Td>
+                  <Td align="right">
+                    <span className="tabular-nums font-medium" style={{ color: LP_FG }}>
+                      {fractionToPercent(r.rate)}%
+                    </span>
+                  </Td>
+                  <Td>
+                    <span style={{ color: r.isInclusive ? LP_FG : LP_MUTED_FG }}>
+                      {r.isInclusive ? t('common.yes') : t('common.no')}
+                    </span>
+                  </Td>
+                  <Td align="right">
+                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
+                      <IconBtn
+                        onClick={() => {
+                          setEditing(r)
+                          setDialogOpen(true)
+                        }}
+                        label={t('common.edit')}
+                      >
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                      <IconBtn
+                        onClick={() => {
+                          setDeleteError(null)
+                          setPendingDelete(r)
+                        }}
+                        label={t('common.delete')}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <ListPagination
+          pageStart={pageStart}
+          pageEnd={pageEnd}
+          total={list.length}
+          page={page}
+          onPrev={() => setPage((p) => Math.max(0, p - 1))}
+          onNext={() => setPage((p) => p + 1)}
+        />
+      </ListSection>
+
       <TaxRateDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
-    </div>
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null)
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('common.delete')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm" style={{ color: LP_MUTED_FG }}>
+            {pendingDelete ? t('taxes.confirmDelete', { name: pendingDelete.name }) : ''}
+          </p>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingDelete(null)}
+              disabled={deleteMut.isPending}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMut.isPending}
+            >
+              {deleteMut.isPending ? t('common.saving') : t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </ListPageShell>
   )
 }

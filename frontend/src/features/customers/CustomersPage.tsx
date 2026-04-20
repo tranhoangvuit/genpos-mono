@@ -1,16 +1,40 @@
 import { ConnectError } from '@connectrpc/connect'
-import { Pencil, Plus, Trash2, Upload } from 'lucide-react'
+import { Pencil, Trash2, Upload, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/shared/ui/button'
-import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
-import { Input } from '@/shared/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui/dialog'
+import {
+  AllTab,
+  Avatar,
+  Check,
+  DeleteBanner,
+  IconBtn,
+  LP_FG,
+  LP_MUTED_FG,
+  ListHeader,
+  ListPageShell,
+  ListPagination,
+  ListSection,
+  MoreBtn,
+  PrimaryBtn,
+  Td,
+  Th,
+} from '@/shared/ui/list-page'
 
 import { CustomerDialog } from './CustomerDialog'
 import { ImportCustomerDialog } from './ImportCustomerDialog'
 import { useCustomers, useDeleteCustomer, useGetCustomer } from './hooks'
 import type { CustomerListRow, CustomerRow } from './types'
+
+const PAGE_SIZE = 15
 
 export function CustomersPage() {
   const { t } = useTranslation()
@@ -20,18 +44,36 @@ export function CustomersPage() {
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<CustomerRow | null>(null)
-  const [query, setQuery] = useState('')
   const [importOpen, setImportOpen] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<CustomerListRow | null>(null)
+  const [page, setPage] = useState(0)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
-  const needle = query.trim().toLowerCase()
-  const rows = (customers ?? []).filter((r) =>
-    needle === ''
-      ? true
-      : r.name.toLowerCase().includes(needle) ||
-        r.email.toLowerCase().includes(needle) ||
-        r.phone.toLowerCase().includes(needle),
-  )
+  const list = customers ?? []
+
+  const pageStart = page * PAGE_SIZE
+  const pageRows = list.slice(pageStart, pageStart + PAGE_SIZE)
+  const pageEnd = pageStart + pageRows.length
+  const allSelectedOnPage =
+    pageRows.length > 0 && pageRows.every((r) => selected.has(r.id))
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+  function toggleAll() {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (allSelectedOnPage) pageRows.forEach((r) => next.delete(r.id))
+      else pageRows.forEach((r) => next.add(r.id))
+      return next
+    })
+  }
 
   const onEdit = async (r: CustomerListRow) => {
     const res = await getMut.mutateAsync(r.id)
@@ -41,110 +83,184 @@ export function CustomersPage() {
     }
   }
 
-  const onDelete = async (r: CustomerListRow) => {
-    if (!confirm(t('customers.confirmDelete', { name: r.name }))) return
-    setDeleteError(null)
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
     try {
-      await deleteMut.mutateAsync(r.id)
+      await deleteMut.mutateAsync(pendingDelete.id)
+      setPendingDelete(null)
     } catch (err) {
       setDeleteError(ConnectError.from(err).rawMessage)
+      setPendingDelete(null)
     }
   }
 
-  const columns: DataTableColumn<CustomerListRow>[] = [
-    {
-      id: 'name',
-      header: t('customers.name'),
-      cell: (r) => <span className="font-medium">{r.name}</span>,
-    },
-    {
-      id: 'email',
-      header: t('customers.email'),
-      cell: (r) => r.email || '—',
-    },
-    {
-      id: 'phone',
-      header: t('customers.phone'),
-      cell: (r) => r.phone || '—',
-    },
-    {
-      id: 'groups',
-      header: t('customers.groups'),
-      cell: (r) => r.groupNames || '—',
-    },
-    {
-      id: 'actions',
-      header: '',
-      headerClassName: 'w-24',
-      cell: (r) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(r)} aria-label={t('common.edit')}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(r)}
-            disabled={deleteMut.isPending}
-            aria-label={t('common.delete')}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ]
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('nav.customers')}</h1>
-          <p className="text-sm text-[color:var(--color-muted-foreground)]">
-            {t('customers.subtitle')}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setImportOpen(true)}>
-            <Upload className="mr-2 h-4 w-4" />
-            {t('customers.importCustomers')}
-          </Button>
-          <Button
-            onClick={() => {
-              setEditing(null)
-              setDialogOpen(true)
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t('customers.newCustomer')}
-          </Button>
-        </div>
-      </div>
-
-      {deleteError && (
-        <div className="rounded-md border border-[color:var(--color-destructive)]/30 bg-[color:var(--color-destructive)]/10 px-3 py-2 text-sm text-[color:var(--color-destructive)]">
-          {deleteError}
-        </div>
-      )}
-
-      <div className="max-w-sm">
-        <Input
-          placeholder={t('customers.searchPlaceholder')}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={rows}
-        isLoading={isLoading}
-        rowKey={(r) => r.id}
-        emptyMessage={t('customers.noCustomers')}
+    <ListPageShell>
+      <ListHeader
+        icon={<Users className="h-[18px] w-[18px]" strokeWidth={2} />}
+        title={t('nav.customers')}
+        count={list.length}
+        actions={
+          <>
+            <MoreBtn icon={<Upload className="h-3.5 w-3.5" />} onClick={() => setImportOpen(true)}>
+              {t('customers.importCustomers')}
+            </MoreBtn>
+            <PrimaryBtn
+              onClick={() => {
+                setEditing(null)
+                setDialogOpen(true)
+              }}
+            >
+              {t('customers.newCustomer')}
+            </PrimaryBtn>
+          </>
+        }
       />
+
+      <DeleteBanner message={deleteError} />
+
+      <ListSection>
+        <AllTab count={list.length} />
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full border-collapse" style={{ minWidth: 960 }}>
+            <colgroup>
+              <col style={{ width: 44 }} />
+              <col style={{ width: 48 }} />
+              <col />
+              <col style={{ width: 240 }} />
+              <col style={{ width: 160 }} />
+              <col style={{ width: 200 }} />
+              <col style={{ width: 88 }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <Th>
+                  <Check checked={allSelectedOnPage} onClick={toggleAll} />
+                </Th>
+                <Th />
+                <Th>{t('customers.name')}</Th>
+                <Th>{t('customers.email')}</Th>
+                <Th>{t('customers.phone')}</Th>
+                <Th>{t('customers.groups')}</Th>
+                <Th />
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('common.loading')}
+                  </td>
+                </tr>
+              )}
+              {!isLoading && pageRows.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('customers.noCustomers')}
+                  </td>
+                </tr>
+              )}
+              {pageRows.map((r, i) => (
+                <tr key={r.id} className="group transition hover:bg-[hsl(210_40%_96%_/_0.3)]">
+                  <Td>
+                    <Check checked={selected.has(r.id)} onClick={() => toggle(r.id)} />
+                  </Td>
+                  <Td>
+                    <Avatar name={r.name} index={pageStart + i} />
+                  </Td>
+                  <Td>
+                    <button
+                      type="button"
+                      onClick={() => onEdit(r)}
+                      className="font-medium hover:underline"
+                      style={{ color: LP_FG, textDecorationColor: LP_MUTED_FG }}
+                    >
+                      {r.name}
+                    </button>
+                  </Td>
+                  <Td>
+                    <span style={{ color: r.email ? LP_FG : LP_MUTED_FG }}>{r.email || '—'}</span>
+                  </Td>
+                  <Td>
+                    <span className="tabular-nums" style={{ color: r.phone ? LP_FG : LP_MUTED_FG }}>
+                      {r.phone || '—'}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span style={{ color: r.groupNames ? LP_FG : LP_MUTED_FG }}>
+                      {r.groupNames || '—'}
+                    </span>
+                  </Td>
+                  <Td align="right">
+                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
+                      <IconBtn onClick={() => onEdit(r)} label={t('common.edit')}>
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                      <IconBtn
+                        onClick={() => {
+                          setDeleteError(null)
+                          setPendingDelete(r)
+                        }}
+                        label={t('common.delete')}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <ListPagination
+          pageStart={pageStart}
+          pageEnd={pageEnd}
+          total={list.length}
+          page={page}
+          onPrev={() => setPage((p) => Math.max(0, p - 1))}
+          onNext={() => setPage((p) => p + 1)}
+        />
+      </ListSection>
 
       <CustomerDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
       <ImportCustomerDialog open={importOpen} onOpenChange={setImportOpen} />
-    </div>
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null)
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('common.delete')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm" style={{ color: LP_MUTED_FG }}>
+            {pendingDelete ? t('customers.confirmDelete', { name: pendingDelete.name }) : ''}
+          </p>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingDelete(null)}
+              disabled={deleteMut.isPending}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMut.isPending}
+            >
+              {deleteMut.isPending ? t('common.saving') : t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </ListPageShell>
   )
 }
+

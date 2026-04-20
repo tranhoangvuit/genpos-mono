@@ -1,14 +1,45 @@
 import { ConnectError } from '@connectrpc/connect'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, UserCog } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/shared/ui/button'
-import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui/dialog'
+import {
+  AllTab,
+  Avatar,
+  Check,
+  DeleteBanner,
+  IconBtn,
+  LP_FG,
+  LP_MUTED_FG,
+  ListHeader,
+  ListPageShell,
+  ListPagination,
+  ListSection,
+  PrimaryBtn,
+  Td,
+  Th,
+} from '@/shared/ui/list-page'
 
 import { MemberDialog } from './MemberDialog'
 import { useDeleteMember, useMembers } from './hooks'
 import type { MemberRow } from './types'
+
+const PAGE_SIZE = 15
+
+function statusLabel(t: (k: string) => string, status: string): string {
+  if (status === 'active') return t('members.statusActive')
+  if (status === 'inactive') return t('members.statusInactive')
+  if (status === 'suspended') return t('members.statusSuspended')
+  return status || '—'
+}
 
 export function MembersPage() {
   const { t } = useTranslation()
@@ -18,117 +49,218 @@ export function MembersPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<MemberRow | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<MemberRow | null>(null)
+  const [page, setPage] = useState(0)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
-  const onEdit = (r: MemberRow) => {
-    setEditing(r)
-    setDialogOpen(true)
+  const list = members ?? []
+
+  const pageStart = page * PAGE_SIZE
+  const pageRows = list.slice(pageStart, pageStart + PAGE_SIZE)
+  const pageEnd = pageStart + pageRows.length
+  const allSelectedOnPage =
+    pageRows.length > 0 && pageRows.every((r) => selected.has(r.id))
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+  function toggleAll() {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (allSelectedOnPage) pageRows.forEach((r) => next.delete(r.id))
+      else pageRows.forEach((r) => next.add(r.id))
+      return next
+    })
   }
 
-  const onDelete = async (r: MemberRow) => {
-    if (!confirm(t('members.confirmDelete', { name: r.name }))) return
-    setDeleteError(null)
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
     try {
-      await deleteMut.mutateAsync(r.id)
+      await deleteMut.mutateAsync(pendingDelete.id)
+      setPendingDelete(null)
     } catch (err) {
       setDeleteError(ConnectError.from(err).rawMessage)
+      setPendingDelete(null)
     }
   }
 
-  const columns: DataTableColumn<MemberRow>[] = [
-    {
-      id: 'name',
-      header: t('members.name'),
-      cell: (r) => <span className="font-medium">{r.name}</span>,
-    },
-    {
-      id: 'email',
-      header: t('members.email'),
-      cell: (r) => r.email || '—',
-      headerClassName: 'w-64',
-    },
-    {
-      id: 'phone',
-      header: t('members.phone'),
-      cell: (r) => r.phone || '—',
-      headerClassName: 'w-40',
-    },
-    {
-      id: 'role',
-      header: t('members.role'),
-      cell: (r) => r.roleName,
-      headerClassName: 'w-32',
-    },
-    {
-      id: 'status',
-      header: t('members.status'),
-      cell: (r) => statusLabel(t, r.status),
-      headerClassName: 'w-28',
-    },
-    {
-      id: 'actions',
-      header: '',
-      headerClassName: 'w-24',
-      cell: (r) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(r)} aria-label={t('common.edit')}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(r)}
-            disabled={deleteMut.isPending}
-            aria-label={t('common.delete')}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ]
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('nav.members')}</h1>
-          <p className="text-sm text-[color:var(--color-muted-foreground)]">
-            {t('members.subtitle')}
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditing(null)
-            setDialogOpen(true)
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          {t('members.newMember')}
-        </Button>
-      </div>
-
-      {deleteError && (
-        <div className="rounded-md border border-[color:var(--color-destructive)]/30 bg-[color:var(--color-destructive)]/10 px-3 py-2 text-sm text-[color:var(--color-destructive)]">
-          {deleteError}
-        </div>
-      )}
-
-      <DataTable
-        columns={columns}
-        data={members ?? []}
-        isLoading={isLoading}
-        rowKey={(r) => r.id}
-        emptyMessage={t('members.noMembers')}
+    <ListPageShell>
+      <ListHeader
+        icon={<UserCog className="h-[18px] w-[18px]" strokeWidth={2} />}
+        title={t('nav.members')}
+        count={list.length}
+        actions={
+          <PrimaryBtn
+            onClick={() => {
+              setEditing(null)
+              setDialogOpen(true)
+            }}
+          >
+            {t('members.newMember')}
+          </PrimaryBtn>
+        }
       />
 
-      <MemberDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
-    </div>
-  )
-}
+      <DeleteBanner message={deleteError} />
 
-function statusLabel(t: (k: string) => string, status: string): string {
-  if (status === 'active') return t('members.statusActive')
-  if (status === 'inactive') return t('members.statusInactive')
-  if (status === 'suspended') return t('members.statusSuspended')
-  return status || '—'
+      <ListSection>
+        <AllTab count={list.length} />
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full border-collapse" style={{ minWidth: 980 }}>
+            <colgroup>
+              <col style={{ width: 44 }} />
+              <col style={{ width: 48 }} />
+              <col />
+              <col style={{ width: 240 }} />
+              <col style={{ width: 160 }} />
+              <col style={{ width: 140 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 88 }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <Th>
+                  <Check checked={allSelectedOnPage} onClick={toggleAll} />
+                </Th>
+                <Th />
+                <Th>{t('members.name')}</Th>
+                <Th>{t('members.email')}</Th>
+                <Th>{t('members.phone')}</Th>
+                <Th>{t('members.role')}</Th>
+                <Th>{t('members.status')}</Th>
+                <Th />
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('common.loading')}
+                  </td>
+                </tr>
+              )}
+              {!isLoading && pageRows.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
+                    {t('members.noMembers')}
+                  </td>
+                </tr>
+              )}
+              {pageRows.map((r, i) => (
+                <tr key={r.id} className="group transition hover:bg-[hsl(210_40%_96%_/_0.3)]">
+                  <Td>
+                    <Check checked={selected.has(r.id)} onClick={() => toggle(r.id)} />
+                  </Td>
+                  <Td>
+                    <Avatar name={r.name} index={pageStart + i} />
+                  </Td>
+                  <Td>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(r)
+                        setDialogOpen(true)
+                      }}
+                      className="font-medium hover:underline"
+                      style={{ color: LP_FG, textDecorationColor: LP_MUTED_FG }}
+                    >
+                      {r.name}
+                    </button>
+                  </Td>
+                  <Td>
+                    <span style={{ color: r.email ? LP_FG : LP_MUTED_FG }}>{r.email || '—'}</span>
+                  </Td>
+                  <Td>
+                    <span className="tabular-nums" style={{ color: r.phone ? LP_FG : LP_MUTED_FG }}>
+                      {r.phone || '—'}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span style={{ color: LP_FG }}>{r.roleName}</span>
+                  </Td>
+                  <Td>
+                    <span style={{ color: LP_MUTED_FG }}>{statusLabel(t, r.status)}</span>
+                  </Td>
+                  <Td align="right">
+                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
+                      <IconBtn
+                        onClick={() => {
+                          setEditing(r)
+                          setDialogOpen(true)
+                        }}
+                        label={t('common.edit')}
+                      >
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                      <IconBtn
+                        onClick={() => {
+                          setDeleteError(null)
+                          setPendingDelete(r)
+                        }}
+                        label={t('common.delete')}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                      </IconBtn>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <ListPagination
+          pageStart={pageStart}
+          pageEnd={pageEnd}
+          total={list.length}
+          page={page}
+          onPrev={() => setPage((p) => Math.max(0, p - 1))}
+          onNext={() => setPage((p) => p + 1)}
+        />
+      </ListSection>
+
+      <MemberDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null)
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('common.delete')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm" style={{ color: LP_MUTED_FG }}>
+            {pendingDelete ? t('members.confirmDelete', { name: pendingDelete.name }) : ''}
+          </p>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingDelete(null)}
+              disabled={deleteMut.isPending}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMut.isPending}
+            >
+              {deleteMut.isPending ? t('common.saving') : t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </ListPageShell>
+  )
 }
