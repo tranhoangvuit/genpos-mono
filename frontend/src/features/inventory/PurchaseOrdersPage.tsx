@@ -172,7 +172,7 @@ export function PurchaseOrdersPage() {
   }
 
   return (
-    <div className="-m-6 p-6" style={{ maxWidth: 1600 }}>
+    <div className="mx-auto -my-6 py-6" style={{ maxWidth: 1600 }}>
       <div className="mb-[18px] flex items-center justify-between">
         <h1 className="m-0 flex items-center gap-2.5 text-[20px] font-semibold tracking-[-0.005em]">
           <CalendarCheck className="h-[18px] w-[18px]" strokeWidth={2} />
