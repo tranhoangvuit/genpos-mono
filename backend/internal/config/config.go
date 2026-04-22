@@ -29,7 +29,7 @@ type AuthConfig struct {
 	RefreshTTLShort time.Duration `envconfig:"REFRESH_TTL_SHORT" default:"24h"`
 	CookieDomain    string        `envconfig:"COOKIE_DOMAIN" default:""`
 	CookieSecure    bool          `envconfig:"COOKIE_SECURE" default:"false"`
-	FrontendOrigin  string        `envconfig:"FRONTEND_ORIGIN" default:"http://localhost:3032"`
+	FrontendOrigins []string      `envconfig:"FRONTEND_ORIGINS" default:"http://localhost:3032,http://localhost:1420,tauri://localhost,http://tauri.localhost,https://tauri.localhost"`
 }
 
 // PowerSyncConfig holds PowerSync JWT bridge settings.

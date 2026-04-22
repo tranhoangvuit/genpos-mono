@@ -79,19 +79,28 @@ func (a *App) NewHTTPHandler() http.Handler {
 	memPath, memHTTP := genposv1connect.NewMemberServiceHandler(a.MemberHandler, interceptors)
 	mux.Handle(memPath, memHTTP)
 
-	return withCORS(a.Config.Auth.FrontendOrigin, mux)
+	return withCORS(a.Config.Auth.FrontendOrigins, mux)
 }
 
-func withCORS(origin string, h http.Handler) http.Handler {
+func withCORS(origins []string, h http.Handler) http.Handler {
+	allowed := make(map[string]struct{}, len(origins))
+	for _, o := range origins {
+		if o != "" {
+			allowed[o] = struct{}{}
+		}
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set(
-			"Access-Control-Allow-Headers",
-			"Content-Type, Connect-Protocol-Version, Connect-Timeout-Ms, X-User-Agent",
-		)
-		w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
+		origin := r.Header.Get("Origin")
+		if _, ok := allowed[origin]; ok {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set(
+				"Access-Control-Allow-Headers",
+				"Content-Type, Connect-Protocol-Version, Connect-Timeout-Ms, X-User-Agent",
+			)
+			w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
+		}
 		w.Header().Set("Vary", "Origin")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)

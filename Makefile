@@ -12,7 +12,7 @@ infra-logs:
 
 # Backend
 backend:
-	cd backend && go run ./cmd/server/
+	cd backend && POWERSYNC_ENDPOINT=http://localhost:3034 go run ./cmd/server/
 
 proto:
 	cd backend && buf generate
@@ -23,6 +23,16 @@ frontend:
 
 frontend-install:
 	cd frontend && pnpm install
+
+# Desk (Tauri app)
+desk:
+	cd genpos-desk && pnpm tauri dev
+
+desk-install:
+	cd genpos-desk && pnpm install
+
+desk-proto:
+	cd genpos-desk && pnpm run buf:generate
 
 # Dev: run backend + frontend (requires separate terminals)
 dev:

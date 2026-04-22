@@ -64,7 +64,7 @@ services:
       SERVER_PORT: 3031
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      AUTH_FRONTEND_ORIGIN: http://localhost:3032
+      AUTH_FRONTEND_ORIGINS: http://localhost:3032,http://localhost:1420,tauri://localhost,http://tauri.localhost,https://tauri.localhost
     volumes:
       - ./backend:/app
       - backend_tmp:/app/tmp
