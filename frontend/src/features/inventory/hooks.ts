@@ -1,3 +1,4 @@
+import { useQuery as usePowerSyncQuery } from '@powersync/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
@@ -113,6 +114,35 @@ export function usePurchaseOrder(id: string | undefined) {
       return res.purchaseOrder
     },
   })
+}
+
+export type StockTakeRow = {
+  id: string
+  status: string
+  store_id: string
+  notes: string | null
+  created_at: string
+}
+
+export function useStockTakeRow(id: string | undefined) {
+  return usePowerSyncQuery<StockTakeRow>(
+    'SELECT id, status, store_id, notes, created_at FROM stock_takes WHERE id = ? LIMIT 1',
+    [id ?? ''],
+  )
+}
+
+export type StockTakeItemRow = {
+  id: string
+  variant_id: string
+  expected_qty: string
+  counted_qty: string
+}
+
+export function useStockTakeItems(id: string | undefined) {
+  return usePowerSyncQuery<StockTakeItemRow>(
+    'SELECT id, variant_id, expected_qty, counted_qty FROM stock_take_items WHERE stock_take_id = ? ORDER BY created_at ASC',
+    [id ?? ''],
+  )
 }
 
 export function useStockTake(id: string | undefined) {
