@@ -18,8 +18,15 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/.output .output
+RUN npm install -g pnpm
 
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
+
+COPY --from=builder /app/dist ./dist
+COPY server.mjs ./server.mjs
+
+ENV PORT=3032
 EXPOSE 3032
 
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "server.mjs"]
