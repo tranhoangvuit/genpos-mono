@@ -1,0 +1,147 @@
+name: genpos-prod
+
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-genpos}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=8
+      - -c
+      - max_wal_senders=8
+      - -c
+      - max_connections=200
+    ports:
+      - "${POSTGRES_PORT:-127.0.0.1:5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-genpos}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-127.0.0.1:6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # One-shot: applies SQL migrations bundled inside the backend image at /migrations.
+  migrate:
+    image: ${BACKEND_IMAGE:-ghcr.io/genpick/genpos-backend}:${BACKEND_TAG:-latest}
+    restart: "no"
+    entrypoint: ["/usr/local/bin/atlas"]
+    command:
+      - migrate
+      - apply
+      - --url
+      - postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-genpos}?sslmode=disable
+      - --dir
+      - file:///migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  powersync:
+    image: journeyapps/powersync-service:${POWERSYNC_VERSION:-1.14.0}
+    restart: always
+    expose:
+      - "8080"
+    environment:
+      POSTGRES_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-genpos}
+      POWERSYNC_JWT_SECRET_B64: ${POWERSYNC_JWT_SECRET_B64}
+      POWERSYNC_AUDIENCE: ${POWERSYNC_AUDIENCE:-powersync-prod}
+      POWERSYNC_API_TOKEN: ${POWERSYNC_API_TOKEN}
+    volumes:
+      - ./powersync.yaml:/config/powersync.yaml:ro
+      - ./sync-rules.yaml:/config/sync-rules.yaml:ro
+    command: ["start", "-c", "/config/powersync.yaml"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/genpick/genpos-backend}:${BACKEND_TAG:-latest}
+    restart: always
+    expose:
+      - "3031"
+    environment:
+      ENV: prod
+      SERVICE_NAME: genpos
+      SERVER_PORT: 3031
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_DATABASE: ${POSTGRES_DB:-genpos}
+      DATABASE_SSL_MODE: disable
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
+      AUTH_ACCESS_TTL: ${AUTH_ACCESS_TTL:-15m}
+      AUTH_REFRESH_TTL_LONG: ${AUTH_REFRESH_TTL_LONG:-720h}
+      AUTH_REFRESH_TTL_SHORT: ${AUTH_REFRESH_TTL_SHORT:-24h}
+      AUTH_COOKIE_DOMAIN: ${AUTH_COOKIE_DOMAIN}
+      AUTH_COOKIE_SECURE: "true"
+      AUTH_FRONTEND_ORIGINS: ${AUTH_FRONTEND_ORIGINS}
+      POWERSYNC_JWT_SECRET: ${POWERSYNC_JWT_SECRET}
+      POWERSYNC_AUDIENCE: ${POWERSYNC_AUDIENCE:-powersync-prod}
+      POWERSYNC_ENDPOINT: ${POWERSYNC_PUBLIC_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/genpick/genpos-frontend}:${FRONTEND_TAG:-latest}
+    restart: always
+    expose:
+      - "3032"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - backend
+
+  caddy:
+    build:
+      context: ./caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    environment:
+      CF_API_TOKEN: ${CF_API_TOKEN:-}    # only needed for Caddyfile option C
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/etc/caddy/certs:ro      # only needed for option A
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - frontend
+      - powersync
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:

@@ -1,16 +1,30 @@
 FROM golang:1.25-alpine AS builder
 
+ARG TARGETARCH
+
 WORKDIR /app
+
+RUN apk add --no-cache curl ca-certificates
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o /server ./cmd/server/
+RUN go build -ldflags="-s -w" -o /server ./cmd/server/
+
+# Atlas binary for migrations.
+RUN curl -fsSL -o /usr/local/bin/atlas \
+      "https://release.ariga.io/atlas/atlas-community-linux-${TARGETARCH}-latest" \
+    && chmod +x /usr/local/bin/atlas \
+    && /usr/local/bin/atlas version
 
 FROM alpine:3.21
 
+RUN apk add --no-cache ca-certificates
+
 COPY --from=builder /server /server
+COPY --from=builder /usr/local/bin/atlas /usr/local/bin/atlas
+COPY database/migrations /migrations
 
 EXPOSE 3031
 

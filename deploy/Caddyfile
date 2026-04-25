@@ -1,0 +1,58 @@
+# GenPOS Caddy config — single domain, path-based routing.
+#   /          → frontend (TanStack Start SSR)
+#   /api/*     → backend  (Connect-RPC, prefix stripped)
+#   /sync/*    → powersync (prefix stripped)
+#
+# Pick ONE TLS option below by uncommenting its (tls_config) block.
+# Delete the other two.
+
+# ─────────────────────────────────────────────────────────────
+# OPTION A — Cloudflare proxy ON + Origin Certificate
+# Place origin.pem / origin.key in deploy/certs/ before starting.
+# ─────────────────────────────────────────────────────────────
+(tls_config) {
+  tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key
+}
+
+# ─────────────────────────────────────────────────────────────
+# OPTION B — Cloudflare DNS-only (grey cloud) + Let's Encrypt HTTP-01
+# Caddy auto-issues. Make sure ports 80/443 reachable on origin.
+# ─────────────────────────────────────────────────────────────
+# (tls_config) { }
+
+# ─────────────────────────────────────────────────────────────
+# OPTION C — Cloudflare proxy ON + Let's Encrypt DNS-01
+# Set CF_API_TOKEN in deploy/.env (Zone:DNS:Edit on your zone).
+# ─────────────────────────────────────────────────────────────
+# (tls_config) {
+#   tls {
+#     dns cloudflare {env.CF_API_TOKEN}
+#   }
+# }
+
+pos.genpick.com {
+  import tls_config
+  encode zstd gzip
+
+  # /api/* → backend, prefix stripped so backend sees the original Connect-RPC path.
+  handle_path /api/* {
+    reverse_proxy backend:3031 {
+      flush_interval -1
+    }
+  }
+
+  # /sync/* → powersync, prefix stripped. PowerSync SDK calls
+  # `<base>/sync/stream` — combined with base "/sync" the request becomes
+  # /sync/sync/stream, then `handle_path` strips /sync → /sync/stream at the
+  # service (which is the path PowerSync expects).
+  handle_path /sync/* {
+    reverse_proxy powersync:8080 {
+      flush_interval -1
+    }
+  }
+
+  # Everything else → frontend SSR.
+  handle {
+    reverse_proxy frontend:3032
+  }
+}

@@ -1,0 +1,4 @@
+# Place Cloudflare Origin Certificate here for Caddyfile option A:
+#   origin.pem  (full chain)
+#   origin.key  (private key, chmod 600)
+# These are gitignored.

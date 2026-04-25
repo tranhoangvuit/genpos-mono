@@ -1,0 +1,38 @@
+# Production PowerSync config — values pulled from container env.
+replication:
+  connections:
+    - type: postgresql
+      uri: !env POSTGRES_URI
+      sslmode: disable
+
+storage:
+  type: postgresql
+  uri: !env POSTGRES_URI
+  sslmode: disable
+
+port: 8080
+
+sync_rules:
+  path: /config/sync-rules.yaml
+
+# JWT must match backend POWERSYNC_JWT_SECRET (HS256).
+# Provide POWERSYNC_JWT_SECRET_B64 — base64(POWERSYNC_JWT_SECRET).
+client_auth:
+  jwks:
+    keys:
+      - kty: oct
+        k: !env POWERSYNC_JWT_SECRET_B64
+        alg: HS256
+  audience:
+    - !env POWERSYNC_AUDIENCE
+
+api:
+  tokens:
+    - !env POWERSYNC_API_TOKEN
+
+telemetry:
+  disable_telemetry_sharing: true
+
+system:
+  logging:
+    level: info
