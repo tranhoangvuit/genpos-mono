@@ -30,9 +30,36 @@ type PreviewState = {
   overrides: Set<number>
 }
 
+const SAMPLE_HEADER =
+  'Title,Description,Status,SKU,Barcode,Option1 name,Option1 value,Option2 name,Option2 value,Option3 name,Option3 value,Price,Cost price,Inventory quantity'
+
 const SAMPLE_CSV =
-  'name,category,description,sku,barcode,price,cost_price,is_active\n' +
-  'Sample Product,Drinks,A sample,SP-001,,9.99,4.50,true\n'
+  SAMPLE_HEADER +
+  '\n' +
+  'Basic Tee,Plain cotton tee,Active,TEE-S,,Size,S,,,,,19.99,8.00,\n' +
+  'Basic Tee,Plain cotton tee,Active,TEE-M,,Size,M,,,,,19.99,8.00,\n' +
+  'Basic Tee,Plain cotton tee,Active,TEE-L,,Size,L,,,,,19.99,8.00,\n' +
+  'Water Bottle,,Active,WB-001,,,,,,,,9.50,4.00,\n'
+
+function summarizeVariants(row: CsvProductRow): string {
+  const axes = new Set<string>()
+  for (const v of row.variants) {
+    if (v.option1Name) axes.add(v.option1Name)
+    if (v.option2Name) axes.add(v.option2Name)
+    if (v.option3Name) axes.add(v.option3Name)
+  }
+  const axisPart = axes.size === 0 ? '' : ` (${[...axes].join(', ')})`
+  return `${row.variants.length}${axisPart}`
+}
+
+function priceRange(row: CsvProductRow): string {
+  const prices = row.variants
+    .map((v) => v.price.trim())
+    .filter((p) => p !== '')
+  if (prices.length === 0) return ''
+  if (prices.every((p) => p === prices[0])) return prices[0]
+  return `${prices[0]} – ${prices[prices.length - 1]}`
+}
 
 export function ImportProductDialog({ open, onOpenChange }: Props) {
   const { t } = useTranslation()
@@ -197,8 +224,9 @@ export function ImportProductDialog({ open, onOpenChange }: Props) {
                 <thead className="bg-[color:var(--color-muted)]/40 text-[color:var(--color-muted-foreground)]">
                   <tr>
                     <th className="px-2 py-2 text-left">{t('catalog.name')}</th>
-                    <th className="px-2 py-2 text-left">{t('catalog.category')}</th>
-                    <th className="px-2 py-2 text-left">{t('catalog.sku')}</th>
+                    <th className="px-2 py-2 text-left">
+                      {t('catalog.variants')}
+                    </th>
                     <th className="px-2 py-2 text-left">{t('catalog.price')}</th>
                     <th className="px-2 py-2 text-left">{t('catalog.status')}</th>
                     <th className="px-2 py-2 text-left">
@@ -208,12 +236,20 @@ export function ImportProductDialog({ open, onOpenChange }: Props) {
                 </thead>
                 <tbody className="divide-y divide-[color:var(--color-border)]">
                   {preview.rows.map((r, i) => (
-                    <tr key={i} className={r.errors.length > 0 ? 'bg-[color:var(--color-destructive)]/5' : ''}>
-                      <td className="px-2 py-1">{r.name}</td>
-                      <td className="px-2 py-1">{r.categoryName}</td>
-                      <td className="px-2 py-1">{r.sku}</td>
-                      <td className="px-2 py-1">{r.price}</td>
-                      <td className="px-2 py-1">
+                    <tr
+                      key={i}
+                      className={
+                        r.errors.length > 0
+                          ? 'bg-[color:var(--color-destructive)]/5'
+                          : ''
+                      }
+                    >
+                      <td className="px-2 py-1 align-top">{r.name}</td>
+                      <td className="px-2 py-1 align-top">
+                        {summarizeVariants(r)}
+                      </td>
+                      <td className="px-2 py-1 align-top">{priceRange(r)}</td>
+                      <td className="px-2 py-1 align-top">
                         {r.errors.length > 0 ? (
                           <span className="text-[color:var(--color-destructive)]">
                             {r.errors.join(', ')}
@@ -228,7 +264,7 @@ export function ImportProductDialog({ open, onOpenChange }: Props) {
                           </span>
                         )}
                       </td>
-                      <td className="px-2 py-1">
+                      <td className="px-2 py-1 align-top">
                         {r.exists && r.errors.length === 0 && (
                           <Checkbox
                             checked={preview.overrides.has(i)}

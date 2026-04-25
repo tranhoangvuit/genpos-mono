@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"time"
 
 	"github.com/genpick/genpos-mono/backend/internal/domain/entity"
 )
@@ -11,19 +12,35 @@ import (
 // ----- Customer --------------------------------------------------------------
 
 type CreateCustomerParams struct {
-	OrgID string
-	Name  string
-	Email string
-	Phone string
-	Notes string
+	OrgID       string
+	Name        string
+	Email       string
+	Phone       string
+	Notes       string
+	Code        string
+	Address     string
+	Company     string
+	TaxCode     string
+	DateOfBirth time.Time
+	Gender      string
+	Facebook    string
+	IsActive    bool
 }
 
 type UpdateCustomerParams struct {
-	ID    string
-	Name  string
-	Email string
-	Phone string
-	Notes string
+	ID          string
+	Name        string
+	Email       string
+	Phone       string
+	Notes       string
+	Code        string
+	Address     string
+	Company     string
+	TaxCode     string
+	DateOfBirth time.Time
+	Gender      string
+	Facebook    string
+	IsActive    bool
 }
 
 // CustomerReader fetches customers.
@@ -31,6 +48,7 @@ type CustomerReader interface {
 	GetByID(ctx context.Context, id string) (*entity.Customer, error)
 	GetByEmail(ctx context.Context, email string) (*entity.Customer, error)
 	GetByPhone(ctx context.Context, phone string) (*entity.Customer, error)
+	GetByCode(ctx context.Context, orgID, code string) (*entity.Customer, error)
 	ListGroupIDsByCustomer(ctx context.Context, customerID string) ([]string, error)
 	ListSummaries(ctx context.Context) ([]*entity.CustomerListItem, error)
 }

@@ -1,13 +1,23 @@
 package input
 
+import "time"
+
 // Customer inputs ----------------------------------------------------------
 
 type CustomerInput struct {
-	Name     string
-	Email    string
-	Phone    string
-	Notes    string
-	GroupIDs []string
+	Name        string
+	Email       string
+	Phone       string
+	Notes       string
+	GroupIDs    []string
+	Code        string
+	Address     string
+	Company     string
+	TaxCode     string
+	DateOfBirth time.Time // zero = unset
+	Gender      string
+	Facebook    string
+	IsActive    bool
 }
 
 type CreateCustomerInput struct {
@@ -64,14 +74,22 @@ type ParseImportCustomerCsvInput struct {
 }
 
 type CsvCustomerRow struct {
-	Name       string
-	Email      string
-	Phone      string
-	Notes      string
-	Groups     string // comma-separated group names
-	Errors     []string
-	Exists     bool
-	ExistingID string
+	Name        string
+	Email       string
+	Phone       string
+	Notes       string
+	Groups      string // comma-separated group names
+	Errors      []string
+	Exists      bool
+	ExistingID  string
+	Code        string
+	Address     string
+	Company     string
+	TaxCode     string
+	DateOfBirth string // YYYY-MM-DD, preserved as string for round-trip
+	Gender      string
+	Facebook    string
+	Status      string // "", "active", "inactive"
 }
 
 type ParseImportCustomerCsvResult struct {

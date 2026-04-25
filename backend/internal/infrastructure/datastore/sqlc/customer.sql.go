@@ -12,29 +12,54 @@ import (
 )
 
 const createCustomer = `-- name: CreateCustomer :one
-INSERT INTO customers (org_id, name, email, phone, notes)
-VALUES ($1, $2, $3,
-        $4, $5)
-RETURNING id, org_id, name, email, phone, notes, created_at, updated_at
+INSERT INTO customers (
+    org_id, name, email, phone, notes,
+    code, address, company, tax_code, date_of_birth, gender, facebook, is_active
+) VALUES (
+    $1, $2, $3,
+    $4, $5,
+    $6, $7, $8,
+    $9, $10,
+    $11, $12, $13
+)
+RETURNING id, org_id, name, email, phone, notes,
+          code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+          created_at, updated_at
 `
 
 type CreateCustomerParams struct {
-	OrgID pgtype.UUID `json:"org_id"`
-	Name  string      `json:"name"`
-	Email pgtype.Text `json:"email"`
-	Phone pgtype.Text `json:"phone"`
-	Notes pgtype.Text `json:"notes"`
+	OrgID       pgtype.UUID `json:"org_id"`
+	Name        string      `json:"name"`
+	Email       pgtype.Text `json:"email"`
+	Phone       pgtype.Text `json:"phone"`
+	Notes       pgtype.Text `json:"notes"`
+	Code        pgtype.Text `json:"code"`
+	Address     pgtype.Text `json:"address"`
+	Company     pgtype.Text `json:"company"`
+	TaxCode     pgtype.Text `json:"tax_code"`
+	DateOfBirth pgtype.Date `json:"date_of_birth"`
+	Gender      pgtype.Text `json:"gender"`
+	Facebook    pgtype.Text `json:"facebook"`
+	IsActive    bool        `json:"is_active"`
 }
 
 type CreateCustomerRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (CreateCustomerRow, error) {
@@ -44,6 +69,14 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 		arg.Email,
 		arg.Phone,
 		arg.Notes,
+		arg.Code,
+		arg.Address,
+		arg.Company,
+		arg.TaxCode,
+		arg.DateOfBirth,
+		arg.Gender,
+		arg.Facebook,
+		arg.IsActive,
 	)
 	var i CreateCustomerRow
 	err := row.Scan(
@@ -53,6 +86,14 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 		&i.Email,
 		&i.Phone,
 		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -69,22 +110,89 @@ func (q *Queries) DeleteCustomerGroupMembersByCustomer(ctx context.Context, cust
 	return err
 }
 
+const getCustomerByCode = `-- name: GetCustomerByCode :one
+SELECT id, org_id, name, email, phone, notes,
+       code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+       created_at, updated_at
+FROM customers
+WHERE org_id = $1 AND code = $2 AND deleted_at IS NULL
+LIMIT 1
+`
+
+type GetCustomerByCodeParams struct {
+	OrgID pgtype.UUID `json:"org_id"`
+	Code  pgtype.Text `json:"code"`
+}
+
+type GetCustomerByCodeRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) GetCustomerByCode(ctx context.Context, arg GetCustomerByCodeParams) (GetCustomerByCodeRow, error) {
+	row := q.db.QueryRow(ctx, getCustomerByCode, arg.OrgID, arg.Code)
+	var i GetCustomerByCodeRow
+	err := row.Scan(
+		&i.ID,
+		&i.OrgID,
+		&i.Name,
+		&i.Email,
+		&i.Phone,
+		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getCustomerByEmail = `-- name: GetCustomerByEmail :one
-SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+SELECT id, org_id, name, email, phone, notes,
+       code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+       created_at, updated_at
 FROM customers
 WHERE email = $1 AND deleted_at IS NULL
 LIMIT 1
 `
 
 type GetCustomerByEmailRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 func (q *Queries) GetCustomerByEmail(ctx context.Context, email pgtype.Text) (GetCustomerByEmailRow, error) {
@@ -97,6 +205,14 @@ func (q *Queries) GetCustomerByEmail(ctx context.Context, email pgtype.Text) (Ge
 		&i.Email,
 		&i.Phone,
 		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -104,20 +220,30 @@ func (q *Queries) GetCustomerByEmail(ctx context.Context, email pgtype.Text) (Ge
 }
 
 const getCustomerByID = `-- name: GetCustomerByID :one
-SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+SELECT id, org_id, name, email, phone, notes,
+       code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+       created_at, updated_at
 FROM customers
 WHERE id = $1 AND deleted_at IS NULL
 `
 
 type GetCustomerByIDRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 func (q *Queries) GetCustomerByID(ctx context.Context, id pgtype.UUID) (GetCustomerByIDRow, error) {
@@ -130,6 +256,14 @@ func (q *Queries) GetCustomerByID(ctx context.Context, id pgtype.UUID) (GetCusto
 		&i.Email,
 		&i.Phone,
 		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -137,21 +271,31 @@ func (q *Queries) GetCustomerByID(ctx context.Context, id pgtype.UUID) (GetCusto
 }
 
 const getCustomerByPhone = `-- name: GetCustomerByPhone :one
-SELECT id, org_id, name, email, phone, notes, created_at, updated_at
+SELECT id, org_id, name, email, phone, notes,
+       code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+       created_at, updated_at
 FROM customers
 WHERE phone = $1 AND deleted_at IS NULL
 LIMIT 1
 `
 
 type GetCustomerByPhoneRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 func (q *Queries) GetCustomerByPhone(ctx context.Context, phone pgtype.Text) (GetCustomerByPhoneRow, error) {
@@ -164,6 +308,14 @@ func (q *Queries) GetCustomerByPhone(ctx context.Context, phone pgtype.Text) (Ge
 		&i.Email,
 		&i.Phone,
 		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -224,6 +376,9 @@ SELECT c.id,
        c.name,
        c.email,
        c.phone,
+       c.code,
+       c.company,
+       c.is_active,
        COALESCE(STRING_AGG(g.name, ', ' ORDER BY g.name), '') AS group_names
 FROM customers c
 LEFT JOIN customer_group_members m
@@ -231,7 +386,7 @@ LEFT JOIN customer_group_members m
 LEFT JOIN customer_groups g
        ON g.id = m.group_id AND g.deleted_at IS NULL
 WHERE c.deleted_at IS NULL
-GROUP BY c.id, c.name, c.email, c.phone, c.created_at
+GROUP BY c.id, c.name, c.email, c.phone, c.code, c.company, c.is_active, c.created_at
 ORDER BY c.name ASC
 `
 
@@ -240,6 +395,9 @@ type ListCustomerSummariesRow struct {
 	Name       string      `json:"name"`
 	Email      pgtype.Text `json:"email"`
 	Phone      pgtype.Text `json:"phone"`
+	Code       pgtype.Text `json:"code"`
+	Company    pgtype.Text `json:"company"`
+	IsActive   bool        `json:"is_active"`
 	GroupNames interface{} `json:"group_names"`
 }
 
@@ -257,6 +415,9 @@ func (q *Queries) ListCustomerSummaries(ctx context.Context) ([]ListCustomerSumm
 			&i.Name,
 			&i.Email,
 			&i.Phone,
+			&i.Code,
+			&i.Company,
+			&i.IsActive,
 			&i.GroupNames,
 		); err != nil {
 			return nil, err
@@ -282,32 +443,58 @@ func (q *Queries) SoftDeleteCustomer(ctx context.Context, id pgtype.UUID) error 
 
 const updateCustomer = `-- name: UpdateCustomer :one
 UPDATE customers
-SET name       = $1,
-    email      = $2,
-    phone      = $3,
-    notes      = $4,
-    updated_at = now()
-WHERE id = $5 AND deleted_at IS NULL
-RETURNING id, org_id, name, email, phone, notes, created_at, updated_at
+SET name          = $1,
+    email         = $2,
+    phone         = $3,
+    notes         = $4,
+    code          = $5,
+    address       = $6,
+    company       = $7,
+    tax_code      = $8,
+    date_of_birth = $9,
+    gender        = $10,
+    facebook      = $11,
+    is_active     = $12,
+    updated_at    = now()
+WHERE id = $13 AND deleted_at IS NULL
+RETURNING id, org_id, name, email, phone, notes,
+          code, address, company, tax_code, date_of_birth, gender, facebook, is_active,
+          created_at, updated_at
 `
 
 type UpdateCustomerParams struct {
-	Name  string      `json:"name"`
-	Email pgtype.Text `json:"email"`
-	Phone pgtype.Text `json:"phone"`
-	Notes pgtype.Text `json:"notes"`
-	ID    pgtype.UUID `json:"id"`
+	Name        string      `json:"name"`
+	Email       pgtype.Text `json:"email"`
+	Phone       pgtype.Text `json:"phone"`
+	Notes       pgtype.Text `json:"notes"`
+	Code        pgtype.Text `json:"code"`
+	Address     pgtype.Text `json:"address"`
+	Company     pgtype.Text `json:"company"`
+	TaxCode     pgtype.Text `json:"tax_code"`
+	DateOfBirth pgtype.Date `json:"date_of_birth"`
+	Gender      pgtype.Text `json:"gender"`
+	Facebook    pgtype.Text `json:"facebook"`
+	IsActive    bool        `json:"is_active"`
+	ID          pgtype.UUID `json:"id"`
 }
 
 type UpdateCustomerRow struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (UpdateCustomerRow, error) {
@@ -316,6 +503,14 @@ func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) 
 		arg.Email,
 		arg.Phone,
 		arg.Notes,
+		arg.Code,
+		arg.Address,
+		arg.Company,
+		arg.TaxCode,
+		arg.DateOfBirth,
+		arg.Gender,
+		arg.Facebook,
+		arg.IsActive,
 		arg.ID,
 	)
 	var i UpdateCustomerRow
@@ -326,6 +521,14 @@ func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) 
 		&i.Email,
 		&i.Phone,
 		&i.Notes,
+		&i.Code,
+		&i.Address,
+		&i.Company,
+		&i.TaxCode,
+		&i.DateOfBirth,
+		&i.Gender,
+		&i.Facebook,
+		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

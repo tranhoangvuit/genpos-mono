@@ -30,9 +30,14 @@ type PreviewState = {
   overrides: Set<number>
 }
 
+const SAMPLE_HEADER =
+  'name,email,phone,code,address,company,tax_code,date_of_birth,gender,facebook,groups,notes,status'
+
 const SAMPLE_CSV =
-  'name,email,phone,notes,groups\n' +
-  'Jane Doe,jane@example.com,+84 90 123 4567,VIP customer,VIP\n'
+  SAMPLE_HEADER +
+  '\n' +
+  'Jane Doe,jane@example.com,+84 90 123 4567,C-0001,"12 Main St, D1",,,1990-01-15,female,,VIP,VIP customer,active\n' +
+  'Acme LLC,billing@acme.vn,+84 28 555 0100,C-0002,"100 Ly Thuong Kiet",Acme LLC,0312345678,,,,,"Corporate account",active\n'
 
 export function ImportCustomerDialog({ open, onOpenChange }: Props) {
   const { t } = useTranslation()
@@ -194,8 +199,9 @@ export function ImportCustomerDialog({ open, onOpenChange }: Props) {
                 <thead className="bg-[color:var(--color-muted)]/40 text-[color:var(--color-muted-foreground)]">
                   <tr>
                     <th className="px-2 py-2 text-left">{t('customers.name')}</th>
-                    <th className="px-2 py-2 text-left">{t('customers.email')}</th>
+                    <th className="px-2 py-2 text-left">Code</th>
                     <th className="px-2 py-2 text-left">{t('customers.phone')}</th>
+                    <th className="px-2 py-2 text-left">{t('customers.email')}</th>
                     <th className="px-2 py-2 text-left">{t('customers.groups')}</th>
                     <th className="px-2 py-2 text-left">{t('catalog.status')}</th>
                     <th className="px-2 py-2 text-left">{t('catalog.override')}</th>
@@ -207,9 +213,17 @@ export function ImportCustomerDialog({ open, onOpenChange }: Props) {
                       key={i}
                       className={r.errors.length > 0 ? 'bg-[color:var(--color-destructive)]/5' : ''}
                     >
-                      <td className="px-2 py-1">{r.name}</td>
-                      <td className="px-2 py-1">{r.email}</td>
+                      <td className="px-2 py-1">
+                        {r.name}
+                        {r.company ? (
+                          <span className="ml-1 text-[color:var(--color-muted-foreground)]">
+                            · {r.company}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-2 py-1">{r.code}</td>
                       <td className="px-2 py-1">{r.phone}</td>
+                      <td className="px-2 py-1">{r.email}</td>
                       <td className="px-2 py-1">{r.groups}</td>
                       <td className="px-2 py-1">
                         {r.errors.length > 0 ? (

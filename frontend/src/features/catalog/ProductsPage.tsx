@@ -145,17 +145,17 @@ export function ProductsPage() {
           </span>
         </h1>
         <div className="flex gap-2">
-          <MoreBtn icon={<Download className="h-3.5 w-3.5" />}>Export</MoreBtn>
+          {/* <MoreBtn icon={<Download className="h-3.5 w-3.5" />}>Export</MoreBtn> */}
           <MoreBtn
             icon={<Upload className="h-3.5 w-3.5" />}
             onClick={() => setImportOpen(true)}
           >
             {t('catalog.importProducts')}
           </MoreBtn>
-          <MoreBtn>
+          {/* <MoreBtn>
             More actions
             <ChevronDown className="h-3.5 w-3.5" style={{ color: MUTED_FG }} />
-          </MoreBtn>
+          </MoreBtn> */}
           <Link
             to="/$subdomain/products/new"
             params={{ subdomain }}
@@ -174,7 +174,7 @@ export function ProductsPage() {
         </div>
       </div>
 
-      <section
+      {/* <section
         className="mb-4 grid grid-cols-[auto_repeat(3,1fr)] rounded-lg border bg-white p-0.5"
         style={{ borderColor: BORDER }}
       >
@@ -220,7 +220,7 @@ export function ProductsPage() {
             </span>
           </div>
         </KpiCell>
-      </section>
+      </section> */}
 
       <section
         className="overflow-hidden rounded-lg border bg-white"
@@ -231,7 +231,7 @@ export function ProductsPage() {
           style={{ borderColor: BORDER }}
         >
           <div className="flex items-center gap-0.5">
-            {(['all', 'active', 'draft', 'archived'] as TabKey[]).map((k) => (
+            {(['all', 'active', 'archived'] as TabKey[]).map((k) => (
               <button
                 key={k}
                 type="button"

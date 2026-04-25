@@ -65,6 +65,22 @@ func timestampTime(t pgtype.Timestamptz) time.Time {
 	return t.Time
 }
 
+// dateOrNull converts a Go time to pgtype.Date (date-only), zero time = NULL.
+func dateOrNull(t time.Time) pgtype.Date {
+	if t.IsZero() {
+		return pgtype.Date{Valid: false}
+	}
+	return pgtype.Date{Time: t, Valid: true}
+}
+
+// dateTime extracts a time.Time from pgtype.Date (zero if NULL).
+func dateTime(d pgtype.Date) time.Time {
+	if !d.Valid {
+		return time.Time{}
+	}
+	return d.Time
+}
+
 // numericToString renders a pgtype.Numeric as a decimal string.
 func numericToString(n pgtype.Numeric) string {
 	if !n.Valid {

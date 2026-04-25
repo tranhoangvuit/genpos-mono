@@ -35,6 +35,7 @@ type Querier interface {
 	DeletePurchaseOrderItemsByPO(ctx context.Context, purchaseOrderID pgtype.UUID) error
 	GetCategoryByID(ctx context.Context, id pgtype.UUID) (GetCategoryByIDRow, error)
 	GetCategoryByName(ctx context.Context, name string) (GetCategoryByNameRow, error)
+	GetCustomerByCode(ctx context.Context, arg GetCustomerByCodeParams) (GetCustomerByCodeRow, error)
 	GetCustomerByEmail(ctx context.Context, email pgtype.Text) (GetCustomerByEmailRow, error)
 	GetCustomerByID(ctx context.Context, id pgtype.UUID) (GetCustomerByIDRow, error)
 	GetCustomerByPhone(ctx context.Context, phone pgtype.Text) (GetCustomerByPhoneRow, error)

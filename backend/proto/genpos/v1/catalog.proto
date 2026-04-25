@@ -191,20 +191,31 @@ message DeleteProductResponse {}
 
 // ----- CSV import ------------------------------------------------------------
 
+message CsvVariantRow {
+  string sku                = 1;
+  string barcode            = 2;
+  string option1_name       = 3;
+  string option1_value      = 4;
+  string option2_name       = 5;
+  string option2_value      = 6;
+  string option3_name       = 7;
+  string option3_value      = 8;
+  string price              = 9;
+  string cost_price         = 10;
+  string inventory_quantity = 11;
+}
+
 message CsvProductRow {
-  string          name          = 1;
-  string          category_name = 2;
-  string          description   = 3;
-  string          sku           = 4;
-  string          barcode       = 5;
-  string          price         = 6;
-  string          cost_price    = 7;
-  string          is_active     = 8;
-  // Per-row validation errors collected during parse.
-  repeated string errors        = 9;
+  string                 name        = 1;
+  string                 description = 2;
+  // Raw status string from the CSV (e.g. "Active", "Inactive"). Truthy == active.
+  string                 status      = 3;
+  repeated CsvVariantRow variants    = 4;
+  // Per-group validation errors collected during parse.
+  repeated string        errors      = 5;
   // True if an existing product with this name already exists.
-  bool            exists        = 10;
-  string          existing_id   = 11;
+  bool                   exists      = 6;
+  string                 existing_id = 7;
 }
 
 message ParseImportCsvRequest {

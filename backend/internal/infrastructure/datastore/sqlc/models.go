@@ -22,15 +22,23 @@ type Category struct {
 }
 
 type Customer struct {
-	ID        pgtype.UUID        `json:"id"`
-	OrgID     pgtype.UUID        `json:"org_id"`
-	Name      string             `json:"name"`
-	Email     pgtype.Text        `json:"email"`
-	Phone     pgtype.Text        `json:"phone"`
-	Notes     pgtype.Text        `json:"notes"`
-	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
-	CreatedAt pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Email       pgtype.Text        `json:"email"`
+	Phone       pgtype.Text        `json:"phone"`
+	Notes       pgtype.Text        `json:"notes"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+	Code        pgtype.Text        `json:"code"`
+	Address     pgtype.Text        `json:"address"`
+	Company     pgtype.Text        `json:"company"`
+	TaxCode     pgtype.Text        `json:"tax_code"`
+	DateOfBirth pgtype.Date        `json:"date_of_birth"`
+	Gender      pgtype.Text        `json:"gender"`
+	Facebook    pgtype.Text        `json:"facebook"`
+	IsActive    bool               `json:"is_active"`
 }
 
 type CustomerGroup struct {

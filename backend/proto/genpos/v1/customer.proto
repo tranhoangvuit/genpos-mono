@@ -32,6 +32,9 @@ message CustomerListItem {
   string email        = 3;
   string phone        = 4;
   string group_names  = 5; // comma-separated group labels
+  string code         = 6;
+  string company      = 7;
+  bool   is_active    = 8;
 }
 
 message ListCustomersRequest {}
@@ -50,23 +53,41 @@ message ListCustomerGroupsResponse {
 // ----- Customer types --------------------------------------------------------
 
 message Customer {
-  string                    id         = 1;
-  string                    org_id     = 2;
-  string                    name       = 3;
-  string                    email      = 4;
-  string                    phone      = 5;
-  string                    notes      = 6;
-  repeated string           group_ids  = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  string                    id            = 1;
+  string                    org_id        = 2;
+  string                    name          = 3;
+  string                    email         = 4;
+  string                    phone         = 5;
+  string                    notes         = 6;
+  repeated string           group_ids     = 7;
+  google.protobuf.Timestamp created_at    = 8;
+  google.protobuf.Timestamp updated_at    = 9;
+  string                    code          = 10;
+  string                    address       = 11;
+  string                    company       = 12;
+  string                    tax_code      = 13;
+  // ISO 8601 date (YYYY-MM-DD), empty if unset.
+  string                    date_of_birth = 14;
+  // "", "male", "female"
+  string                    gender        = 15;
+  string                    facebook      = 16;
+  bool                      is_active     = 17;
 }
 
 message CustomerInput {
-  string          name       = 1;
-  string          email      = 2;
-  string          phone      = 3;
-  string          notes      = 4;
-  repeated string group_ids  = 5;
+  string          name          = 1;
+  string          email         = 2;
+  string          phone         = 3;
+  string          notes         = 4;
+  repeated string group_ids     = 5;
+  string          code          = 6;
+  string          address       = 7;
+  string          company       = 8;
+  string          tax_code      = 9;
+  string          date_of_birth = 10; // YYYY-MM-DD
+  string          gender        = 11;
+  string          facebook      = 12;
+  bool            is_active     = 13;
 }
 
 message CreateCustomerRequest { CustomerInput customer = 1; }
@@ -117,15 +138,24 @@ message DeleteCustomerGroupResponse {}
 // ----- CSV import ------------------------------------------------------------
 
 message CsvCustomerRow {
-  string          name        = 1;
-  string          email       = 2;
-  string          phone       = 3;
-  string          notes       = 4;
+  string          name          = 1;
+  string          email         = 2;
+  string          phone         = 3;
+  string          notes         = 4;
   // Comma-separated group names; resolved server-side against customer_groups.
-  string          groups      = 5;
-  repeated string errors      = 6;
-  bool            exists      = 7;
-  string          existing_id = 8;
+  string          groups        = 5;
+  repeated string errors        = 6;
+  bool            exists        = 7;
+  string          existing_id   = 8;
+  string          code          = 9;
+  string          address       = 10;
+  string          company       = 11;
+  string          tax_code      = 12;
+  string          date_of_birth = 13; // YYYY-MM-DD
+  string          gender        = 14;
+  string          facebook      = 15;
+  // "" (treated as active), "active" or "inactive"
+  string          status        = 16;
 }
 
 message ParseImportCustomerCsvRequest {

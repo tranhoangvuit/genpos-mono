@@ -1805,28 +1805,149 @@ func (*DeleteProductResponse) Descriptor() ([]byte, []int) {
 	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{28}
 }
 
+type CsvVariantRow struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Sku               string                 `protobuf:"bytes,1,opt,name=sku,proto3" json:"sku,omitempty"`
+	Barcode           string                 `protobuf:"bytes,2,opt,name=barcode,proto3" json:"barcode,omitempty"`
+	Option1Name       string                 `protobuf:"bytes,3,opt,name=option1_name,json=option1Name,proto3" json:"option1_name,omitempty"`
+	Option1Value      string                 `protobuf:"bytes,4,opt,name=option1_value,json=option1Value,proto3" json:"option1_value,omitempty"`
+	Option2Name       string                 `protobuf:"bytes,5,opt,name=option2_name,json=option2Name,proto3" json:"option2_name,omitempty"`
+	Option2Value      string                 `protobuf:"bytes,6,opt,name=option2_value,json=option2Value,proto3" json:"option2_value,omitempty"`
+	Option3Name       string                 `protobuf:"bytes,7,opt,name=option3_name,json=option3Name,proto3" json:"option3_name,omitempty"`
+	Option3Value      string                 `protobuf:"bytes,8,opt,name=option3_value,json=option3Value,proto3" json:"option3_value,omitempty"`
+	Price             string                 `protobuf:"bytes,9,opt,name=price,proto3" json:"price,omitempty"`
+	CostPrice         string                 `protobuf:"bytes,10,opt,name=cost_price,json=costPrice,proto3" json:"cost_price,omitempty"`
+	InventoryQuantity string                 `protobuf:"bytes,11,opt,name=inventory_quantity,json=inventoryQuantity,proto3" json:"inventory_quantity,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *CsvVariantRow) Reset() {
+	*x = CsvVariantRow{}
+	mi := &file_genpos_v1_catalog_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CsvVariantRow) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CsvVariantRow) ProtoMessage() {}
+
+func (x *CsvVariantRow) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_catalog_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CsvVariantRow.ProtoReflect.Descriptor instead.
+func (*CsvVariantRow) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *CsvVariantRow) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetBarcode() string {
+	if x != nil {
+		return x.Barcode
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption1Name() string {
+	if x != nil {
+		return x.Option1Name
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption1Value() string {
+	if x != nil {
+		return x.Option1Value
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption2Name() string {
+	if x != nil {
+		return x.Option2Name
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption2Value() string {
+	if x != nil {
+		return x.Option2Value
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption3Name() string {
+	if x != nil {
+		return x.Option3Name
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetOption3Value() string {
+	if x != nil {
+		return x.Option3Value
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetPrice() string {
+	if x != nil {
+		return x.Price
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetCostPrice() string {
+	if x != nil {
+		return x.CostPrice
+	}
+	return ""
+}
+
+func (x *CsvVariantRow) GetInventoryQuantity() string {
+	if x != nil {
+		return x.InventoryQuantity
+	}
+	return ""
+}
+
 type CsvProductRow struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Name         string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	CategoryName string                 `protobuf:"bytes,2,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Description  string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Sku          string                 `protobuf:"bytes,4,opt,name=sku,proto3" json:"sku,omitempty"`
-	Barcode      string                 `protobuf:"bytes,5,opt,name=barcode,proto3" json:"barcode,omitempty"`
-	Price        string                 `protobuf:"bytes,6,opt,name=price,proto3" json:"price,omitempty"`
-	CostPrice    string                 `protobuf:"bytes,7,opt,name=cost_price,json=costPrice,proto3" json:"cost_price,omitempty"`
-	IsActive     string                 `protobuf:"bytes,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	// Per-row validation errors collected during parse.
-	Errors []string `protobuf:"bytes,9,rep,name=errors,proto3" json:"errors,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	// Raw status string from the CSV (e.g. "Active", "Inactive"). Truthy == active.
+	Status   string           `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Variants []*CsvVariantRow `protobuf:"bytes,4,rep,name=variants,proto3" json:"variants,omitempty"`
+	// Per-group validation errors collected during parse.
+	Errors []string `protobuf:"bytes,5,rep,name=errors,proto3" json:"errors,omitempty"`
 	// True if an existing product with this name already exists.
-	Exists        bool   `protobuf:"varint,10,opt,name=exists,proto3" json:"exists,omitempty"`
-	ExistingId    string `protobuf:"bytes,11,opt,name=existing_id,json=existingId,proto3" json:"existing_id,omitempty"`
+	Exists        bool   `protobuf:"varint,6,opt,name=exists,proto3" json:"exists,omitempty"`
+	ExistingId    string `protobuf:"bytes,7,opt,name=existing_id,json=existingId,proto3" json:"existing_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CsvProductRow) Reset() {
 	*x = CsvProductRow{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[29]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1838,7 +1959,7 @@ func (x *CsvProductRow) String() string {
 func (*CsvProductRow) ProtoMessage() {}
 
 func (x *CsvProductRow) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[29]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1851,19 +1972,12 @@ func (x *CsvProductRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CsvProductRow.ProtoReflect.Descriptor instead.
 func (*CsvProductRow) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{29}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CsvProductRow) GetName() string {
 	if x != nil {
 		return x.Name
-	}
-	return ""
-}
-
-func (x *CsvProductRow) GetCategoryName() string {
-	if x != nil {
-		return x.CategoryName
 	}
 	return ""
 }
@@ -1875,39 +1989,18 @@ func (x *CsvProductRow) GetDescription() string {
 	return ""
 }
 
-func (x *CsvProductRow) GetSku() string {
+func (x *CsvProductRow) GetStatus() string {
 	if x != nil {
-		return x.Sku
+		return x.Status
 	}
 	return ""
 }
 
-func (x *CsvProductRow) GetBarcode() string {
+func (x *CsvProductRow) GetVariants() []*CsvVariantRow {
 	if x != nil {
-		return x.Barcode
+		return x.Variants
 	}
-	return ""
-}
-
-func (x *CsvProductRow) GetPrice() string {
-	if x != nil {
-		return x.Price
-	}
-	return ""
-}
-
-func (x *CsvProductRow) GetCostPrice() string {
-	if x != nil {
-		return x.CostPrice
-	}
-	return ""
-}
-
-func (x *CsvProductRow) GetIsActive() string {
-	if x != nil {
-		return x.IsActive
-	}
-	return ""
+	return nil
 }
 
 func (x *CsvProductRow) GetErrors() []string {
@@ -1940,7 +2033,7 @@ type ParseImportCsvRequest struct {
 
 func (x *ParseImportCsvRequest) Reset() {
 	*x = ParseImportCsvRequest{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[30]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1952,7 +2045,7 @@ func (x *ParseImportCsvRequest) String() string {
 func (*ParseImportCsvRequest) ProtoMessage() {}
 
 func (x *ParseImportCsvRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[30]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1965,7 +2058,7 @@ func (x *ParseImportCsvRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseImportCsvRequest.ProtoReflect.Descriptor instead.
 func (*ParseImportCsvRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{30}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ParseImportCsvRequest) GetCsvData() []byte {
@@ -1987,7 +2080,7 @@ type ParseImportCsvResponse struct {
 
 func (x *ParseImportCsvResponse) Reset() {
 	*x = ParseImportCsvResponse{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[31]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1999,7 +2092,7 @@ func (x *ParseImportCsvResponse) String() string {
 func (*ParseImportCsvResponse) ProtoMessage() {}
 
 func (x *ParseImportCsvResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[31]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2012,7 +2105,7 @@ func (x *ParseImportCsvResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseImportCsvResponse.ProtoReflect.Descriptor instead.
 func (*ParseImportCsvResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{31}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ParseImportCsvResponse) GetRows() []*CsvProductRow {
@@ -2054,7 +2147,7 @@ type ImportProductItem struct {
 
 func (x *ImportProductItem) Reset() {
 	*x = ImportProductItem{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[32]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2066,7 +2159,7 @@ func (x *ImportProductItem) String() string {
 func (*ImportProductItem) ProtoMessage() {}
 
 func (x *ImportProductItem) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[32]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2079,7 +2172,7 @@ func (x *ImportProductItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportProductItem.ProtoReflect.Descriptor instead.
 func (*ImportProductItem) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{32}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ImportProductItem) GetRow() *CsvProductRow {
@@ -2112,7 +2205,7 @@ type ImportProductsRequest struct {
 
 func (x *ImportProductsRequest) Reset() {
 	*x = ImportProductsRequest{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[33]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2124,7 +2217,7 @@ func (x *ImportProductsRequest) String() string {
 func (*ImportProductsRequest) ProtoMessage() {}
 
 func (x *ImportProductsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[33]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2137,7 +2230,7 @@ func (x *ImportProductsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportProductsRequest.ProtoReflect.Descriptor instead.
 func (*ImportProductsRequest) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{33}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ImportProductsRequest) GetItems() []*ImportProductItem {
@@ -2159,7 +2252,7 @@ type ImportProductsResponse struct {
 
 func (x *ImportProductsResponse) Reset() {
 	*x = ImportProductsResponse{}
-	mi := &file_genpos_v1_catalog_proto_msgTypes[34]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2171,7 +2264,7 @@ func (x *ImportProductsResponse) String() string {
 func (*ImportProductsResponse) ProtoMessage() {}
 
 func (x *ImportProductsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_genpos_v1_catalog_proto_msgTypes[34]
+	mi := &file_genpos_v1_catalog_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2184,7 +2277,7 @@ func (x *ImportProductsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportProductsResponse.ProtoReflect.Descriptor instead.
 func (*ImportProductsResponse) Descriptor() ([]byte, []int) {
-	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{34}
+	return file_genpos_v1_catalog_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ImportProductsResponse) GetCreated() int32 {
@@ -2367,21 +2460,29 @@ const file_genpos_v1_catalog_proto_rawDesc = "" +
 	"\aproduct\x18\x01 \x01(\v2\x18.genpos.v1.ProductDetailR\aproduct\"&\n" +
 	"\x14DeleteProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x17\n" +
-	"\x15DeleteProductResponse\"\xb9\x02\n" +
-	"\rCsvProductRow\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12#\n" +
-	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x10\n" +
-	"\x03sku\x18\x04 \x01(\tR\x03sku\x12\x18\n" +
-	"\abarcode\x18\x05 \x01(\tR\abarcode\x12\x14\n" +
-	"\x05price\x18\x06 \x01(\tR\x05price\x12\x1d\n" +
+	"\x15DeleteProductResponse\"\xf7\x02\n" +
+	"\rCsvVariantRow\x12\x10\n" +
+	"\x03sku\x18\x01 \x01(\tR\x03sku\x12\x18\n" +
+	"\abarcode\x18\x02 \x01(\tR\abarcode\x12!\n" +
+	"\foption1_name\x18\x03 \x01(\tR\voption1Name\x12#\n" +
+	"\roption1_value\x18\x04 \x01(\tR\foption1Value\x12!\n" +
+	"\foption2_name\x18\x05 \x01(\tR\voption2Name\x12#\n" +
+	"\roption2_value\x18\x06 \x01(\tR\foption2Value\x12!\n" +
+	"\foption3_name\x18\a \x01(\tR\voption3Name\x12#\n" +
+	"\roption3_value\x18\b \x01(\tR\foption3Value\x12\x14\n" +
+	"\x05price\x18\t \x01(\tR\x05price\x12\x1d\n" +
 	"\n" +
-	"cost_price\x18\a \x01(\tR\tcostPrice\x12\x1b\n" +
-	"\tis_active\x18\b \x01(\tR\bisActive\x12\x16\n" +
-	"\x06errors\x18\t \x03(\tR\x06errors\x12\x16\n" +
-	"\x06exists\x18\n" +
-	" \x01(\bR\x06exists\x12\x1f\n" +
-	"\vexisting_id\x18\v \x01(\tR\n" +
+	"cost_price\x18\n" +
+	" \x01(\tR\tcostPrice\x12-\n" +
+	"\x12inventory_quantity\x18\v \x01(\tR\x11inventoryQuantity\"\xe4\x01\n" +
+	"\rCsvProductRow\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x124\n" +
+	"\bvariants\x18\x04 \x03(\v2\x18.genpos.v1.CsvVariantRowR\bvariants\x12\x16\n" +
+	"\x06errors\x18\x05 \x03(\tR\x06errors\x12\x16\n" +
+	"\x06exists\x18\x06 \x01(\bR\x06exists\x12\x1f\n" +
+	"\vexisting_id\x18\a \x01(\tR\n" +
 	"existingId\"2\n" +
 	"\x15ParseImportCsvRequest\x12\x19\n" +
 	"\bcsv_data\x18\x01 \x01(\fR\acsvData\"\xa4\x01\n" +
@@ -2432,7 +2533,7 @@ func file_genpos_v1_catalog_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_catalog_proto_rawDescData
 }
 
-var file_genpos_v1_catalog_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_genpos_v1_catalog_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_genpos_v1_catalog_proto_goTypes = []any{
 	(*Category)(nil),               // 0: genpos.v1.Category
 	(*ListCategoriesRequest)(nil),  // 1: genpos.v1.ListCategoriesRequest
@@ -2463,17 +2564,18 @@ var file_genpos_v1_catalog_proto_goTypes = []any{
 	(*UpdateProductResponse)(nil),  // 26: genpos.v1.UpdateProductResponse
 	(*DeleteProductRequest)(nil),   // 27: genpos.v1.DeleteProductRequest
 	(*DeleteProductResponse)(nil),  // 28: genpos.v1.DeleteProductResponse
-	(*CsvProductRow)(nil),          // 29: genpos.v1.CsvProductRow
-	(*ParseImportCsvRequest)(nil),  // 30: genpos.v1.ParseImportCsvRequest
-	(*ParseImportCsvResponse)(nil), // 31: genpos.v1.ParseImportCsvResponse
-	(*ImportProductItem)(nil),      // 32: genpos.v1.ImportProductItem
-	(*ImportProductsRequest)(nil),  // 33: genpos.v1.ImportProductsRequest
-	(*ImportProductsResponse)(nil), // 34: genpos.v1.ImportProductsResponse
-	(*timestamppb.Timestamp)(nil),  // 35: google.protobuf.Timestamp
+	(*CsvVariantRow)(nil),          // 29: genpos.v1.CsvVariantRow
+	(*CsvProductRow)(nil),          // 30: genpos.v1.CsvProductRow
+	(*ParseImportCsvRequest)(nil),  // 31: genpos.v1.ParseImportCsvRequest
+	(*ParseImportCsvResponse)(nil), // 32: genpos.v1.ParseImportCsvResponse
+	(*ImportProductItem)(nil),      // 33: genpos.v1.ImportProductItem
+	(*ImportProductsRequest)(nil),  // 34: genpos.v1.ImportProductsRequest
+	(*ImportProductsResponse)(nil), // 35: genpos.v1.ImportProductsResponse
+	(*timestamppb.Timestamp)(nil),  // 36: google.protobuf.Timestamp
 }
 var file_genpos_v1_catalog_proto_depIdxs = []int32{
-	35, // 0: genpos.v1.Category.created_at:type_name -> google.protobuf.Timestamp
-	35, // 1: genpos.v1.Category.updated_at:type_name -> google.protobuf.Timestamp
+	36, // 0: genpos.v1.Category.created_at:type_name -> google.protobuf.Timestamp
+	36, // 1: genpos.v1.Category.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: genpos.v1.ListCategoriesResponse.categories:type_name -> genpos.v1.Category
 	0,  // 3: genpos.v1.CreateCategoryResponse.category:type_name -> genpos.v1.Category
 	0,  // 4: genpos.v1.UpdateCategoryResponse.category:type_name -> genpos.v1.Category
@@ -2481,8 +2583,8 @@ var file_genpos_v1_catalog_proto_depIdxs = []int32{
 	9,  // 6: genpos.v1.ProductDetail.options:type_name -> genpos.v1.ProductOption
 	11, // 7: genpos.v1.ProductDetail.variants:type_name -> genpos.v1.ProductVariant
 	12, // 8: genpos.v1.ProductDetail.images:type_name -> genpos.v1.ProductImage
-	35, // 9: genpos.v1.ProductDetail.created_at:type_name -> google.protobuf.Timestamp
-	35, // 10: genpos.v1.ProductDetail.updated_at:type_name -> google.protobuf.Timestamp
+	36, // 9: genpos.v1.ProductDetail.created_at:type_name -> google.protobuf.Timestamp
+	36, // 10: genpos.v1.ProductDetail.updated_at:type_name -> google.protobuf.Timestamp
 	14, // 11: genpos.v1.ProductInput.options:type_name -> genpos.v1.OptionInput
 	15, // 12: genpos.v1.ProductInput.variants:type_name -> genpos.v1.VariantInput
 	16, // 13: genpos.v1.ProductInput.images:type_name -> genpos.v1.ProductImageInput
@@ -2492,36 +2594,37 @@ var file_genpos_v1_catalog_proto_depIdxs = []int32{
 	13, // 17: genpos.v1.CreateProductResponse.product:type_name -> genpos.v1.ProductDetail
 	17, // 18: genpos.v1.UpdateProductRequest.product:type_name -> genpos.v1.ProductInput
 	13, // 19: genpos.v1.UpdateProductResponse.product:type_name -> genpos.v1.ProductDetail
-	29, // 20: genpos.v1.ParseImportCsvResponse.rows:type_name -> genpos.v1.CsvProductRow
-	29, // 21: genpos.v1.ImportProductItem.row:type_name -> genpos.v1.CsvProductRow
-	32, // 22: genpos.v1.ImportProductsRequest.items:type_name -> genpos.v1.ImportProductItem
-	1,  // 23: genpos.v1.CatalogService.ListCategories:input_type -> genpos.v1.ListCategoriesRequest
-	3,  // 24: genpos.v1.CatalogService.CreateCategory:input_type -> genpos.v1.CreateCategoryRequest
-	5,  // 25: genpos.v1.CatalogService.UpdateCategory:input_type -> genpos.v1.UpdateCategoryRequest
-	7,  // 26: genpos.v1.CatalogService.DeleteCategory:input_type -> genpos.v1.DeleteCategoryRequest
-	19, // 27: genpos.v1.CatalogService.ListProducts:input_type -> genpos.v1.ListProductsRequest
-	21, // 28: genpos.v1.CatalogService.GetProduct:input_type -> genpos.v1.GetProductRequest
-	23, // 29: genpos.v1.CatalogService.CreateProduct:input_type -> genpos.v1.CreateProductRequest
-	25, // 30: genpos.v1.CatalogService.UpdateProduct:input_type -> genpos.v1.UpdateProductRequest
-	27, // 31: genpos.v1.CatalogService.DeleteProduct:input_type -> genpos.v1.DeleteProductRequest
-	30, // 32: genpos.v1.CatalogService.ParseImportCsv:input_type -> genpos.v1.ParseImportCsvRequest
-	33, // 33: genpos.v1.CatalogService.ImportProducts:input_type -> genpos.v1.ImportProductsRequest
-	2,  // 34: genpos.v1.CatalogService.ListCategories:output_type -> genpos.v1.ListCategoriesResponse
-	4,  // 35: genpos.v1.CatalogService.CreateCategory:output_type -> genpos.v1.CreateCategoryResponse
-	6,  // 36: genpos.v1.CatalogService.UpdateCategory:output_type -> genpos.v1.UpdateCategoryResponse
-	8,  // 37: genpos.v1.CatalogService.DeleteCategory:output_type -> genpos.v1.DeleteCategoryResponse
-	20, // 38: genpos.v1.CatalogService.ListProducts:output_type -> genpos.v1.ListProductsResponse
-	22, // 39: genpos.v1.CatalogService.GetProduct:output_type -> genpos.v1.GetProductResponse
-	24, // 40: genpos.v1.CatalogService.CreateProduct:output_type -> genpos.v1.CreateProductResponse
-	26, // 41: genpos.v1.CatalogService.UpdateProduct:output_type -> genpos.v1.UpdateProductResponse
-	28, // 42: genpos.v1.CatalogService.DeleteProduct:output_type -> genpos.v1.DeleteProductResponse
-	31, // 43: genpos.v1.CatalogService.ParseImportCsv:output_type -> genpos.v1.ParseImportCsvResponse
-	34, // 44: genpos.v1.CatalogService.ImportProducts:output_type -> genpos.v1.ImportProductsResponse
-	34, // [34:45] is the sub-list for method output_type
-	23, // [23:34] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	29, // 20: genpos.v1.CsvProductRow.variants:type_name -> genpos.v1.CsvVariantRow
+	30, // 21: genpos.v1.ParseImportCsvResponse.rows:type_name -> genpos.v1.CsvProductRow
+	30, // 22: genpos.v1.ImportProductItem.row:type_name -> genpos.v1.CsvProductRow
+	33, // 23: genpos.v1.ImportProductsRequest.items:type_name -> genpos.v1.ImportProductItem
+	1,  // 24: genpos.v1.CatalogService.ListCategories:input_type -> genpos.v1.ListCategoriesRequest
+	3,  // 25: genpos.v1.CatalogService.CreateCategory:input_type -> genpos.v1.CreateCategoryRequest
+	5,  // 26: genpos.v1.CatalogService.UpdateCategory:input_type -> genpos.v1.UpdateCategoryRequest
+	7,  // 27: genpos.v1.CatalogService.DeleteCategory:input_type -> genpos.v1.DeleteCategoryRequest
+	19, // 28: genpos.v1.CatalogService.ListProducts:input_type -> genpos.v1.ListProductsRequest
+	21, // 29: genpos.v1.CatalogService.GetProduct:input_type -> genpos.v1.GetProductRequest
+	23, // 30: genpos.v1.CatalogService.CreateProduct:input_type -> genpos.v1.CreateProductRequest
+	25, // 31: genpos.v1.CatalogService.UpdateProduct:input_type -> genpos.v1.UpdateProductRequest
+	27, // 32: genpos.v1.CatalogService.DeleteProduct:input_type -> genpos.v1.DeleteProductRequest
+	31, // 33: genpos.v1.CatalogService.ParseImportCsv:input_type -> genpos.v1.ParseImportCsvRequest
+	34, // 34: genpos.v1.CatalogService.ImportProducts:input_type -> genpos.v1.ImportProductsRequest
+	2,  // 35: genpos.v1.CatalogService.ListCategories:output_type -> genpos.v1.ListCategoriesResponse
+	4,  // 36: genpos.v1.CatalogService.CreateCategory:output_type -> genpos.v1.CreateCategoryResponse
+	6,  // 37: genpos.v1.CatalogService.UpdateCategory:output_type -> genpos.v1.UpdateCategoryResponse
+	8,  // 38: genpos.v1.CatalogService.DeleteCategory:output_type -> genpos.v1.DeleteCategoryResponse
+	20, // 39: genpos.v1.CatalogService.ListProducts:output_type -> genpos.v1.ListProductsResponse
+	22, // 40: genpos.v1.CatalogService.GetProduct:output_type -> genpos.v1.GetProductResponse
+	24, // 41: genpos.v1.CatalogService.CreateProduct:output_type -> genpos.v1.CreateProductResponse
+	26, // 42: genpos.v1.CatalogService.UpdateProduct:output_type -> genpos.v1.UpdateProductResponse
+	28, // 43: genpos.v1.CatalogService.DeleteProduct:output_type -> genpos.v1.DeleteProductResponse
+	32, // 44: genpos.v1.CatalogService.ParseImportCsv:output_type -> genpos.v1.ParseImportCsvResponse
+	35, // 45: genpos.v1.CatalogService.ImportProducts:output_type -> genpos.v1.ImportProductsResponse
+	35, // [35:46] is the sub-list for method output_type
+	24, // [24:35] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_genpos_v1_catalog_proto_init() }
@@ -2535,7 +2638,7 @@ func file_genpos_v1_catalog_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_catalog_proto_rawDesc), len(file_genpos_v1_catalog_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   35,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

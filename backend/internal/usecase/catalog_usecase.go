@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/csv"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/genpick/genpos-mono/backend/internal/domain/entity"
@@ -332,7 +333,15 @@ func (u *catalogUsecase) writeProductGraph(ctx context.Context, orgID, productID
 
 // ----- CSV Import ----------------------------------------------------------
 
-const csvExpectedHeader = "name,category,description,sku,barcode,price,cost_price,is_active"
+// Expected column headers. Rows with the same Title collapse into a single
+// product with one variant per row.
+var csvExpectedColumns = []string{
+	"Title", "Description", "Status", "SKU", "Barcode",
+	"Option1 name", "Option1 value",
+	"Option2 name", "Option2 value",
+	"Option3 name", "Option3 value",
+	"Price", "Cost price", "Inventory quantity",
+}
 
 func (u *catalogUsecase) ParseImportCsv(ctx context.Context, in input.ParseImportCsvInput) (*input.ParseImportCsvResult, error) {
 	if in.OrgID == "" {
@@ -346,12 +355,15 @@ func (u *catalogUsecase) ParseImportCsv(ctx context.Context, in input.ParseImpor
 	reader.FieldsPerRecord = -1
 	reader.TrimLeadingSpace = true
 
-	rows := make([]input.CsvProductRow, 0)
 	warnings := make([]string, 0)
-	valid, invalid := int32(0), int32(0)
 
 	var header []string
+	// Preserve product insertion order.
+	order := make([]string, 0)
+	byTitle := make(map[string]*input.CsvProductRow)
+
 	lineNum := 0
+	inventoryMentioned := false
 	for {
 		rec, err := reader.Read()
 		if err == io.EOF {
@@ -364,12 +376,61 @@ func (u *catalogUsecase) ParseImportCsv(ctx context.Context, in input.ParseImpor
 		if lineNum == 1 {
 			header = rec
 			if !headerMatches(header) {
-				warnings = append(warnings, "unexpected header; expected: "+csvExpectedHeader)
+				warnings = append(warnings, "unexpected header; expected: "+strings.Join(csvExpectedColumns, ","))
 			}
 			continue
 		}
-		row := rowFromRecord(header, rec)
-		row.Errors = validateRow(row)
+		get := func(name string) string {
+			for i, h := range header {
+				if strings.EqualFold(strings.TrimSpace(h), name) && i < len(rec) {
+					return strings.TrimSpace(rec[i])
+				}
+			}
+			return ""
+		}
+		title := get("Title")
+		if title == "" {
+			// Rows with no title are skipped silently — likely blank lines.
+			continue
+		}
+		variant := input.CsvVariantRow{
+			SKU:               get("SKU"),
+			Barcode:           get("Barcode"),
+			Option1Name:       get("Option1 name"),
+			Option1Value:      get("Option1 value"),
+			Option2Name:       get("Option2 name"),
+			Option2Value:      get("Option2 value"),
+			Option3Name:       get("Option3 name"),
+			Option3Value:      get("Option3 value"),
+			Price:             get("Price"),
+			CostPrice:         get("Cost price"),
+			InventoryQuantity: get("Inventory quantity"),
+		}
+		if variant.InventoryQuantity != "" {
+			inventoryMentioned = true
+		}
+		group, ok := byTitle[title]
+		if !ok {
+			group = &input.CsvProductRow{
+				Name:        title,
+				Description: get("Description"),
+				Status:      get("Status"),
+			}
+			byTitle[title] = group
+			order = append(order, title)
+		}
+		group.Variants = append(group.Variants, variant)
+	}
+
+	if inventoryMentioned {
+		warnings = append(warnings, "Inventory quantity is ignored — stock levels must be set via a stock take in a store context")
+	}
+
+	rows := make([]input.CsvProductRow, 0, len(order))
+	valid, invalid := int32(0), int32(0)
+	for _, title := range order {
+		row := *byTitle[title]
+		row.Errors = validateGroup(row)
 		if err := u.tenantDB.ReadWithTenant(ctx, in.OrgID, func(ctx context.Context) error {
 			existing, err := u.productDetail.GetByName(ctx, row.Name)
 			if err == nil && existing != nil {
@@ -406,27 +467,12 @@ func (u *catalogUsecase) ImportProducts(ctx context.Context, in input.ImportProd
 
 	result := &input.ImportProductsResult{}
 
-	// Resolve category names to ids once up front
-	categoryByName := make(map[string]string)
-	if err := u.tenantDB.ReadWithTenant(ctx, in.OrgID, func(ctx context.Context) error {
-		cats, err := u.categoryReader.List(ctx)
-		if err != nil {
-			return err
-		}
-		for _, c := range cats {
-			categoryByName[strings.ToLower(c.Name)] = c.ID
-		}
-		return nil
-	}); err != nil {
-		return nil, errors.Wrap(err, "load categories")
-	}
-
 	for _, item := range in.Items {
 		if len(item.Row.Errors) > 0 {
 			result.Skipped++
 			continue
 		}
-		productIn := rowToProductInput(item.Row, categoryByName)
+		productIn := groupToProductInput(item.Row)
 
 		if item.Row.Exists {
 			if !item.OverrideExisting {
@@ -460,65 +506,137 @@ func (u *catalogUsecase) ImportProducts(ctx context.Context, in input.ImportProd
 	return result, nil
 }
 
-func rowFromRecord(header, rec []string) input.CsvProductRow {
-	get := func(name string) string {
-		for i, h := range header {
-			if strings.EqualFold(strings.TrimSpace(h), name) && i < len(rec) {
-				return strings.TrimSpace(rec[i])
-			}
-		}
-		return ""
-	}
-	return input.CsvProductRow{
-		Name:         get("name"),
-		CategoryName: get("category"),
-		Description:  get("description"),
-		SKU:          get("sku"),
-		Barcode:      get("barcode"),
-		Price:        get("price"),
-		CostPrice:    get("cost_price"),
-		IsActive:     get("is_active"),
-	}
-}
-
-func validateRow(r input.CsvProductRow) []string {
+func validateGroup(r input.CsvProductRow) []string {
 	errs := make([]string, 0)
-	if r.Name == "" {
-		errs = append(errs, "name is required")
+	if strings.TrimSpace(r.Name) == "" {
+		errs = append(errs, "title is required")
 	}
-	if r.Price == "" {
-		errs = append(errs, "price is required")
+	if len(r.Variants) == 0 {
+		errs = append(errs, "at least one variant row is required")
+		return errs
+	}
+	for i, v := range r.Variants {
+		if strings.TrimSpace(v.Price) == "" {
+			errs = append(errs, "variant "+itoa(i+1)+": price is required")
+		}
 	}
 	return errs
 }
 
-func rowToProductInput(r input.CsvProductRow, categoryByName map[string]string) input.ProductInput {
-	isActive := strings.EqualFold(r.IsActive, "true") || r.IsActive == "1" || r.IsActive == ""
+// groupToProductInput builds a ProductInput from a grouped CSV row.
+// Options are inferred per-axis from the variants: each axis becomes a
+// ProductOption (with the first non-empty name on that axis), and unique
+// values across variants become its values. A product with no option names
+// across any variant emits no options and a single "Default" variant name.
+func groupToProductInput(r input.CsvProductRow) input.ProductInput {
+	isActive := parseStatus(r.Status)
+
+	// Per-axis accumulated option name + ordered unique values.
+	type axisAcc struct {
+		name   string
+		values []string
+		seen   map[string]bool
+	}
+	axes := [3]axisAcc{{seen: map[string]bool{}}, {seen: map[string]bool{}}, {seen: map[string]bool{}}}
+	pickOption := func(axis int, v input.CsvVariantRow) (string, string) {
+		switch axis {
+		case 0:
+			return v.Option1Name, v.Option1Value
+		case 1:
+			return v.Option2Name, v.Option2Value
+		default:
+			return v.Option3Name, v.Option3Value
+		}
+	}
+	for _, v := range r.Variants {
+		for axis := 0; axis < 3; axis++ {
+			name, val := pickOption(axis, v)
+			name = strings.TrimSpace(name)
+			val = strings.TrimSpace(val)
+			if name != "" && axes[axis].name == "" {
+				axes[axis].name = name
+			}
+			if val != "" && !axes[axis].seen[val] {
+				axes[axis].seen[val] = true
+				axes[axis].values = append(axes[axis].values, val)
+			}
+		}
+	}
+
+	options := make([]input.OptionInput, 0, 3)
+	axisIncluded := [3]bool{}
+	for axis := 0; axis < 3; axis++ {
+		if axes[axis].name == "" || len(axes[axis].values) == 0 {
+			continue
+		}
+		axisIncluded[axis] = true
+		options = append(options, input.OptionInput{
+			Name:   axes[axis].name,
+			Values: axes[axis].values,
+		})
+	}
+
+	variants := make([]input.VariantInput, 0, len(r.Variants))
+	for i, v := range r.Variants {
+		optValues := make([]string, 0, len(options))
+		name := ""
+		for axis := 0; axis < 3; axis++ {
+			if !axisIncluded[axis] {
+				continue
+			}
+			_, val := pickOption(axis, v)
+			val = strings.TrimSpace(val)
+			optValues = append(optValues, val)
+			if val != "" {
+				if name != "" {
+					name += " / "
+				}
+				name += val
+			}
+		}
+		if name == "" {
+			name = "Default"
+		}
+		variants = append(variants, input.VariantInput{
+			Name:         name,
+			SKU:          v.SKU,
+			Barcode:      v.Barcode,
+			Price:        v.Price,
+			CostPrice:    v.CostPrice,
+			TrackStock:   true,
+			IsActive:     isActive,
+			SortOrder:    int32(i),
+			OptionValues: optValues,
+		})
+	}
+
 	return input.ProductInput{
 		Name:        r.Name,
 		Description: r.Description,
-		CategoryID:  categoryByName[strings.ToLower(r.CategoryName)],
 		IsActive:    isActive,
-		Variants: []input.VariantInput{
-			{
-				Name:       "Default",
-				SKU:        r.SKU,
-				Barcode:    r.Barcode,
-				Price:      r.Price,
-				CostPrice:  r.CostPrice,
-				TrackStock: true,
-				IsActive:   isActive,
-			},
-		},
+		Options:     options,
+		Variants:    variants,
+	}
+}
+
+func parseStatus(s string) bool {
+	t := strings.ToLower(strings.TrimSpace(s))
+	if t == "" {
+		return true
+	}
+	switch t {
+	case "inactive", "false", "0", "no", "disabled", "draft":
+		return false
+	default:
+		return true
 	}
 }
 
 func headerMatches(header []string) bool {
-	expected := strings.Split(csvExpectedHeader, ",")
-	if len(header) < len(expected) {
+	if len(header) < len(csvExpectedColumns) {
 		return false
 	}
-	for i, want := range expected {
+	for i, want := range csvExpectedColumns {
 		if !strings.EqualFold(strings.TrimSpace(header[i]), want) {
 			return false
 		}
@@ -531,4 +649,8 @@ func fallback(s, def string) string {
 		return def
 	}
 	return s
+}
+
+func itoa(n int) string {
+	return strconv.Itoa(n)
 }

@@ -87,18 +87,28 @@ type ParseImportCsvInput struct {
 	CsvData []byte
 }
 
+type CsvVariantRow struct {
+	SKU               string
+	Barcode           string
+	Option1Name       string
+	Option1Value      string
+	Option2Name       string
+	Option2Value      string
+	Option3Name       string
+	Option3Value      string
+	Price             string
+	CostPrice         string
+	InventoryQuantity string
+}
+
 type CsvProductRow struct {
-	Name         string
-	CategoryName string
-	Description  string
-	SKU          string
-	Barcode      string
-	Price        string
-	CostPrice    string
-	IsActive     string
-	Errors       []string
-	Exists       bool
-	ExistingID   string
+	Name        string
+	Description string
+	Status      string
+	Variants    []CsvVariantRow
+	Errors      []string
+	Exists      bool
+	ExistingID  string
 }
 
 type ParseImportCsvResult struct {

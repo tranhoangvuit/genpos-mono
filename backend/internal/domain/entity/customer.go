@@ -4,15 +4,23 @@ import "time"
 
 // Customer represents a customer record.
 type Customer struct {
-	ID        string
-	OrgID     string
-	Name      string
-	Email     string
-	Phone     string
-	Notes     string
-	GroupIDs  []string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          string
+	OrgID       string
+	Name        string
+	Email       string
+	Phone       string
+	Notes       string
+	Code        string
+	Address     string
+	Company     string
+	TaxCode     string
+	DateOfBirth time.Time // zero = unset
+	Gender      string    // "", "male", "female"
+	Facebook    string
+	IsActive    bool
+	GroupIDs    []string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // CustomerGroup represents a pricing/discount group.
@@ -42,5 +50,8 @@ type CustomerListItem struct {
 	Name       string
 	Email      string
 	Phone      string
+	Code       string
+	Company    string
+	IsActive   bool
 	GroupNames string // comma-separated
 }

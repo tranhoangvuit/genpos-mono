@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -50,6 +51,9 @@ func (h *CustomerHandler) ListCustomers(
 			Email:      c.Email,
 			Phone:      c.Phone,
 			GroupNames: c.GroupNames,
+			Code:       c.Code,
+			Company:    c.Company,
+			IsActive:   c.IsActive,
 		})
 	}
 	return connect.NewResponse(&genposv1.ListCustomersResponse{Customers: pb}), nil
@@ -278,16 +282,28 @@ func toCustomerProto(c *entity.Customer) *genposv1.Customer {
 	if c == nil {
 		return nil
 	}
+	dob := ""
+	if !c.DateOfBirth.IsZero() {
+		dob = c.DateOfBirth.Format("2006-01-02")
+	}
 	return &genposv1.Customer{
-		Id:        c.ID,
-		OrgId:     c.OrgID,
-		Name:      c.Name,
-		Email:     c.Email,
-		Phone:     c.Phone,
-		Notes:     c.Notes,
-		GroupIds:  c.GroupIDs,
-		CreatedAt: timestamppb.New(c.CreatedAt),
-		UpdatedAt: timestamppb.New(c.UpdatedAt),
+		Id:          c.ID,
+		OrgId:       c.OrgID,
+		Name:        c.Name,
+		Email:       c.Email,
+		Phone:       c.Phone,
+		Notes:       c.Notes,
+		GroupIds:    c.GroupIDs,
+		CreatedAt:   timestamppb.New(c.CreatedAt),
+		UpdatedAt:   timestamppb.New(c.UpdatedAt),
+		Code:        c.Code,
+		Address:     c.Address,
+		Company:     c.Company,
+		TaxCode:     c.TaxCode,
+		DateOfBirth: dob,
+		Gender:      c.Gender,
+		Facebook:    c.Facebook,
+		IsActive:    c.IsActive,
 	}
 }
 
@@ -295,12 +311,26 @@ func fromCustomerInputProto(c *genposv1.CustomerInput) input.CustomerInput {
 	if c == nil {
 		return input.CustomerInput{}
 	}
+	var dob time.Time
+	if s := c.GetDateOfBirth(); s != "" {
+		if t, err := time.Parse("2006-01-02", s); err == nil {
+			dob = t
+		}
+	}
 	return input.CustomerInput{
-		Name:     c.GetName(),
-		Email:    c.GetEmail(),
-		Phone:    c.GetPhone(),
-		Notes:    c.GetNotes(),
-		GroupIDs: c.GetGroupIds(),
+		Name:        c.GetName(),
+		Email:       c.GetEmail(),
+		Phone:       c.GetPhone(),
+		Notes:       c.GetNotes(),
+		GroupIDs:    c.GetGroupIds(),
+		Code:        c.GetCode(),
+		Address:     c.GetAddress(),
+		Company:     c.GetCompany(),
+		TaxCode:     c.GetTaxCode(),
+		DateOfBirth: dob,
+		Gender:      c.GetGender(),
+		Facebook:    c.GetFacebook(),
+		IsActive:    c.GetIsActive(),
 	}
 }
 
@@ -334,14 +364,22 @@ func fromCustomerGroupInputProto(g *genposv1.CustomerGroupInput) input.CustomerG
 
 func toCustomerCsvRowProto(r input.CsvCustomerRow) *genposv1.CsvCustomerRow {
 	return &genposv1.CsvCustomerRow{
-		Name:       r.Name,
-		Email:      r.Email,
-		Phone:      r.Phone,
-		Notes:      r.Notes,
-		Groups:     r.Groups,
-		Errors:     r.Errors,
-		Exists:     r.Exists,
-		ExistingId: r.ExistingID,
+		Name:        r.Name,
+		Email:       r.Email,
+		Phone:       r.Phone,
+		Notes:       r.Notes,
+		Groups:      r.Groups,
+		Errors:      r.Errors,
+		Exists:      r.Exists,
+		ExistingId:  r.ExistingID,
+		Code:        r.Code,
+		Address:     r.Address,
+		Company:     r.Company,
+		TaxCode:     r.TaxCode,
+		DateOfBirth: r.DateOfBirth,
+		Gender:      r.Gender,
+		Facebook:    r.Facebook,
+		Status:      r.Status,
 	}
 }
 
@@ -350,14 +388,22 @@ func fromCustomerCsvRowProto(r *genposv1.CsvCustomerRow) input.CsvCustomerRow {
 		return input.CsvCustomerRow{}
 	}
 	return input.CsvCustomerRow{
-		Name:       r.GetName(),
-		Email:      r.GetEmail(),
-		Phone:      r.GetPhone(),
-		Notes:      r.GetNotes(),
-		Groups:     r.GetGroups(),
-		Errors:     r.GetErrors(),
-		Exists:     r.GetExists(),
-		ExistingID: r.GetExistingId(),
+		Name:        r.GetName(),
+		Email:       r.GetEmail(),
+		Phone:       r.GetPhone(),
+		Notes:       r.GetNotes(),
+		Groups:      r.GetGroups(),
+		Errors:      r.GetErrors(),
+		Exists:      r.GetExists(),
+		ExistingID:  r.GetExistingId(),
+		Code:        r.GetCode(),
+		Address:     r.GetAddress(),
+		Company:     r.GetCompany(),
+		TaxCode:     r.GetTaxCode(),
+		DateOfBirth: r.GetDateOfBirth(),
+		Gender:      r.GetGender(),
+		Facebook:    r.GetFacebook(),
+		Status:      r.GetStatus(),
 	}
 }
 

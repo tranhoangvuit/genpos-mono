@@ -383,18 +383,30 @@ func fromProductInputProto(p *genposv1.ProductInput) input.ProductInput {
 }
 
 func toCsvRowProto(r input.CsvProductRow) *genposv1.CsvProductRow {
+	variants := make([]*genposv1.CsvVariantRow, 0, len(r.Variants))
+	for _, v := range r.Variants {
+		variants = append(variants, &genposv1.CsvVariantRow{
+			Sku:               v.SKU,
+			Barcode:           v.Barcode,
+			Option1Name:       v.Option1Name,
+			Option1Value:      v.Option1Value,
+			Option2Name:       v.Option2Name,
+			Option2Value:      v.Option2Value,
+			Option3Name:       v.Option3Name,
+			Option3Value:      v.Option3Value,
+			Price:             v.Price,
+			CostPrice:         v.CostPrice,
+			InventoryQuantity: v.InventoryQuantity,
+		})
+	}
 	return &genposv1.CsvProductRow{
-		Name:         r.Name,
-		CategoryName: r.CategoryName,
-		Description:  r.Description,
-		Sku:          r.SKU,
-		Barcode:      r.Barcode,
-		Price:        r.Price,
-		CostPrice:    r.CostPrice,
-		IsActive:     r.IsActive,
-		Errors:       r.Errors,
-		Exists:       r.Exists,
-		ExistingId:   r.ExistingID,
+		Name:        r.Name,
+		Description: r.Description,
+		Status:      r.Status,
+		Variants:    variants,
+		Errors:      r.Errors,
+		Exists:      r.Exists,
+		ExistingId:  r.ExistingID,
 	}
 }
 
@@ -402,18 +414,30 @@ func fromCsvRowProto(r *genposv1.CsvProductRow) input.CsvProductRow {
 	if r == nil {
 		return input.CsvProductRow{}
 	}
+	variants := make([]input.CsvVariantRow, 0, len(r.GetVariants()))
+	for _, v := range r.GetVariants() {
+		variants = append(variants, input.CsvVariantRow{
+			SKU:               v.GetSku(),
+			Barcode:           v.GetBarcode(),
+			Option1Name:       v.GetOption1Name(),
+			Option1Value:      v.GetOption1Value(),
+			Option2Name:       v.GetOption2Name(),
+			Option2Value:      v.GetOption2Value(),
+			Option3Name:       v.GetOption3Name(),
+			Option3Value:      v.GetOption3Value(),
+			Price:             v.GetPrice(),
+			CostPrice:         v.GetCostPrice(),
+			InventoryQuantity: v.GetInventoryQuantity(),
+		})
+	}
 	return input.CsvProductRow{
-		Name:         r.GetName(),
-		CategoryName: r.GetCategoryName(),
-		Description:  r.GetDescription(),
-		SKU:          r.GetSku(),
-		Barcode:      r.GetBarcode(),
-		Price:        r.GetPrice(),
-		CostPrice:    r.GetCostPrice(),
-		IsActive:     r.GetIsActive(),
-		Errors:       r.GetErrors(),
-		Exists:       r.GetExists(),
-		ExistingID:   r.GetExistingId(),
+		Name:        r.GetName(),
+		Description: r.GetDescription(),
+		Status:      r.GetStatus(),
+		Variants:    variants,
+		Errors:      r.GetErrors(),
+		Exists:      r.GetExists(),
+		ExistingID:  r.GetExistingId(),
 	}
 }
 

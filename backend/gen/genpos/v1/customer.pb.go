@@ -29,6 +29,9 @@ type CustomerListItem struct {
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	GroupNames    string                 `protobuf:"bytes,5,opt,name=group_names,json=groupNames,proto3" json:"group_names,omitempty"` // comma-separated group labels
+	Code          string                 `protobuf:"bytes,6,opt,name=code,proto3" json:"code,omitempty"`
+	Company       string                 `protobuf:"bytes,7,opt,name=company,proto3" json:"company,omitempty"`
+	IsActive      bool                   `protobuf:"varint,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -96,6 +99,27 @@ func (x *CustomerListItem) GetGroupNames() string {
 		return x.GroupNames
 	}
 	return ""
+}
+
+func (x *CustomerListItem) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *CustomerListItem) GetCompany() string {
+	if x != nil {
+		return x.Company
+	}
+	return ""
+}
+
+func (x *CustomerListItem) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
 }
 
 type ListCustomersRequest struct {
@@ -347,16 +371,26 @@ func (x *ListCustomerGroupsResponse) GetGroups() []*CustomerGroup {
 }
 
 type Customer struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrgId         string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
-	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
-	Notes         string                 `protobuf:"bytes,6,opt,name=notes,proto3" json:"notes,omitempty"`
-	GroupIds      []string               `protobuf:"bytes,7,rep,name=group_ids,json=groupIds,proto3" json:"group_ids,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrgId     string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Name      string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Email     string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	Phone     string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	Notes     string                 `protobuf:"bytes,6,opt,name=notes,proto3" json:"notes,omitempty"`
+	GroupIds  []string               `protobuf:"bytes,7,rep,name=group_ids,json=groupIds,proto3" json:"group_ids,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Code      string                 `protobuf:"bytes,10,opt,name=code,proto3" json:"code,omitempty"`
+	Address   string                 `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
+	Company   string                 `protobuf:"bytes,12,opt,name=company,proto3" json:"company,omitempty"`
+	TaxCode   string                 `protobuf:"bytes,13,opt,name=tax_code,json=taxCode,proto3" json:"tax_code,omitempty"`
+	// ISO 8601 date (YYYY-MM-DD), empty if unset.
+	DateOfBirth string `protobuf:"bytes,14,opt,name=date_of_birth,json=dateOfBirth,proto3" json:"date_of_birth,omitempty"`
+	// "", "male", "female"
+	Gender        string `protobuf:"bytes,15,opt,name=gender,proto3" json:"gender,omitempty"`
+	Facebook      string `protobuf:"bytes,16,opt,name=facebook,proto3" json:"facebook,omitempty"`
+	IsActive      bool   `protobuf:"varint,17,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -454,6 +488,62 @@ func (x *Customer) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Customer) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *Customer) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *Customer) GetCompany() string {
+	if x != nil {
+		return x.Company
+	}
+	return ""
+}
+
+func (x *Customer) GetTaxCode() string {
+	if x != nil {
+		return x.TaxCode
+	}
+	return ""
+}
+
+func (x *Customer) GetDateOfBirth() string {
+	if x != nil {
+		return x.DateOfBirth
+	}
+	return ""
+}
+
+func (x *Customer) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *Customer) GetFacebook() string {
+	if x != nil {
+		return x.Facebook
+	}
+	return ""
+}
+
+func (x *Customer) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
 type CustomerInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -461,6 +551,14 @@ type CustomerInput struct {
 	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
 	Notes         string                 `protobuf:"bytes,4,opt,name=notes,proto3" json:"notes,omitempty"`
 	GroupIds      []string               `protobuf:"bytes,5,rep,name=group_ids,json=groupIds,proto3" json:"group_ids,omitempty"`
+	Code          string                 `protobuf:"bytes,6,opt,name=code,proto3" json:"code,omitempty"`
+	Address       string                 `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
+	Company       string                 `protobuf:"bytes,8,opt,name=company,proto3" json:"company,omitempty"`
+	TaxCode       string                 `protobuf:"bytes,9,opt,name=tax_code,json=taxCode,proto3" json:"tax_code,omitempty"`
+	DateOfBirth   string                 `protobuf:"bytes,10,opt,name=date_of_birth,json=dateOfBirth,proto3" json:"date_of_birth,omitempty"` // YYYY-MM-DD
+	Gender        string                 `protobuf:"bytes,11,opt,name=gender,proto3" json:"gender,omitempty"`
+	Facebook      string                 `protobuf:"bytes,12,opt,name=facebook,proto3" json:"facebook,omitempty"`
+	IsActive      bool                   `protobuf:"varint,13,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -528,6 +626,62 @@ func (x *CustomerInput) GetGroupIds() []string {
 		return x.GroupIds
 	}
 	return nil
+}
+
+func (x *CustomerInput) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetCompany() string {
+	if x != nil {
+		return x.Company
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetTaxCode() string {
+	if x != nil {
+		return x.TaxCode
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetDateOfBirth() string {
+	if x != nil {
+		return x.DateOfBirth
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetFacebook() string {
+	if x != nil {
+		return x.Facebook
+	}
+	return ""
+}
+
+func (x *CustomerInput) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
 }
 
 type CreateCustomerRequest struct {
@@ -1234,10 +1388,19 @@ type CsvCustomerRow struct {
 	Phone string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
 	Notes string                 `protobuf:"bytes,4,opt,name=notes,proto3" json:"notes,omitempty"`
 	// Comma-separated group names; resolved server-side against customer_groups.
-	Groups        string   `protobuf:"bytes,5,opt,name=groups,proto3" json:"groups,omitempty"`
-	Errors        []string `protobuf:"bytes,6,rep,name=errors,proto3" json:"errors,omitempty"`
-	Exists        bool     `protobuf:"varint,7,opt,name=exists,proto3" json:"exists,omitempty"`
-	ExistingId    string   `protobuf:"bytes,8,opt,name=existing_id,json=existingId,proto3" json:"existing_id,omitempty"`
+	Groups      string   `protobuf:"bytes,5,opt,name=groups,proto3" json:"groups,omitempty"`
+	Errors      []string `protobuf:"bytes,6,rep,name=errors,proto3" json:"errors,omitempty"`
+	Exists      bool     `protobuf:"varint,7,opt,name=exists,proto3" json:"exists,omitempty"`
+	ExistingId  string   `protobuf:"bytes,8,opt,name=existing_id,json=existingId,proto3" json:"existing_id,omitempty"`
+	Code        string   `protobuf:"bytes,9,opt,name=code,proto3" json:"code,omitempty"`
+	Address     string   `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
+	Company     string   `protobuf:"bytes,11,opt,name=company,proto3" json:"company,omitempty"`
+	TaxCode     string   `protobuf:"bytes,12,opt,name=tax_code,json=taxCode,proto3" json:"tax_code,omitempty"`
+	DateOfBirth string   `protobuf:"bytes,13,opt,name=date_of_birth,json=dateOfBirth,proto3" json:"date_of_birth,omitempty"` // YYYY-MM-DD
+	Gender      string   `protobuf:"bytes,14,opt,name=gender,proto3" json:"gender,omitempty"`
+	Facebook    string   `protobuf:"bytes,15,opt,name=facebook,proto3" json:"facebook,omitempty"`
+	// "" (treated as active), "active" or "inactive"
+	Status        string `protobuf:"bytes,16,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1324,6 +1487,62 @@ func (x *CsvCustomerRow) GetExists() bool {
 func (x *CsvCustomerRow) GetExistingId() string {
 	if x != nil {
 		return x.ExistingId
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetCompany() string {
+	if x != nil {
+		return x.Company
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetTaxCode() string {
+	if x != nil {
+		return x.TaxCode
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetDateOfBirth() string {
+	if x != nil {
+		return x.DateOfBirth
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetFacebook() string {
+	if x != nil {
+		return x.Facebook
+	}
+	return ""
+}
+
+func (x *CsvCustomerRow) GetStatus() string {
+	if x != nil {
+		return x.Status
 	}
 	return ""
 }
@@ -1616,14 +1835,17 @@ var File_genpos_v1_customer_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_customer_proto_rawDesc = "" +
 	"\n" +
-	"\x18genpos/v1/customer.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x01\n" +
+	"\x18genpos/v1/customer.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xce\x01\n" +
 	"\x10CustomerListItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x1f\n" +
 	"\vgroup_names\x18\x05 \x01(\tR\n" +
-	"groupNames\"\x16\n" +
+	"groupNames\x12\x12\n" +
+	"\x04code\x18\x06 \x01(\tR\x04code\x12\x18\n" +
+	"\acompany\x18\a \x01(\tR\acompany\x12\x1b\n" +
+	"\tis_active\x18\b \x01(\bR\bisActive\"\x16\n" +
 	"\x14ListCustomersRequest\"R\n" +
 	"\x15ListCustomersResponse\x129\n" +
 	"\tcustomers\x18\x01 \x03(\v2\x1b.genpos.v1.CustomerListItemR\tcustomers\"$\n" +
@@ -1633,7 +1855,7 @@ const file_genpos_v1_customer_proto_rawDesc = "" +
 	"\bcustomer\x18\x01 \x01(\v2\x13.genpos.v1.CustomerR\bcustomer\"\x1b\n" +
 	"\x19ListCustomerGroupsRequest\"N\n" +
 	"\x1aListCustomerGroupsResponse\x120\n" +
-	"\x06groups\x18\x01 \x03(\v2\x18.genpos.v1.CustomerGroupR\x06groups\"\x9a\x02\n" +
+	"\x06groups\x18\x01 \x03(\v2\x18.genpos.v1.CustomerGroupR\x06groups\"\xf2\x03\n" +
 	"\bCustomer\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -1645,13 +1867,31 @@ const file_genpos_v1_customer_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x82\x01\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x12\n" +
+	"\x04code\x18\n" +
+	" \x01(\tR\x04code\x12\x18\n" +
+	"\aaddress\x18\v \x01(\tR\aaddress\x12\x18\n" +
+	"\acompany\x18\f \x01(\tR\acompany\x12\x19\n" +
+	"\btax_code\x18\r \x01(\tR\ataxCode\x12\"\n" +
+	"\rdate_of_birth\x18\x0e \x01(\tR\vdateOfBirth\x12\x16\n" +
+	"\x06gender\x18\x0f \x01(\tR\x06gender\x12\x1a\n" +
+	"\bfacebook\x18\x10 \x01(\tR\bfacebook\x12\x1b\n" +
+	"\tis_active\x18\x11 \x01(\bR\bisActive\"\xda\x02\n" +
 	"\rCustomerInput\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x14\n" +
 	"\x05notes\x18\x04 \x01(\tR\x05notes\x12\x1b\n" +
-	"\tgroup_ids\x18\x05 \x03(\tR\bgroupIds\"M\n" +
+	"\tgroup_ids\x18\x05 \x03(\tR\bgroupIds\x12\x12\n" +
+	"\x04code\x18\x06 \x01(\tR\x04code\x12\x18\n" +
+	"\aaddress\x18\a \x01(\tR\aaddress\x12\x18\n" +
+	"\acompany\x18\b \x01(\tR\acompany\x12\x19\n" +
+	"\btax_code\x18\t \x01(\tR\ataxCode\x12\"\n" +
+	"\rdate_of_birth\x18\n" +
+	" \x01(\tR\vdateOfBirth\x12\x16\n" +
+	"\x06gender\x18\v \x01(\tR\x06gender\x12\x1a\n" +
+	"\bfacebook\x18\f \x01(\tR\bfacebook\x12\x1b\n" +
+	"\tis_active\x18\r \x01(\bR\bisActive\"M\n" +
 	"\x15CreateCustomerRequest\x124\n" +
 	"\bcustomer\x18\x01 \x01(\v2\x18.genpos.v1.CustomerInputR\bcustomer\"I\n" +
 	"\x16CreateCustomerResponse\x12/\n" +
@@ -1691,7 +1931,7 @@ const file_genpos_v1_customer_proto_rawDesc = "" +
 	"\x05group\x18\x01 \x01(\v2\x18.genpos.v1.CustomerGroupR\x05group\",\n" +
 	"\x1aDeleteCustomerGroupRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1d\n" +
-	"\x1bDeleteCustomerGroupResponse\"\xcf\x01\n" +
+	"\x1bDeleteCustomerGroupResponse\"\xa2\x03\n" +
 	"\x0eCsvCustomerRow\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
@@ -1701,7 +1941,16 @@ const file_genpos_v1_customer_proto_rawDesc = "" +
 	"\x06errors\x18\x06 \x03(\tR\x06errors\x12\x16\n" +
 	"\x06exists\x18\a \x01(\bR\x06exists\x12\x1f\n" +
 	"\vexisting_id\x18\b \x01(\tR\n" +
-	"existingId\":\n" +
+	"existingId\x12\x12\n" +
+	"\x04code\x18\t \x01(\tR\x04code\x12\x18\n" +
+	"\aaddress\x18\n" +
+	" \x01(\tR\aaddress\x12\x18\n" +
+	"\acompany\x18\v \x01(\tR\acompany\x12\x19\n" +
+	"\btax_code\x18\f \x01(\tR\ataxCode\x12\"\n" +
+	"\rdate_of_birth\x18\r \x01(\tR\vdateOfBirth\x12\x16\n" +
+	"\x06gender\x18\x0e \x01(\tR\x06gender\x12\x1a\n" +
+	"\bfacebook\x18\x0f \x01(\tR\bfacebook\x12\x16\n" +
+	"\x06status\x18\x10 \x01(\tR\x06status\":\n" +
 	"\x1dParseImportCustomerCsvRequest\x12\x19\n" +
 	"\bcsv_data\x18\x01 \x01(\fR\acsvData\"\xad\x01\n" +
 	"\x1eParseImportCustomerCsvResponse\x12-\n" +
