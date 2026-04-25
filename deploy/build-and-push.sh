@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
-# Build + push backend and frontend images. Run from repo root or deploy/.
-# Usage:
-#   BACKEND_IMAGE=ghcr.io/you/genpos-backend \
-#   FRONTEND_IMAGE=ghcr.io/you/genpos-frontend \
-#   PUBLIC_API_BASE_URL=https://api.example.com \
-#   TAG=v1.0.0 \
-#   ./build-and-push.sh
+# Build + push backend and frontend images.
+# Reads BACKEND_IMAGE / FRONTEND_IMAGE / PUBLIC_API_BASE_URL from deploy/.env
+# (or env vars). Override TAG via env: `TAG=v1.0.0 ./build-and-push.sh`.
 set -euo pipefail
 
-: "${BACKEND_IMAGE:?set BACKEND_IMAGE}"
-: "${FRONTEND_IMAGE:?set FRONTEND_IMAGE}"
-: "${PUBLIC_API_BASE_URL:?set PUBLIC_API_BASE_URL}"
-TAG="${TAG:-latest}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$HERE/.." && pwd)"
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Auto-load deploy/.env if present (does not override existing env vars).
+if [[ -f "$HERE/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$HERE/.env"
+  set +a
+fi
+
+: "${BACKEND_IMAGE:?set BACKEND_IMAGE (in deploy/.env or env)}"
+: "${FRONTEND_IMAGE:?set FRONTEND_IMAGE (in deploy/.env or env)}"
+: "${PUBLIC_API_BASE_URL:?set PUBLIC_API_BASE_URL (in deploy/.env or env)}"
+TAG="${TAG:-${BACKEND_TAG:-latest}}"
 
 echo "==> backend: $BACKEND_IMAGE:$TAG"
 docker build -t "$BACKEND_IMAGE:$TAG" "$ROOT/backend"

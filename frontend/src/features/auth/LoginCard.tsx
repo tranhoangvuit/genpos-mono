@@ -1,5 +1,6 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
 import { Code, ConnectError } from '@connectrpc/connect'
+import { Link } from '@tanstack/react-router'
 import { ArrowRight, ArrowUpCircle, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -205,6 +206,16 @@ export function LoginCard() {
             <ArrowRight className="h-[15px] w-[15px]" strokeWidth={2.5} />
           )}
         </button>
+
+        <p className="mt-5 text-center text-[13px] text-[hsl(215.4_16.3%_46.9%)]">
+          {t('auth.noAccount')}{' '}
+          <Link
+            to="/signup"
+            className="font-semibold text-[hsl(221_83%_53%)] hover:underline"
+          >
+            {t('auth.signUp')}
+          </Link>
+        </p>
 
         <div className="mt-6 flex items-center gap-1.5 border-t border-[hsl(214.3_31.8%_91.4%)] pt-4 text-[12.5px] text-[hsl(215.4_16.3%_46.9%)]">
           <ShieldCheck

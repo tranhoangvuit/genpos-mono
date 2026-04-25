@@ -36,7 +36,13 @@ export function useSignUp() {
       domain: string
       email: string
       password: string
-    }) => authClient.signUp(input),
+      // businessType is captured client-side until proto adds it.
+      businessType?: string
+    }) => authClient.signUp({
+      domain: input.domain,
+      email: input.email,
+      password: input.password,
+    }),
     onSuccess: (res) => {
       setUser(res.user ?? null)
       const slug = res.user?.orgSlug
