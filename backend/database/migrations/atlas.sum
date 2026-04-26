@@ -1,4 +1,4 @@
-h1:RLTmv2AC5bupCJLbjJE3/x12z2RMhTl1edQBfSlcXEc=
+h1:06G7TE8PQ2Wv5isRhKH1K3uUaOnmGqF4N6q2m/0SlTE=
 20260415145733_create_foundation_tables.sql h1:6XW1q/oelgfNALbUVoo9nt2o96Jr0ulnP6hb29XI25w=
 20260415145742_create_auth_tables.sql h1:bvehFaDPleTPBOj305iEMZagRSPm33y8aZXRA7ZYnjo=
 20260415145806_create_catalog_tables.sql h1:8dBqWXNAUEU8nMnBWUktE5LbbcHi1cM/D2WG20/E1mY=
@@ -10,3 +10,4 @@ h1:RLTmv2AC5bupCJLbjJE3/x12z2RMhTl1edQBfSlcXEc=
 20260417000001_create_catalog_extensions.sql h1:izZIfrA/ewr0F+12mEfHpk/FJu/oEHECAvHt9WrGQ4o=
 20260418000001_backfill_default_stores.sql h1:1QEuI4I9Rta/c9NcnYn0jN1OQvnkLiAHBmiHBx9KHjU=
 20260424000001_extend_customer_fields.sql h1:LWfr96dOB1uO4f3Nz2bsRH3HUGMucIbYrtFjuRg2O+k=
+20260425000001_separate_db_roles.sql h1:Ua8qu1h/WDz3ddBFMX9khtLHGv77qdMMMpXcmyXv7cI=

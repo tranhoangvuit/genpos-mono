@@ -89,6 +89,9 @@ importers:
       react-i18next:
         specifier: ^17.0.2
         version: 17.0.2(i18next@26.0.4(typescript@5.9.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)
+      srvx:
+        specifier: ^0.11.15
+        version: 0.11.15
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0

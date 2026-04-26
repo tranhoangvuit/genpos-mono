@@ -10,10 +10,11 @@ import (
 	"github.com/genpick/genpos-mono/backend/internal/infrastructure/datastore"
 )
 
-// NewDBInterceptor injects the raw pgx pool as a datastore DBTX for
-// AuthService procedures. Auth-table queries (orgs, users, refresh_tokens)
-// run without RLS, so they only need any DB connection — not a tenant-
-// scoped one. Product procedures continue to use TenantDB.WithTenant.
+// NewDBInterceptor injects the auth pgx pool as the datastore DBTX for
+// AuthService procedures. The auth pool connects as a BYPASSRLS role so
+// cross-tenant lookups (find user by email, list orgs for user) succeed
+// before any org context is established. Product procedures continue to
+// use TenantDB.WithTenant on the NOBYPASSRLS app pool.
 func NewDBInterceptor(pool *pgxpool.Pool) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {

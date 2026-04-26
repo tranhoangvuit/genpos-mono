@@ -43,7 +43,6 @@ func NewPostgresDB(ctx context.Context, cfg Config) (*PostgresDB, error) {
 		return nil, fmt.Errorf("failed to parse database config: %w", err)
 	}
 
-	// Set pool configuration
 	poolCfg.MaxConns = cfg.MaxConns
 	poolCfg.MinConns = cfg.MinConns
 

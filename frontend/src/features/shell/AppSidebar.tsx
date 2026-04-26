@@ -55,8 +55,10 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.inventory',
     icon: Warehouse,
     children: [
+      { labelKey: 'nav.stocks', to: '/$subdomain/inventory/stocks' },
       { labelKey: 'nav.suppliers', to: '/$subdomain/inventory/suppliers' },
       { labelKey: 'nav.purchaseOrders', to: '/$subdomain/inventory/purchase-orders' },
+      // { labelKey: 'nav.stockIns', to: '/$subdomain/inventory/stock-ins' },
       { labelKey: 'nav.stockTakes', to: '/$subdomain/inventory/stock-takes' },
     ],
   },

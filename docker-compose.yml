@@ -38,6 +38,27 @@ services:
       timeout: 5s
       retries: 5
 
+  # One-shot: creates DB roles (app_runner, app_auth, powersync_user) from
+  # env passwords, then applies Atlas migrations. Runs on every `up`.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/database/bootstrap/Dockerfile
+    restart: "no"
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DATABASE_DATABASE: ${POSTGRES_DB:-genpos_dev}
+      DATABASE_SSL_MODE: disable
+      BOOTSTRAP_EXTRA_DATABASES: genpos_test
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   powersync:
     image: journeyapps/powersync-service:latest
     restart: unless-stopped
@@ -50,6 +71,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   backend:
     build:
@@ -71,6 +94,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   frontend:
     build:

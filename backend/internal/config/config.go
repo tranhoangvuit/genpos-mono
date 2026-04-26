@@ -46,10 +46,28 @@ type Config struct {
 	ServerPort  int    `envconfig:"SERVER_PORT" default:"3031"`
 	Env         Env    `envconfig:"ENV" default:"dev"`
 
-	Database  database.Config  `envconfig:"DATABASE"`
-	Log       log.Config       `envconfig:"LOG"`
-	Auth      AuthConfig       `envconfig:"AUTH"`
-	PowerSync PowerSyncConfig  `envconfig:"POWERSYNC"`
+	Database     database.Config `envconfig:"DATABASE"`
+	DatabaseAuth AuthDBOverride  `envconfig:"DATABASE_AUTH"`
+	Log          log.Config      `envconfig:"LOG"`
+	Auth         AuthConfig      `envconfig:"AUTH"`
+	PowerSync    PowerSyncConfig `envconfig:"POWERSYNC"`
+}
+
+// AuthDBOverride supplies the credentials for the auth-only DB pool. Host /
+// port / database / SSL come from the main Database config — only the user
+// and password differ (auth uses a BYPASSRLS role for cross-tenant lookups).
+type AuthDBOverride struct {
+	User     string `envconfig:"USER" required:"true"`
+	Password string `envconfig:"PASSWORD" required:"true"`
+}
+
+// AuthDatabase returns a database.Config that reuses Database connection
+// settings but with the auth role's credentials.
+func (c *Config) AuthDatabase() database.Config {
+	cfg := c.Database
+	cfg.User = c.DatabaseAuth.User
+	cfg.Password = c.DatabaseAuth.Password
+	return cfg
 }
 
 // Load loads the configuration from environment variables.

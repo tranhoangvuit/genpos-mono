@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Package,
-  Plus,
   Search,
   Trash2,
 } from 'lucide-react'
@@ -17,6 +16,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { useAuthStore } from '@/shared/auth/store'
+import { currencySymbol, formatMoney } from '@/shared/lib/currency'
 
 import {
   useCreatePurchaseOrder,
@@ -26,6 +26,7 @@ import {
   useUpdatePurchaseOrder,
   useVariantPicker,
 } from './hooks'
+import { ProductPickerDialog } from './ProductPickerDialog'
 import {
   purchaseOrderSchema,
   type PurchaseOrderFormData,
@@ -60,10 +61,12 @@ export function PurchaseOrderForm({ poId }: Props) {
   const [prodSearch, setProdSearch] = useState('')
   const [refNumber, setRefNumber] = useState('')
   const [paymentTerms, setPaymentTerms] = useState('none')
-  const [currency, setCurrency] = useState('USD')
+  const [currency, setCurrency] = useState('VND')
   const [carrier, setCarrier] = useState('')
   const [trackingNumber, setTrackingNumber] = useState('')
   const [shippingCost, setShippingCost] = useState('0')
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [pickerSeed, setPickerSeed] = useState('')
 
   const form = useForm<PurchaseOrderFormData>({
     resolver: standardSchemaResolver(purchaseOrderSchema(t)),
@@ -124,17 +127,6 @@ export function PurchaseOrderForm({ poId }: Props) {
     [variants],
   )
 
-  const filteredVariants = useMemo(() => {
-    const q = prodSearch.trim().toLowerCase()
-    if (!q) return variantOptions.slice(0, 10)
-    return variantOptions
-      .filter(
-        (v) =>
-          v.label.toLowerCase().includes(q) || v.sku?.toLowerCase().includes(q),
-      )
-      .slice(0, 10)
-  }, [variantOptions, prodSearch])
-
   const submitting = create.isPending || update.isPending
   const serverError = create.error ?? update.error
   const errorMessage = serverError ? ConnectError.from(serverError).rawMessage : null
@@ -153,17 +145,25 @@ export function PurchaseOrderForm({ poId }: Props) {
   const itemCount = watchedItems.length
   const variantCount = watchedItems.filter((it) => it.variantId).length
 
-  const addVariant = (id: string) => {
-    const v = variantOptions.find((x) => x.id === id)
-    if (!v) return
-    if (fields.some((f) => f.variantId === v.id)) return
-    append({
-      variantId: v.id,
-      variantLabel: v.label,
-      quantityOrdered: '1',
-      costPrice: v.costPrice || '0',
-    })
+  const addVariants = (ids: string[]) => {
+    const existingIds = new Set(fields.map((f) => f.variantId))
+    for (const id of ids) {
+      if (existingIds.has(id)) continue
+      const v = variantOptions.find((x) => x.id === id)
+      if (!v) continue
+      append({
+        variantId: v.id,
+        variantLabel: v.label,
+        quantityOrdered: '1',
+        costPrice: v.costPrice || '0',
+      })
+    }
     setProdSearch('')
+  }
+
+  const openPicker = (seed = '') => {
+    setPickerSeed(seed)
+    setPickerOpen(true)
   }
 
   const backToList = () =>
@@ -308,6 +308,7 @@ export function PurchaseOrderForm({ poId }: Props) {
               </Field>
               <Field label={t('inventory.currency', 'Supplier currency')}>
                 <NativeSelect value={currency} onChange={setCurrency}>
+                  <option value="VND">Vietnamese Dong (VND ₫)</option>
                   <option value="USD">US Dollar (USD $)</option>
                   <option value="SGD">Singapore Dollar (SGD $)</option>
                   <option value="EUR">Euro (EUR €)</option>
@@ -369,42 +370,24 @@ export function PurchaseOrderForm({ poId }: Props) {
                 />
                 <input
                   type="text"
-                  list="variant-options"
                   placeholder={t('inventory.searchProducts', 'Search products')}
                   value={prodSearch}
-                  onChange={(e) => setProdSearch(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key !== 'Enter') return
-                    e.preventDefault()
-                    const match = filteredVariants.find(
-                      (v) => v.label === prodSearch || v.sku === prodSearch,
-                    )
-                    if (match) addVariant(match.id)
+                  onChange={(e) => {
+                    const v = e.target.value
+                    setProdSearch(v)
+                    if (v && !pickerOpen) openPicker(v)
+                  }}
+                  onFocus={() => {
+                    if (prodSearch && !pickerOpen) openPicker(prodSearch)
                   }}
                   className={`${inputCls} pl-9`}
                   style={inputStyle}
+                  autoComplete="off"
                 />
-                <datalist id="variant-options">
-                  {filteredVariants.map((v) => (
-                    <option key={v.id} value={v.label} />
-                  ))}
-                </datalist>
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  const first = variantOptions[0]
-                  if (first && !fields.some((f) => f.variantId === first.id)) {
-                    addVariant(first.id)
-                  } else {
-                    append({
-                      variantId: '',
-                      variantLabel: '',
-                      quantityOrdered: '1',
-                      costPrice: '0',
-                    })
-                  }
-                }}
+                onClick={() => openPicker(prodSearch)}
                 className="inline-flex h-[38px] items-center rounded-md border px-3.5 text-[13px] font-medium"
                 style={{ borderColor: BORDER_STRONG, color: FG, background: 'white' }}
               >
@@ -534,13 +517,13 @@ export function PurchaseOrderForm({ poId }: Props) {
                           className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[12.5px]"
                           style={{ color: MUTED_FG }}
                         >
-                          $
+                          {currencySymbol(currency)}
                         </span>
                         <input
                           type="number"
                           step="0.0001"
                           {...form.register(`items.${i}.costPrice`)}
-                          className="h-[34px] w-full rounded-[7px] border pl-6 pr-2.5 text-right text-[13px]"
+                          className="h-[34px] w-full rounded-[7px] border pl-7 pr-2.5 text-right text-[13px]"
                           style={{
                             borderColor: BORDER_STRONG,
                             background: 'white',
@@ -553,7 +536,7 @@ export function PurchaseOrderForm({ poId }: Props) {
                         className="text-right text-[13.5px] font-medium"
                         style={{ color: FG, fontVariantNumeric: 'tabular-nums' }}
                       >
-                        ${line.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {formatMoney(line, currency)}
                       </div>
                       <button
                         type="button"
@@ -631,10 +614,10 @@ export function PurchaseOrderForm({ poId }: Props) {
                 </div>
               </div>
               <CostRow label={t('inventory.taxesIncluded', 'Taxes (Included)')}>
-                $0.00
+                {formatMoney(0, currency)}
               </CostRow>
               <CostRow label={t('inventory.subtotal', 'Subtotal')} strong>
-                ${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatMoney(subtotal, currency)}
               </CostRow>
               <div className="pb-2 text-[12px]" style={{ color: MUTED_FG }}>
                 {t('inventory.itemsCount', {
@@ -650,19 +633,19 @@ export function PurchaseOrderForm({ poId }: Props) {
                 className="flex items-center justify-between py-[5px] text-[13px]"
               >
                 <span style={{ color: FG }}>{t('inventory.shipping', 'Shipping')}</span>
-                <div className="relative w-24">
+                <div className="relative w-28">
                   <span
                     className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[12px]"
                     style={{ color: MUTED_FG }}
                   >
-                    $
+                    {currencySymbol(currency)}
                   </span>
                   <input
                     type="number"
                     step="0.01"
                     value={shippingCost}
                     onChange={(e) => setShippingCost(e.target.value)}
-                    className="h-8 w-full rounded-[6px] border pl-5 pr-2 text-right text-[13px]"
+                    className="h-8 w-full rounded-[6px] border pl-6 pr-2 text-right text-[13px]"
                     style={{
                       borderColor: BORDER_STRONG,
                       background: 'white',
@@ -682,7 +665,7 @@ export function PurchaseOrderForm({ poId }: Props) {
                   className="font-semibold"
                   style={{ color: FG, fontVariantNumeric: 'tabular-nums' }}
                 >
-                  ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatMoney(total, currency)}
                 </span>
               </div>
             </Card>
@@ -731,6 +714,18 @@ export function PurchaseOrderForm({ poId }: Props) {
           )}
         </div>
       </form>
+
+      <ProductPickerDialog
+        open={pickerOpen}
+        onOpenChange={(o) => {
+          setPickerOpen(o)
+          if (!o) setProdSearch('')
+        }}
+        variants={variants ?? []}
+        excludeVariantIds={fields.map((f) => f.variantId).filter(Boolean)}
+        initialQuery={pickerSeed}
+        onAdd={addVariants}
+      />
     </div>
   )
 }

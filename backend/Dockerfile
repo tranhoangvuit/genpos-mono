@@ -20,11 +20,14 @@ RUN curl -fsSL -o /usr/local/bin/atlas \
 
 FROM alpine:3.21
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates postgresql17-client
 
 COPY --from=builder /server /server
 COPY --from=builder /usr/local/bin/atlas /usr/local/bin/atlas
 COPY database/migrations /migrations
+COPY database/bootstrap/bootstrap.sh /usr/local/bin/bootstrap.sh
+COPY database/bootstrap/migrate.sh   /usr/local/bin/migrate.sh
+RUN chmod +x /usr/local/bin/bootstrap.sh /usr/local/bin/migrate.sh
 
 EXPOSE 3031
 

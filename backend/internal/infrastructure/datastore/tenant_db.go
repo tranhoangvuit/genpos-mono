@@ -5,6 +5,7 @@ import (
 
 	"github.com/genpick/genpos-mono/backend/internal/domain/gateway"
 	"github.com/genpick/genpos-mono/backend/pkg/errors"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -50,7 +51,10 @@ func (t *tenantDB) WithTenant(ctx context.Context, clientID string, fn func(ctx 
 	return nil
 }
 
-// ReadWithTenant executes fn within a tenant-scoped connection without transaction.
+// ReadWithTenant executes fn inside a READ ONLY transaction with the tenant
+// GUC set transaction-locally. Using a tx (not a bare pooled connection)
+// guarantees the GUC cannot leak to a later request that picks up the same
+// pool connection — commit/rollback resets it.
 func (t *tenantDB) ReadWithTenant(ctx context.Context, clientID string, fn func(ctx context.Context) error) error {
 	conn, err := t.pool.Acquire(ctx)
 	if err != nil {
@@ -58,16 +62,26 @@ func (t *tenantDB) ReadWithTenant(ctx context.Context, clientID string, fn func(
 	}
 	defer conn.Release()
 
-	if _, err := conn.Exec(ctx, "SELECT set_config('app.current_org_id', $1, false)", clientID); err != nil {
+	tx, err := conn.BeginTx(ctx, pgx.TxOptions{AccessMode: pgx.ReadOnly})
+	if err != nil {
+		return errors.Wrap(err, "begin read-only transaction")
+	}
+
+	if _, err := tx.Exec(ctx, "SELECT set_config('app.current_org_id', $1, true)", clientID); err != nil {
+		_ = tx.Rollback(ctx)
 		return errors.Wrap(err, "set tenant context")
 	}
 
-	// Reset GUC after fn completes so the pooled connection is clean
-	defer func() {
-		_, _ = conn.Exec(ctx, "RESET app.current_org_id")
-	}()
+	txCtx := WithDBTX(ctx, tx)
 
-	connCtx := WithDBTX(ctx, conn)
+	if err := fn(txCtx); err != nil {
+		_ = tx.Rollback(ctx)
+		return err
+	}
 
-	return fn(connCtx)
+	if err := tx.Commit(ctx); err != nil {
+		return errors.Wrap(err, "commit read-only transaction")
+	}
+
+	return nil
 }

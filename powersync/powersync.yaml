@@ -1,7 +1,7 @@
 replication:
   connections:
     - type: postgresql
-      uri: postgres://postgres:postgres@postgres:5432/genpos_dev
+      uri: postgres://powersync_user:powersync_dev_pw@postgres:5432/genpos_dev
       sslmode: disable
 
 storage:

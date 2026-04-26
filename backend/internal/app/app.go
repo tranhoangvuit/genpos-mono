@@ -30,6 +30,7 @@ type App struct {
 	TaxRateHandler       *grpchandler.TaxRateHandler
 	MemberHandler        *grpchandler.MemberHandler
 	DB                   *database.PostgresDB
+	AuthDB               *database.PostgresDB
 	Config               *config.Config
 }
 
@@ -38,7 +39,7 @@ func (a *App) NewHTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	interceptors := connect.WithInterceptors(
-		interceptor.NewDBInterceptor(a.DB.Pool),
+		interceptor.NewDBInterceptor(a.AuthDB.Pool),
 		interceptor.NewAuthInterceptor(a.Config),
 		interceptor.NewPermissionInterceptor(interceptor.DefaultProcedurePermissions()),
 	)

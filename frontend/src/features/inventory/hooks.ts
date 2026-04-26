@@ -116,6 +116,28 @@ export function usePurchaseOrder(id: string | undefined) {
   })
 }
 
+export type StockOnHandRow = {
+  variant_id: string
+  on_hand: string
+}
+
+// Aggregates current on-hand per variant from stock_movements. When `storeId`
+// is empty, aggregates across all stores.
+export function useStockOnHand(storeId: string) {
+  const filtered = storeId !== ''
+  const sql = filtered
+    ? `SELECT variant_id,
+              SUM(CASE WHEN direction = 'in' THEN CAST(quantity AS REAL) ELSE -CAST(quantity AS REAL) END) AS on_hand
+         FROM stock_movements
+         WHERE store_id = ?
+         GROUP BY variant_id`
+    : `SELECT variant_id,
+              SUM(CASE WHEN direction = 'in' THEN CAST(quantity AS REAL) ELSE -CAST(quantity AS REAL) END) AS on_hand
+         FROM stock_movements
+         GROUP BY variant_id`
+  return usePowerSyncQuery<StockOnHandRow>(sql, filtered ? [storeId] : [])
+}
+
 export type StockTakeRow = {
   id: string
   status: string

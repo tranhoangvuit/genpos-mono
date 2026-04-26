@@ -29,9 +29,15 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("database: %w", err)
 	}
 
-	pool := db.Pool
-	tenantDB := datastore.NewTenantDB(pool)
-	txManager := datastore.NewTxManager(pool)
+	authDB, err := database.NewPostgresDB(ctx, cfg.AuthDatabase())
+	if err != nil {
+		return nil, fmt.Errorf("auth database: %w", err)
+	}
+
+	tenantDB := datastore.NewTenantDB(db.Pool)
+	// Auth flows (login, registration, refresh) need cross-tenant SELECTs
+	// before an org is known; they run on the BYPASSRLS auth pool.
+	txManager := datastore.NewTxManager(authDB.Pool)
 
 	server := handler.NewServer(logger)
 
@@ -135,6 +141,7 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		TaxRateHandler:       trHandler,
 		MemberHandler:        memberHandler,
 		DB:                   db,
+		AuthDB:               authDB,
 		Config:               cfg,
 	}, nil
 }

@@ -26,6 +26,7 @@ func main() {
 		log.Fatalf("failed to initialize app: %v", err)
 	}
 	defer application.DB.Close()
+	defer application.AuthDB.Close()
 
 	port := os.Getenv("PORT")
 	if port == "" {
