@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { Bell, LogOut, Search } from 'lucide-react'
+import { Bell, Download, LogOut, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Link } from '@tanstack/react-router'
 
 import { useSignOut } from '@/shared/auth/hooks'
 import { useAuthStore } from '@/shared/auth/store'
@@ -19,6 +20,7 @@ import {
 export function TopNavbar() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
+  const subdomain = user?.orgSlug ?? ''
   const signOut = useSignOut()
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -67,6 +69,15 @@ export function TopNavbar() {
       </div>
 
       <div className="flex items-center gap-1">
+        <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 px-2.5">
+          <Link to="/$subdomain/downloads" params={{ subdomain }}>
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline-block">
+              {t('nav.downloads')}
+            </span>
+          </Link>
+        </Button>
+
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Bell className="h-4 w-4" />
           <span className="sr-only">{t('nav.notifications')}</span>
