@@ -248,10 +248,16 @@ func (x *SignUpRequest) GetPassword() string {
 }
 
 type SignUpResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	User  *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Native clients (desktop) read these from the body and persist to disk.
+	// Web clients ignore them and rely on the Set-Cookie session cookies.
+	AccessToken      string `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken     string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessExpiresAt  int64  `protobuf:"varint,4,opt,name=access_expires_at,json=accessExpiresAt,proto3" json:"access_expires_at,omitempty"`
+	RefreshExpiresAt int64  `protobuf:"varint,5,opt,name=refresh_expires_at,json=refreshExpiresAt,proto3" json:"refresh_expires_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SignUpResponse) Reset() {
@@ -289,6 +295,34 @@ func (x *SignUpResponse) GetUser() *AuthUser {
 		return x.User
 	}
 	return nil
+}
+
+func (x *SignUpResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *SignUpResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *SignUpResponse) GetAccessExpiresAt() int64 {
+	if x != nil {
+		return x.AccessExpiresAt
+	}
+	return 0
+}
+
+func (x *SignUpResponse) GetRefreshExpiresAt() int64 {
+	if x != nil {
+		return x.RefreshExpiresAt
+	}
+	return 0
 }
 
 type SignInRequest struct {
@@ -352,10 +386,14 @@ func (x *SignInRequest) GetRememberMe() bool {
 }
 
 type SignInResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	User             *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	AccessToken      string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken     string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessExpiresAt  int64                  `protobuf:"varint,4,opt,name=access_expires_at,json=accessExpiresAt,proto3" json:"access_expires_at,omitempty"`
+	RefreshExpiresAt int64                  `protobuf:"varint,5,opt,name=refresh_expires_at,json=refreshExpiresAt,proto3" json:"refresh_expires_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SignInResponse) Reset() {
@@ -393,6 +431,34 @@ func (x *SignInResponse) GetUser() *AuthUser {
 		return x.User
 	}
 	return nil
+}
+
+func (x *SignInResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *SignInResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *SignInResponse) GetAccessExpiresAt() int64 {
+	if x != nil {
+		return x.AccessExpiresAt
+	}
+	return 0
+}
+
+func (x *SignInResponse) GetRefreshExpiresAt() int64 {
+	if x != nil {
+		return x.RefreshExpiresAt
+	}
+	return 0
 }
 
 type SignOutRequest struct {
@@ -468,7 +534,10 @@ func (*SignOutResponse) Descriptor() ([]byte, []int) {
 }
 
 type RefreshRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Native clients pass the refresh token in the body. Web clients leave this
+	// empty and rely on the gp_refresh cookie.
+	RefreshToken  string `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -503,11 +572,22 @@ func (*RefreshRequest) Descriptor() ([]byte, []int) {
 	return file_genpos_v1_genpos_proto_rawDescGZIP(), []int{9}
 }
 
+func (x *RefreshRequest) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
 type RefreshResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	User             *AuthUser              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	AccessToken      string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken     string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessExpiresAt  int64                  `protobuf:"varint,4,opt,name=access_expires_at,json=accessExpiresAt,proto3" json:"access_expires_at,omitempty"`
+	RefreshExpiresAt int64                  `protobuf:"varint,5,opt,name=refresh_expires_at,json=refreshExpiresAt,proto3" json:"refresh_expires_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *RefreshResponse) Reset() {
@@ -545,6 +625,34 @@ func (x *RefreshResponse) GetUser() *AuthUser {
 		return x.User
 	}
 	return nil
+}
+
+func (x *RefreshResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *RefreshResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *RefreshResponse) GetAccessExpiresAt() int64 {
+	if x != nil {
+		return x.AccessExpiresAt
+	}
+	return 0
+}
+
+func (x *RefreshResponse) GetRefreshExpiresAt() int64 {
+	if x != nil {
+		return x.RefreshExpiresAt
+	}
+	return 0
 }
 
 type MeRequest struct {
@@ -741,21 +849,34 @@ const file_genpos_v1_genpos_proto_rawDesc = "" +
 	"\rSignUpRequest\x12\x16\n" +
 	"\x06domain\x18\x01 \x01(\tR\x06domain\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\"9\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\"\xdb\x01\n" +
 	"\x0eSignUpResponse\x12'\n" +
-	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\"b\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12*\n" +
+	"\x11access_expires_at\x18\x04 \x01(\x03R\x0faccessExpiresAt\x12,\n" +
+	"\x12refresh_expires_at\x18\x05 \x01(\x03R\x10refreshExpiresAt\"b\n" +
 	"\rSignInRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1f\n" +
 	"\vremember_me\x18\x03 \x01(\bR\n" +
-	"rememberMe\"9\n" +
+	"rememberMe\"\xdb\x01\n" +
 	"\x0eSignInResponse\x12'\n" +
-	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\"\x10\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12*\n" +
+	"\x11access_expires_at\x18\x04 \x01(\x03R\x0faccessExpiresAt\x12,\n" +
+	"\x12refresh_expires_at\x18\x05 \x01(\x03R\x10refreshExpiresAt\"\x10\n" +
 	"\x0eSignOutRequest\"\x11\n" +
-	"\x0fSignOutResponse\"\x10\n" +
-	"\x0eRefreshRequest\":\n" +
+	"\x0fSignOutResponse\"5\n" +
+	"\x0eRefreshRequest\x12#\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"\xdc\x01\n" +
 	"\x0fRefreshResponse\x12'\n" +
-	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\"\v\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.genpos.v1.AuthUserR\x04user\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12*\n" +
+	"\x11access_expires_at\x18\x04 \x01(\x03R\x0faccessExpiresAt\x12,\n" +
+	"\x12refresh_expires_at\x18\x05 \x01(\x03R\x10refreshExpiresAt\"\v\n" +
 	"\tMeRequest\"5\n" +
 	"\n" +
 	"MeResponse\x12'\n" +

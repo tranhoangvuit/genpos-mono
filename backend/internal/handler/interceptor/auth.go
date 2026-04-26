@@ -3,6 +3,8 @@ package interceptor
 
 import (
 	"context"
+	"net/http"
+	"strings"
 
 	"connectrpc.com/connect"
 
@@ -39,17 +41,32 @@ func WithAuth(ctx context.Context, a *AuthContext) context.Context {
 // publicProcedures are RPCs that must succeed without an access cookie.
 // Refresh is included because it validates the refresh cookie itself.
 var publicProcedures = map[string]struct{}{
-	"/genpos.v1.AuthService/SignUp":   {},
-	"/genpos.v1.AuthService/SignIn":   {},
-	"/genpos.v1.AuthService/SignOut":  {},
+	"/genpos.v1.AuthService/SignUp":  {},
+	"/genpos.v1.AuthService/SignIn":  {},
+	"/genpos.v1.AuthService/SignOut": {},
 	"/genpos.v1.AuthService/Refresh": {},
-	"/genpos.v1.GenposService/Ping":   {},
+	"/genpos.v1.GenposService/Ping":  {},
 }
 
 // IsPublicProcedure returns true if the procedure does not require auth.
 func IsPublicProcedure(procedure string) bool {
 	_, ok := publicProcedures[procedure]
 	return ok
+}
+
+// accessTokenFromRequest extracts the access JWT from a request. Native
+// clients send "Authorization: Bearer <jwt>"; web clients rely on the
+// gp_access cookie. Bearer wins when both are present.
+func accessTokenFromRequest(h http.Header) string {
+	if header := h.Get("Authorization"); header != "" {
+		if token, ok := strings.CutPrefix(header, "Bearer "); ok {
+			return strings.TrimSpace(token)
+		}
+	}
+	if token, ok := cookies.Get(h, cookies.AccessName); ok {
+		return token
+	}
+	return ""
 }
 
 // NewAuthInterceptor parses the gp_access cookie on every unary request and
@@ -63,8 +80,8 @@ func NewAuthInterceptor(cfg *config.Config) connect.UnaryInterceptorFunc {
 				return next(ctx, req)
 			}
 
-			token, ok := cookies.Get(req.Header(), cookies.AccessName)
-			if !ok || token == "" {
+			token := accessTokenFromRequest(req.Header())
+			if token == "" {
 				return nil, errors.Unauthorized("not signed in")
 			}
 

@@ -45,8 +45,8 @@ func Test_Auth_SignSyncToken_RoundTrip(t *testing.T) {
 			if claims.Subject != tc.userID {
 				t.Errorf("sub: want %s, got %s", tc.userID, claims.Subject)
 			}
-			if claims.OrgID != tc.orgID {
-				t.Errorf("org: want %s, got %s", tc.orgID, claims.OrgID)
+			if claims.OrgID() != tc.orgID {
+				t.Errorf("org: want %s, got %s", tc.orgID, claims.OrgID())
 			}
 			aud, _ := claims.GetAudience()
 			if len(aud) != 1 || aud[0] != tc.audience {

@@ -98,7 +98,7 @@ func withCORS(origins []string, h http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 			w.Header().Set(
 				"Access-Control-Allow-Headers",
-				"Content-Type, Connect-Protocol-Version, Connect-Timeout-Ms, X-User-Agent",
+				"Authorization, Content-Type, Connect-Protocol-Version, Connect-Timeout-Ms, X-User-Agent",
 			)
 			w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
 		}

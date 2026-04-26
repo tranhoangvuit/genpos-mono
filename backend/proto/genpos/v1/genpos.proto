@@ -58,6 +58,12 @@ message SignUpRequest {
 
 message SignUpResponse {
   AuthUser user = 1;
+  // Native clients (desktop) read these from the body and persist to disk.
+  // Web clients ignore them and rely on the Set-Cookie session cookies.
+  string access_token        = 2;
+  string refresh_token       = 3;
+  int64  access_expires_at   = 4;
+  int64  refresh_expires_at  = 5;
 }
 
 message SignInRequest {
@@ -68,16 +74,28 @@ message SignInRequest {
 
 message SignInResponse {
   AuthUser user = 1;
+  string access_token        = 2;
+  string refresh_token       = 3;
+  int64  access_expires_at   = 4;
+  int64  refresh_expires_at  = 5;
 }
 
 message SignOutRequest {}
 
 message SignOutResponse {}
 
-message RefreshRequest {}
+message RefreshRequest {
+  // Native clients pass the refresh token in the body. Web clients leave this
+  // empty and rely on the gp_refresh cookie.
+  string refresh_token = 1;
+}
 
 message RefreshResponse {
   AuthUser user = 1;
+  string access_token        = 2;
+  string refresh_token       = 3;
+  int64  access_expires_at   = 4;
+  int64  refresh_expires_at  = 5;
 }
 
 message MeRequest {}

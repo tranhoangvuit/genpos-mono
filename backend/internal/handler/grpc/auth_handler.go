@@ -57,8 +57,13 @@ func (h *AuthHandler) SignUp(
 		return nil, h.logAndConvert(ctx, "sign up", err)
 	}
 
+	accessExp, refreshExp := sessionExpirations(session)
 	resp := connect.NewResponse(&genposv1.SignUpResponse{
-		User: toProtoUser(session.User, session.Org),
+		User:             toProtoUser(session.User, session.Org),
+		AccessToken:      session.AccessToken,
+		RefreshToken:     session.RefreshToken,
+		AccessExpiresAt:  accessExp,
+		RefreshExpiresAt: refreshExp,
 	})
 	h.setSessionCookies(resp.Header(), session)
 	return resp, nil
@@ -78,8 +83,13 @@ func (h *AuthHandler) SignIn(
 		return nil, h.logAndConvert(ctx, "sign in", err)
 	}
 
+	accessExp, refreshExp := sessionExpirations(session)
 	resp := connect.NewResponse(&genposv1.SignInResponse{
-		User: toProtoUser(session.User, session.Org),
+		User:             toProtoUser(session.User, session.Org),
+		AccessToken:      session.AccessToken,
+		RefreshToken:     session.RefreshToken,
+		AccessExpiresAt:  accessExp,
+		RefreshExpiresAt: refreshExp,
 	})
 	h.setSessionCookies(resp.Header(), session)
 	return resp, nil
@@ -104,8 +114,15 @@ func (h *AuthHandler) Refresh(
 	ctx context.Context,
 	req *connect.Request[genposv1.RefreshRequest],
 ) (*connect.Response[genposv1.RefreshResponse], error) {
-	refreshToken, ok := cookies.Get(req.Header(), cookies.RefreshName)
-	if !ok {
+	// Native clients (desktop) pass the refresh token in the body. Web
+	// clients leave it empty and the cookie carries it instead.
+	refreshToken := req.Msg.GetRefreshToken()
+	if refreshToken == "" {
+		if cookieValue, ok := cookies.Get(req.Header(), cookies.RefreshName); ok {
+			refreshToken = cookieValue
+		}
+	}
+	if refreshToken == "" {
 		return nil, errors.ToConnectError(errors.Unauthorized("missing refresh token"))
 	}
 	session, err := h.usecase.Refresh(ctx, input.RefreshInput{
@@ -116,8 +133,13 @@ func (h *AuthHandler) Refresh(
 		return nil, h.logAndConvert(ctx, "refresh", err)
 	}
 
+	accessExp, refreshExp := sessionExpirations(session)
 	resp := connect.NewResponse(&genposv1.RefreshResponse{
-		User: toProtoUser(session.User, session.Org),
+		User:             toProtoUser(session.User, session.Org),
+		AccessToken:      session.AccessToken,
+		RefreshToken:     session.RefreshToken,
+		AccessExpiresAt:  accessExp,
+		RefreshExpiresAt: refreshExp,
 	})
 	h.setSessionCookies(resp.Header(), session)
 	return resp, nil
@@ -195,6 +217,14 @@ func toProtoUser(user *entity.User, org *entity.Org) *genposv1.AuthUser {
 
 func userAgent(h http.Header) string {
 	return h.Get("User-Agent")
+}
+
+// sessionExpirations returns unix-second deadlines for the access and refresh
+// tokens issued in this session. The desk client uses these to schedule
+// refresh and to know when re-login is required.
+func sessionExpirations(session *usecase.AuthSession) (int64, int64) {
+	now := time.Now().UTC()
+	return now.Add(session.AccessTokenTTL).Unix(), now.Add(session.RefreshTokenTTL).Unix()
 }
 
 var _ genposv1connect.AuthServiceHandler = (*AuthHandler)(nil)
