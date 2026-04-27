@@ -12,8 +12,10 @@ SELECT o.id,
        o.user_id,
        COALESCE(u.name, '')   AS user_name,
        o.customer_id,
-       COALESCE(c.name, '')   AS customer_name,
-       o.created_at
+       COALESCE(c.name, '')         AS customer_name,
+       o.created_at,
+       o.source,
+       COALESCE(o.external_id, '')  AS external_id
 FROM orders o
 LEFT JOIN stores    s ON s.id = o.store_id    AND s.deleted_at IS NULL
 LEFT JOIN users     u ON u.id = o.user_id     AND u.deleted_at IS NULL
@@ -39,9 +41,11 @@ SELECT o.id,
        o.user_id,
        COALESCE(u.name, '')   AS user_name,
        o.customer_id,
-       COALESCE(c.name, '')   AS customer_name,
+       COALESCE(c.name, '')         AS customer_name,
        o.created_at,
-       o.completed_at
+       o.completed_at,
+       o.source,
+       COALESCE(o.external_id, '')  AS external_id
 FROM orders o
 LEFT JOIN stores    s ON s.id = o.store_id    AND s.deleted_at IS NULL
 LEFT JOIN users     u ON u.id = o.user_id     AND u.deleted_at IS NULL

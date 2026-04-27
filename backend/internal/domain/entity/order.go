@@ -19,6 +19,8 @@ type OrderSummary struct {
 	CustomerID    string
 	CustomerName  string
 	CreatedAt     time.Time
+	Source        string // pos|online_store|shopify|woocommerce|manual|import
+	ExternalID    string
 }
 
 // Order is the detail view with nested items + payments.
@@ -40,6 +42,8 @@ type Order struct {
 	CustomerName  string
 	CreatedAt     time.Time
 	CompletedAt   time.Time
+	Source        string
+	ExternalID    string
 	LineItems     []*OrderLineItem
 	Payments      []*OrderPayment
 }

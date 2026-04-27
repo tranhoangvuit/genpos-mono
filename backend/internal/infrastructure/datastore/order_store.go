@@ -52,6 +52,8 @@ func (s *orderStore) ListByDateRange(ctx context.Context, params gateway.ListOrd
 			CustomerID:    uuidString(r.CustomerID),
 			CustomerName:  r.CustomerName,
 			CreatedAt:     r.CreatedAt.Time,
+			Source:        r.Source,
+			ExternalID:    r.ExternalID,
 		})
 	}
 	return out, nil
@@ -91,6 +93,8 @@ func (s *orderStore) GetByID(ctx context.Context, id string) (*entity.Order, err
 		CustomerName:  r.CustomerName,
 		CreatedAt:     r.CreatedAt.Time,
 		CompletedAt:   timestampTime(r.CompletedAt),
+		Source:        r.Source,
+		ExternalID:    r.ExternalID,
 	}, nil
 }
 

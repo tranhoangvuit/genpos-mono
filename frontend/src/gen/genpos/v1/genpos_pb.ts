@@ -11,7 +11,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/genpos.proto.
  */
 export const file_genpos_v1_genpos: GenFile = /*@__PURE__*/
-  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIzCg5TaWduVXBSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIkUKDVNpZ25JblJlcXVlc3QSDQoFZW1haWwYASABKAkSEAoIcGFzc3dvcmQYAiABKAkSEwoLcmVtZW1iZXJfbWUYAyABKAgiMwoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIQCg5TaWduT3V0UmVxdWVzdCIRCg9TaWduT3V0UmVzcG9uc2UiEAoOUmVmcmVzaFJlcXVlc3QiNAoPUmVmcmVzaFJlc3BvbnNlEiEKBHVzZXIYASABKAsyEy5nZW5wb3MudjEuQXV0aFVzZXIiCwoJTWVSZXF1ZXN0Ii8KCk1lUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlciIVChNHZXRTeW5jVG9rZW5SZXF1ZXN0IksKFEdldFN5bmNUb2tlblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEhIKCmV4cGlyZXNfYXQYAyABKAMySgoNR2VucG9zU2VydmljZRI5CgRQaW5nEhYuZ2VucG9zLnYxLlBpbmdSZXF1ZXN0GhcuZ2VucG9zLnYxLlBpbmdSZXNwb25zZSIAMp8DCgtBdXRoU2VydmljZRI/CgZTaWduVXASGC5nZW5wb3MudjEuU2lnblVwUmVxdWVzdBoZLmdlbnBvcy52MS5TaWduVXBSZXNwb25zZSIAEj8KBlNpZ25JbhIYLmdlbnBvcy52MS5TaWduSW5SZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25JblJlc3BvbnNlIgASQgoHU2lnbk91dBIZLmdlbnBvcy52MS5TaWduT3V0UmVxdWVzdBoaLmdlbnBvcy52MS5TaWduT3V0UmVzcG9uc2UiABJCCgdSZWZyZXNoEhkuZ2VucG9zLnYxLlJlZnJlc2hSZXF1ZXN0GhouZ2VucG9zLnYxLlJlZnJlc2hSZXNwb25zZSIAEjMKAk1lEhQuZ2VucG9zLnYxLk1lUmVxdWVzdBoVLmdlbnBvcy52MS5NZVJlc3BvbnNlIgASUQoMR2V0U3luY1Rva2VuEh4uZ2VucG9zLnYxLkdldFN5bmNUb2tlblJlcXVlc3QaHy5nZW5wb3MudjEuR2V0U3luY1Rva2VuUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChZnZW5wb3MvdjEvZ2VucG9zLnByb3RvEglnZW5wb3MudjEiDQoLUGluZ1JlcXVlc3QiHwoMUGluZ1Jlc3BvbnNlEg8KB21lc3NhZ2UYASABKAkiYwoIQXV0aFVzZXISCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCG9yZ19zbHVnGAMgASgJEg0KBWVtYWlsGAQgASgJEgwKBG5hbWUYBSABKAkSDAoEcm9sZRgGIAEoCSJACg1TaWduVXBSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRINCgVlbWFpbBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSKXAQoOU2lnblVwUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlchIUCgxhY2Nlc3NfdG9rZW4YAiABKAkSFQoNcmVmcmVzaF90b2tlbhgDIAEoCRIZChFhY2Nlc3NfZXhwaXJlc19hdBgEIAEoAxIaChJyZWZyZXNoX2V4cGlyZXNfYXQYBSABKAMiRQoNU2lnbkluUmVxdWVzdBINCgVlbWFpbBgBIAEoCRIQCghwYXNzd29yZBgCIAEoCRITCgtyZW1lbWJlcl9tZRgDIAEoCCKXAQoOU2lnbkluUmVzcG9uc2USIQoEdXNlchgBIAEoCzITLmdlbnBvcy52MS5BdXRoVXNlchIUCgxhY2Nlc3NfdG9rZW4YAiABKAkSFQoNcmVmcmVzaF90b2tlbhgDIAEoCRIZChFhY2Nlc3NfZXhwaXJlc19hdBgEIAEoAxIaChJyZWZyZXNoX2V4cGlyZXNfYXQYBSABKAMiEAoOU2lnbk91dFJlcXVlc3QiEQoPU2lnbk91dFJlc3BvbnNlIicKDlJlZnJlc2hSZXF1ZXN0EhUKDXJlZnJlc2hfdG9rZW4YASABKAkimAEKD1JlZnJlc2hSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyEhQKDGFjY2Vzc190b2tlbhgCIAEoCRIVCg1yZWZyZXNoX3Rva2VuGAMgASgJEhkKEWFjY2Vzc19leHBpcmVzX2F0GAQgASgDEhoKEnJlZnJlc2hfZXhwaXJlc19hdBgFIAEoAyILCglNZVJlcXVlc3QiLwoKTWVSZXNwb25zZRIhCgR1c2VyGAEgASgLMhMuZ2VucG9zLnYxLkF1dGhVc2VyIhUKE0dldFN5bmNUb2tlblJlcXVlc3QiSwoUR2V0U3luY1Rva2VuUmVzcG9uc2USDQoFdG9rZW4YASABKAkSEAoIZW5kcG9pbnQYAiABKAkSEgoKZXhwaXJlc19hdBgDIAEoAzJKCg1HZW5wb3NTZXJ2aWNlEjkKBFBpbmcSFi5nZW5wb3MudjEuUGluZ1JlcXVlc3QaFy5nZW5wb3MudjEuUGluZ1Jlc3BvbnNlIgAynwMKC0F1dGhTZXJ2aWNlEj8KBlNpZ25VcBIYLmdlbnBvcy52MS5TaWduVXBSZXF1ZXN0GhkuZ2VucG9zLnYxLlNpZ25VcFJlc3BvbnNlIgASPwoGU2lnbkluEhguZ2VucG9zLnYxLlNpZ25JblJlcXVlc3QaGS5nZW5wb3MudjEuU2lnbkluUmVzcG9uc2UiABJCCgdTaWduT3V0EhkuZ2VucG9zLnYxLlNpZ25PdXRSZXF1ZXN0GhouZ2VucG9zLnYxLlNpZ25PdXRSZXNwb25zZSIAEkIKB1JlZnJlc2gSGS5nZW5wb3MudjEuUmVmcmVzaFJlcXVlc3QaGi5nZW5wb3MudjEuUmVmcmVzaFJlc3BvbnNlIgASMwoCTWUSFC5nZW5wb3MudjEuTWVSZXF1ZXN0GhUuZ2VucG9zLnYxLk1lUmVzcG9uc2UiABJRCgxHZXRTeW5jVG9rZW4SHi5nZW5wb3MudjEuR2V0U3luY1Rva2VuUmVxdWVzdBofLmdlbnBvcy52MS5HZXRTeW5jVG9rZW5SZXNwb25zZSIAQj9aPWdpdGh1Yi5jb20vZ2VucGljay9nZW5wb3MtbW9uby9iYWNrZW5kL2dlbi9nZW5wb3MvdjE7Z2VucG9zdjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.PingRequest
@@ -122,6 +122,29 @@ export type SignUpResponse = Message<"genpos.v1.SignUpResponse"> & {
    * @generated from field: genpos.v1.AuthUser user = 1;
    */
   user?: AuthUser;
+
+  /**
+   * Native clients (desktop) read these from the body and persist to disk.
+   * Web clients ignore them and rely on the Set-Cookie session cookies.
+   *
+   * @generated from field: string access_token = 2;
+   */
+  accessToken: string;
+
+  /**
+   * @generated from field: string refresh_token = 3;
+   */
+  refreshToken: string;
+
+  /**
+   * @generated from field: int64 access_expires_at = 4;
+   */
+  accessExpiresAt: bigint;
+
+  /**
+   * @generated from field: int64 refresh_expires_at = 5;
+   */
+  refreshExpiresAt: bigint;
 };
 
 /**
@@ -166,6 +189,26 @@ export type SignInResponse = Message<"genpos.v1.SignInResponse"> & {
    * @generated from field: genpos.v1.AuthUser user = 1;
    */
   user?: AuthUser;
+
+  /**
+   * @generated from field: string access_token = 2;
+   */
+  accessToken: string;
+
+  /**
+   * @generated from field: string refresh_token = 3;
+   */
+  refreshToken: string;
+
+  /**
+   * @generated from field: int64 access_expires_at = 4;
+   */
+  accessExpiresAt: bigint;
+
+  /**
+   * @generated from field: int64 refresh_expires_at = 5;
+   */
+  refreshExpiresAt: bigint;
 };
 
 /**
@@ -205,6 +248,13 @@ export const SignOutResponseSchema: GenMessage<SignOutResponse> = /*@__PURE__*/
  * @generated from message genpos.v1.RefreshRequest
  */
 export type RefreshRequest = Message<"genpos.v1.RefreshRequest"> & {
+  /**
+   * Native clients pass the refresh token in the body. Web clients leave this
+   * empty and rely on the gp_refresh cookie.
+   *
+   * @generated from field: string refresh_token = 1;
+   */
+  refreshToken: string;
 };
 
 /**
@@ -222,6 +272,26 @@ export type RefreshResponse = Message<"genpos.v1.RefreshResponse"> & {
    * @generated from field: genpos.v1.AuthUser user = 1;
    */
   user?: AuthUser;
+
+  /**
+   * @generated from field: string access_token = 2;
+   */
+  accessToken: string;
+
+  /**
+   * @generated from field: string refresh_token = 3;
+   */
+  refreshToken: string;
+
+  /**
+   * @generated from field: int64 access_expires_at = 4;
+   */
+  accessExpiresAt: bigint;
+
+  /**
+   * @generated from field: int64 refresh_expires_at = 5;
+   */
+  refreshExpiresAt: bigint;
 };
 
 /**

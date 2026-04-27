@@ -28,6 +28,9 @@ message OrderSummary {
   string                    customer_id     = 13;
   string                    customer_name   = 14;
   google.protobuf.Timestamp created_at      = 15;
+  // pos | online_store | shopify | woocommerce | manual | import
+  string                    source          = 16;
+  string                    external_id     = 17;
 }
 
 message ListOrdersRequest {
@@ -88,6 +91,9 @@ message Order {
   google.protobuf.Timestamp  completed_at    = 17;
   repeated OrderLineItem     line_items      = 18;
   repeated OrderPayment      payments        = 19;
+  // pos | online_store | shopify | woocommerce | manual | import
+  string                     source          = 20;
+  string                     external_id     = 21;
 }
 
 message GetOrderRequest  { string id = 1; }

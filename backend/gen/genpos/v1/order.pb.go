@@ -39,6 +39,9 @@ type OrderSummary struct {
 	CustomerId    string                 `protobuf:"bytes,13,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
 	CustomerName  string                 `protobuf:"bytes,14,opt,name=customer_name,json=customerName,proto3" json:"customer_name,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// pos | online_store | shopify | woocommerce | manual | import
+	Source        string `protobuf:"bytes,16,opt,name=source,proto3" json:"source,omitempty"`
+	ExternalId    string `protobuf:"bytes,17,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -176,6 +179,20 @@ func (x *OrderSummary) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *OrderSummary) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *OrderSummary) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
 }
 
 type ListOrdersRequest struct {
@@ -544,6 +561,9 @@ type Order struct {
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	LineItems     []*OrderLineItem       `protobuf:"bytes,18,rep,name=line_items,json=lineItems,proto3" json:"line_items,omitempty"`
 	Payments      []*OrderPayment        `protobuf:"bytes,19,rep,name=payments,proto3" json:"payments,omitempty"`
+	// pos | online_store | shopify | woocommerce | manual | import
+	Source        string `protobuf:"bytes,20,opt,name=source,proto3" json:"source,omitempty"`
+	ExternalId    string `protobuf:"bytes,21,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -711,6 +731,20 @@ func (x *Order) GetPayments() []*OrderPayment {
 	return nil
 }
 
+func (x *Order) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *Order) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
 type GetOrderRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -803,7 +837,7 @@ var File_genpos_v1_order_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_order_proto_rawDesc = "" +
 	"\n" +
-	"\x15genpos/v1/order.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x03\n" +
+	"\x15genpos/v1/order.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9a\x04\n" +
 	"\fOrderSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12\x16\n" +
@@ -824,7 +858,10 @@ const file_genpos_v1_order_proto_rawDesc = "" +
 	"customerId\x12#\n" +
 	"\rcustomer_name\x18\x0e \x01(\tR\fcustomerName\x129\n" +
 	"\n" +
-	"created_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9c\x01\n" +
+	"created_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x16\n" +
+	"\x06source\x18\x10 \x01(\tR\x06source\x12\x1f\n" +
+	"\vexternal_id\x18\x11 \x01(\tR\n" +
+	"externalId\"\x9c\x01\n" +
 	"\x11ListOrdersRequest\x12\x19\n" +
 	"\bstore_id\x18\x01 \x01(\tR\astoreId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
@@ -859,7 +896,7 @@ const file_genpos_v1_order_proto_rawDesc = "" +
 	"\treference\x18\a \x01(\tR\treference\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9d\x05\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xd6\x05\n" +
 	"\x05Order\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12\x16\n" +
@@ -885,7 +922,10 @@ const file_genpos_v1_order_proto_rawDesc = "" +
 	"\fcompleted_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x127\n" +
 	"\n" +
 	"line_items\x18\x12 \x03(\v2\x18.genpos.v1.OrderLineItemR\tlineItems\x123\n" +
-	"\bpayments\x18\x13 \x03(\v2\x17.genpos.v1.OrderPaymentR\bpayments\"!\n" +
+	"\bpayments\x18\x13 \x03(\v2\x17.genpos.v1.OrderPaymentR\bpayments\x12\x16\n" +
+	"\x06source\x18\x14 \x01(\tR\x06source\x12\x1f\n" +
+	"\vexternal_id\x18\x15 \x01(\tR\n" +
+	"externalId\"!\n" +
 	"\x0fGetOrderRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\":\n" +
 	"\x10GetOrderResponse\x12&\n" +

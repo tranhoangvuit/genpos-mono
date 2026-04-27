@@ -129,6 +129,8 @@ func toOrderProto(o *entity.Order) *genposv1.Order {
 		CreatedAt:     timestamppb.New(o.CreatedAt),
 		LineItems:     items,
 		Payments:      payments,
+		Source:        o.Source,
+		ExternalId:    o.ExternalID,
 	}
 	if !o.CompletedAt.IsZero() {
 		out.CompletedAt = timestamppb.New(o.CompletedAt)
@@ -156,6 +158,8 @@ func toOrderSummaryProto(o *entity.OrderSummary) *genposv1.OrderSummary {
 		CustomerId:    o.CustomerID,
 		CustomerName:  o.CustomerName,
 		CreatedAt:     timestamppb.New(o.CreatedAt),
+		Source:        o.Source,
+		ExternalId:    o.ExternalID,
 	}
 }
 
