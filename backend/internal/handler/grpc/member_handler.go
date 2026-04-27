@@ -78,12 +78,14 @@ func (h *MemberHandler) CreateMember(
 	}
 	msg := req.Msg.GetMember()
 	m, err := h.usecase.CreateMember(ctx, input.CreateMemberInput{
-		OrgID:    authCtx.OrgID,
-		Name:     msg.GetName(),
-		Email:    msg.GetEmail(),
-		Phone:    msg.GetPhone(),
-		RoleID:   msg.GetRoleId(),
-		Password: msg.GetPassword(),
+		OrgID:     authCtx.OrgID,
+		Name:      msg.GetName(),
+		Email:     msg.GetEmail(),
+		Phone:     msg.GetPhone(),
+		RoleID:    msg.GetRoleId(),
+		Password:  msg.GetPassword(),
+		AllStores: msg.GetAllStores(),
+		StoreIDs:  msg.GetStoreIds(),
 	})
 	if err != nil {
 		return nil, h.logAndConvert(ctx, "create member", err)
@@ -101,12 +103,14 @@ func (h *MemberHandler) UpdateMember(
 	}
 	msg := req.Msg.GetMember()
 	m, err := h.usecase.UpdateMember(ctx, input.UpdateMemberInput{
-		ID:     req.Msg.GetId(),
-		OrgID:  authCtx.OrgID,
-		Name:   msg.GetName(),
-		Phone:  msg.GetPhone(),
-		RoleID: msg.GetRoleId(),
-		Status: msg.GetStatus(),
+		ID:        req.Msg.GetId(),
+		OrgID:     authCtx.OrgID,
+		Name:      msg.GetName(),
+		Phone:     msg.GetPhone(),
+		RoleID:    msg.GetRoleId(),
+		Status:    msg.GetStatus(),
+		AllStores: msg.GetAllStores(),
+		StoreIDs:  msg.GetStoreIds(),
 	})
 	if err != nil {
 		return nil, h.logAndConvert(ctx, "update member", err)
@@ -160,6 +164,8 @@ func toMemberProto(m *entity.Member) *genposv1.Member {
 		RoleId:    m.RoleID,
 		RoleName:  m.RoleName,
 		Status:    m.Status,
+		AllStores: m.AllStores,
+		StoreIds:  m.StoreIDs,
 		CreatedAt: timestamppb.New(m.CreatedAt),
 		UpdatedAt: timestamppb.New(m.UpdatedAt),
 	}

@@ -32,9 +32,13 @@ type Member struct {
 	RoleId   string                 `protobuf:"bytes,6,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	RoleName string                 `protobuf:"bytes,7,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
 	// "active" | "inactive" | "suspended"
-	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Status    string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// When true, this member can operate any store in the org now and in the
+	// future. `store_ids` is ignored in that case.
+	AllStores     bool     `protobuf:"varint,11,opt,name=all_stores,json=allStores,proto3" json:"all_stores,omitempty"`
+	StoreIds      []string `protobuf:"bytes,12,rep,name=store_ids,json=storeIds,proto3" json:"store_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -139,6 +143,20 @@ func (x *Member) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Member) GetAllStores() bool {
+	if x != nil {
+		return x.AllStores
+	}
+	return false
+}
+
+func (x *Member) GetStoreIds() []string {
+	if x != nil {
+		return x.StoreIds
+	}
+	return nil
+}
+
 type RoleOption struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -206,6 +224,8 @@ type CreateMemberInput struct {
 	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
 	RoleId        string                 `protobuf:"bytes,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	Password      string                 `protobuf:"bytes,5,opt,name=password,proto3" json:"password,omitempty"`
+	AllStores     bool                   `protobuf:"varint,6,opt,name=all_stores,json=allStores,proto3" json:"all_stores,omitempty"`
+	StoreIds      []string               `protobuf:"bytes,7,rep,name=store_ids,json=storeIds,proto3" json:"store_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -275,12 +295,28 @@ func (x *CreateMemberInput) GetPassword() string {
 	return ""
 }
 
+func (x *CreateMemberInput) GetAllStores() bool {
+	if x != nil {
+		return x.AllStores
+	}
+	return false
+}
+
+func (x *CreateMemberInput) GetStoreIds() []string {
+	if x != nil {
+		return x.StoreIds
+	}
+	return nil
+}
+
 type UpdateMemberInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
 	RoleId        string                 `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	AllStores     bool                   `protobuf:"varint,5,opt,name=all_stores,json=allStores,proto3" json:"all_stores,omitempty"`
+	StoreIds      []string               `protobuf:"bytes,6,rep,name=store_ids,json=storeIds,proto3" json:"store_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -341,6 +377,20 @@ func (x *UpdateMemberInput) GetStatus() string {
 		return x.Status
 	}
 	return ""
+}
+
+func (x *UpdateMemberInput) GetAllStores() bool {
+	if x != nil {
+		return x.AllStores
+	}
+	return false
+}
+
+func (x *UpdateMemberInput) GetStoreIds() []string {
+	if x != nil {
+		return x.StoreIds
+	}
+	return nil
 }
 
 type ListMembersRequest struct {
@@ -771,7 +821,7 @@ var File_genpos_v1_member_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_member_proto_rawDesc = "" +
 	"\n" +
-	"\x16genpos/v1/member.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb3\x02\n" +
+	"\x16genpos/v1/member.proto\x12\tgenpos.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xef\x02\n" +
 	"\x06Member\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -785,23 +835,32 @@ const file_genpos_v1_member_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"M\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"all_stores\x18\v \x01(\bR\tallStores\x12\x1b\n" +
+	"\tstore_ids\x18\f \x03(\tR\bstoreIds\"M\n" +
 	"\n" +
 	"RoleOption\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tis_system\x18\x03 \x01(\bR\bisSystem\"\x88\x01\n" +
+	"\tis_system\x18\x03 \x01(\bR\bisSystem\"\xc4\x01\n" +
 	"\x11CreateMemberInput\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x17\n" +
 	"\arole_id\x18\x04 \x01(\tR\x06roleId\x12\x1a\n" +
-	"\bpassword\x18\x05 \x01(\tR\bpassword\"n\n" +
+	"\bpassword\x18\x05 \x01(\tR\bpassword\x12\x1d\n" +
+	"\n" +
+	"all_stores\x18\x06 \x01(\bR\tallStores\x12\x1b\n" +
+	"\tstore_ids\x18\a \x03(\tR\bstoreIds\"\xaa\x01\n" +
 	"\x11UpdateMemberInput\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x17\n" +
 	"\arole_id\x18\x03 \x01(\tR\x06roleId\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\"\x14\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"all_stores\x18\x05 \x01(\bR\tallStores\x12\x1b\n" +
+	"\tstore_ids\x18\x06 \x03(\tR\bstoreIds\"\x14\n" +
 	"\x12ListMembersRequest\"B\n" +
 	"\x13ListMembersResponse\x12+\n" +
 	"\amembers\x18\x01 \x03(\v2\x11.genpos.v1.MemberR\amembers\"\x12\n" +

@@ -2,12 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { memberClient } from '@/shared/api/client'
 
-const MEMBERS_KEY = ['settings', 'members'] as const
-const ROLES_KEY = ['settings', 'members', 'roles'] as const
+const STAFFS_KEY = ['settings', 'staffs'] as const
+const ROLES_KEY = ['settings', 'staffs', 'roles'] as const
 
-export function useMembers() {
+export function useStaffs() {
   return useQuery({
-    queryKey: MEMBERS_KEY,
+    queryKey: STAFFS_KEY,
     queryFn: async () => {
       const res = await memberClient.listMembers({})
       return res.members
@@ -25,34 +25,34 @@ export function useRoleOptions() {
   })
 }
 
-export function useCreateMember() {
+export function useCreateStaff() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (req: Parameters<typeof memberClient.createMember>[0]) =>
       memberClient.createMember(req),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: MEMBERS_KEY })
+      void qc.invalidateQueries({ queryKey: STAFFS_KEY })
     },
   })
 }
 
-export function useUpdateMember() {
+export function useUpdateStaff() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (req: Parameters<typeof memberClient.updateMember>[0]) =>
       memberClient.updateMember(req),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: MEMBERS_KEY })
+      void qc.invalidateQueries({ queryKey: STAFFS_KEY })
     },
   })
 }
 
-export function useDeleteMember() {
+export function useDeleteStaff() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => memberClient.deleteMember({ id }),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: MEMBERS_KEY })
+      void qc.invalidateQueries({ queryKey: STAFFS_KEY })
     },
   })
 }

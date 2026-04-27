@@ -53,21 +53,25 @@ type DeleteTaxRateInput struct {
 // ----- Members --------------------------------------------------------------
 
 type CreateMemberInput struct {
-	OrgID    string
-	Name     string
-	Email    string
-	Phone    string
-	RoleID   string
-	Password string
+	OrgID     string
+	Name      string
+	Email     string
+	Phone     string
+	RoleID    string
+	Password  string
+	AllStores bool
+	StoreIDs  []string
 }
 
 type UpdateMemberInput struct {
-	ID     string
-	OrgID  string
-	Name   string
-	Phone  string
-	RoleID string
-	Status string
+	ID        string
+	OrgID     string
+	Name      string
+	Phone     string
+	RoleID    string
+	Status    string
+	AllStores bool
+	StoreIDs  []string
 }
 
 type DeleteMemberInput struct {

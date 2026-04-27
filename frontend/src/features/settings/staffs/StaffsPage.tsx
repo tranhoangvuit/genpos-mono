@@ -28,32 +28,32 @@ import {
   Th,
 } from '@/shared/ui/list-page'
 
-import { MemberDialog } from './MemberDialog'
-import { useDeleteMember, useMembers } from './hooks'
-import type { MemberRow } from './types'
+import { StaffDialog } from './StaffDialog'
+import { useDeleteStaff, useStaffs } from './hooks'
+import type { StaffRow } from './types'
 
 const PAGE_SIZE = 15
 
 function statusLabel(t: (k: string) => string, status: string): string {
-  if (status === 'active') return t('members.statusActive')
-  if (status === 'inactive') return t('members.statusInactive')
-  if (status === 'suspended') return t('members.statusSuspended')
+  if (status === 'active') return t('staffs.statusActive')
+  if (status === 'inactive') return t('staffs.statusInactive')
+  if (status === 'suspended') return t('staffs.statusSuspended')
   return status || '—'
 }
 
-export function MembersPage() {
+export function StaffsPage() {
   const { t } = useTranslation()
-  const { data: members, isLoading } = useMembers()
-  const deleteMut = useDeleteMember()
+  const { data: staffs, isLoading } = useStaffs()
+  const deleteMut = useDeleteStaff()
 
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [editing, setEditing] = useState<MemberRow | null>(null)
+  const [editing, setEditing] = useState<StaffRow | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [pendingDelete, setPendingDelete] = useState<MemberRow | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<StaffRow | null>(null)
   const [page, setPage] = useState(0)
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
-  const list = members ?? []
+  const list = staffs ?? []
 
   const pageStart = page * PAGE_SIZE
   const pageRows = list.slice(pageStart, pageStart + PAGE_SIZE)
@@ -93,7 +93,7 @@ export function MembersPage() {
     <ListPageShell>
       <ListHeader
         icon={<UserCog className="h-[18px] w-[18px]" strokeWidth={2} />}
-        title={t('nav.members')}
+        title={t('nav.staffs')}
         count={list.length}
         actions={
           <PrimaryBtn
@@ -102,7 +102,7 @@ export function MembersPage() {
               setDialogOpen(true)
             }}
           >
-            {t('members.newMember')}
+            {t('staffs.newStaff')}
           </PrimaryBtn>
         }
       />
@@ -130,11 +130,11 @@ export function MembersPage() {
                   <Check checked={allSelectedOnPage} onClick={toggleAll} />
                 </Th>
                 <Th />
-                <Th>{t('members.name')}</Th>
-                <Th>{t('members.email')}</Th>
-                <Th>{t('members.phone')}</Th>
-                <Th>{t('members.role')}</Th>
-                <Th>{t('members.status')}</Th>
+                <Th>{t('staffs.name')}</Th>
+                <Th>{t('staffs.email')}</Th>
+                <Th>{t('staffs.phone')}</Th>
+                <Th>{t('staffs.role')}</Th>
+                <Th>{t('staffs.status')}</Th>
                 <Th />
               </tr>
             </thead>
@@ -149,7 +149,7 @@ export function MembersPage() {
               {!isLoading && pageRows.length === 0 && (
                 <tr>
                   <td colSpan={8} className="py-10 text-center text-[13px]" style={{ color: LP_MUTED_FG }}>
-                    {t('members.noMembers')}
+                    {t('staffs.noStaffs')}
                   </td>
                 </tr>
               )}
@@ -226,7 +226,7 @@ export function MembersPage() {
         />
       </ListSection>
 
-      <MemberDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
+      <StaffDialog open={dialogOpen} onOpenChange={setDialogOpen} existing={editing} />
 
       <Dialog
         open={pendingDelete !== null}
@@ -239,7 +239,7 @@ export function MembersPage() {
             <DialogTitle>{t('common.delete')}</DialogTitle>
           </DialogHeader>
           <p className="text-sm" style={{ color: LP_MUTED_FG }}>
-            {pendingDelete ? t('members.confirmDelete', { name: pendingDelete.name }) : ''}
+            {pendingDelete ? t('staffs.confirmDelete', { name: pendingDelete.name }) : ''}
           </p>
           <DialogFooter>
             <Button

@@ -1,7 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
 
-import { MembersPage } from '@/features/settings/members/MembersPage'
-
+// Legacy redirect: /settings/members → /settings/staffs.
 export const Route = createFileRoute('/_auth/$subdomain/settings/members')({
-  component: MembersPage,
+  component: function RedirectToStaffs() {
+    return (
+      <Navigate
+        to="/$subdomain/settings/staffs"
+        params={{ subdomain: Route.useParams().subdomain }}
+        replace
+      />
+    )
+  },
 })

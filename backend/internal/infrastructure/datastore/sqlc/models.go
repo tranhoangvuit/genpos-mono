@@ -474,6 +474,7 @@ type User struct {
 	DeletedAt    pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt    pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
+	AllStores    bool               `json:"all_stores"`
 }
 
 type UserStore struct {

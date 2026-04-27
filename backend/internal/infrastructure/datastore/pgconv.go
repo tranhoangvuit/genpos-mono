@@ -29,6 +29,18 @@ func uuidOrNull(s string) (pgtype.UUID, error) {
 	return parseUUID(s)
 }
 
+// uuidStrings renders a slice of pgtype.UUID into Go strings, skipping NULLs.
+func uuidStrings(ids []pgtype.UUID) []string {
+	out := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if !id.Valid {
+			continue
+		}
+		out = append(out, uuidString(id))
+	}
+	return out
+}
+
 // numericFromString parses a decimal string into pgtype.Numeric.
 func numericFromString(s string) (pgtype.Numeric, error) {
 	var n pgtype.Numeric

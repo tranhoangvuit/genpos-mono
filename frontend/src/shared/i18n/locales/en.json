@@ -265,10 +265,10 @@
       "rateInvalid": "Rate must be a number between 0 and 100."
     }
   },
-  "members": {
+  "staffs": {
     "subtitle": "Manage your team and their access.",
-    "newMember": "New member",
-    "editMember": "Edit member",
+    "newStaff": "New staff",
+    "editStaff": "Edit staff",
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
@@ -279,8 +279,12 @@
     "statusInactive": "Inactive",
     "statusSuspended": "Suspended",
     "selectRole": "— select a role —",
-    "noMembers": "No members yet.",
-    "confirmDelete": "Remove member \"{{name}}\"? They will lose access.",
+    "noStaffs": "No staff yet.",
+    "confirmDelete": "Remove staff \"{{name}}\"? They will lose access.",
+    "storeAccess": "Store access",
+    "allStoresLabel": "Give access to all stores (current and future)",
+    "noStoresHint": "Create a store first under Settings → Stores.",
+    "noStoresPickedHint": "Without at least one store this user won't be able to use the POS.",
     "validation": {
       "nameRequired": "Name is required.",
       "emailRequired": "Email is required.",
@@ -438,7 +442,7 @@
     "stores": "Stores",
     "payments": "Payments",
     "taxes": "Taxes",
-    "members": "Members",
+    "staffs": "Staffs",
     "searchPlaceholder": "Search...",
     "notifications": "Notifications",
     "downloads": "Get the app"

@@ -11,10 +11,11 @@ import (
 )
 
 type orderUsecase struct {
-	tenantDB    gateway.TenantDB
-	reader      gateway.OrderReader
-	writer      gateway.OrderWriter
-	storeReader gateway.OrgStoreReader
+	tenantDB     gateway.TenantDB
+	reader       gateway.OrderReader
+	writer       gateway.OrderWriter
+	storeReader  gateway.OrgStoreReader
+	memberReader gateway.MemberReader
 }
 
 // NewOrderUsecase constructs an OrderUsecase.
@@ -23,12 +24,14 @@ func NewOrderUsecase(
 	reader gateway.OrderReader,
 	writer gateway.OrderWriter,
 	storeReader gateway.OrgStoreReader,
+	memberReader gateway.MemberReader,
 ) OrderUsecase {
 	return &orderUsecase{
-		tenantDB:    tenantDB,
-		reader:      reader,
-		writer:      writer,
-		storeReader: storeReader,
+		tenantDB:     tenantDB,
+		reader:       reader,
+		writer:       writer,
+		storeReader:  storeReader,
+		memberReader: memberReader,
 	}
 }
 
@@ -107,6 +110,12 @@ func (u *orderUsecase) CreateOrder(ctx context.Context, in input.CreateOrderInpu
 			}
 		}
 
+		// Membership is enforced when the client explicitly chose a store. If the
+		// client omitted store_id we fall back to the org's first store and skip
+		// the check — that path exists for legacy queued uploads (pre-store-picker
+		// rows in the desk pending_order_uploads queue) and for online/marketplace
+		// orders that don't carry a user_id.
+		clientSuppliedStoreID := in.StoreID != ""
 		storeID := in.StoreID
 		if storeID == "" {
 			s, sErr := u.storeReader.FirstStoreID(ctx, in.OrgID)
@@ -114,6 +123,16 @@ func (u *orderUsecase) CreateOrder(ctx context.Context, in input.CreateOrderInpu
 				return sErr
 			}
 			storeID = s
+		}
+
+		if source == "pos" && in.UserID != "" && clientSuppliedStoreID {
+			ok, accErr := u.memberReader.HasStoreAccess(ctx, in.UserID, storeID)
+			if accErr != nil {
+				return accErr
+			}
+			if !ok {
+				return errors.Forbidden("user is not assigned to this store")
+			}
 		}
 
 		params := gateway.CreateOrderParams{

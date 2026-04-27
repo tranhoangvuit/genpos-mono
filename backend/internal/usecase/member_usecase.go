@@ -88,6 +88,12 @@ func (u *memberUsecase) CreateMember(ctx context.Context, in input.CreateMemberI
 	if err != nil {
 		return nil, errors.Wrap(err, "hash password")
 	}
+	// all_stores is the single source of truth — wipe explicit assignments
+	// when it's on, regardless of what the client sent.
+	storeIDs := in.StoreIDs
+	if in.AllStores {
+		storeIDs = nil
+	}
 	var out *entity.Member
 	if err := u.tenantDB.WithTenant(ctx, in.OrgID, func(ctx context.Context) error {
 		id, err := u.writer.Create(ctx, gateway.CreateMemberParams{
@@ -97,8 +103,12 @@ func (u *memberUsecase) CreateMember(ctx context.Context, in input.CreateMemberI
 			Email:        strings.TrimSpace(strings.ToLower(in.Email)),
 			Phone:        strings.TrimSpace(in.Phone),
 			PasswordHash: hash,
+			AllStores:    in.AllStores,
 		})
 		if err != nil {
+			return err
+		}
+		if err := u.writer.ReplaceStores(ctx, in.OrgID, id, storeIDs); err != nil {
 			return err
 		}
 		m, err := u.reader.GetByID(ctx, id)
@@ -126,15 +136,23 @@ func (u *memberUsecase) UpdateMember(ctx context.Context, in input.UpdateMemberI
 	if _, ok := validMemberStatuses[in.Status]; !ok {
 		return nil, errors.BadRequest("status must be active, inactive, or suspended")
 	}
+	storeIDs := in.StoreIDs
+	if in.AllStores {
+		storeIDs = nil
+	}
 	var out *entity.Member
 	if err := u.tenantDB.WithTenant(ctx, in.OrgID, func(ctx context.Context) error {
 		if err := u.writer.Update(ctx, gateway.UpdateMemberParams{
-			ID:     in.ID,
-			Name:   strings.TrimSpace(in.Name),
-			Phone:  strings.TrimSpace(in.Phone),
-			RoleID: in.RoleID,
-			Status: in.Status,
+			ID:        in.ID,
+			Name:      strings.TrimSpace(in.Name),
+			Phone:     strings.TrimSpace(in.Phone),
+			RoleID:    in.RoleID,
+			Status:    in.Status,
+			AllStores: in.AllStores,
 		}); err != nil {
+			return err
+		}
+		if err := u.writer.ReplaceStores(ctx, in.OrgID, in.ID, storeIDs); err != nil {
 			return err
 		}
 		m, err := u.reader.GetByID(ctx, in.ID)
@@ -148,6 +166,7 @@ func (u *memberUsecase) UpdateMember(ctx context.Context, in input.UpdateMemberI
 	}
 	return out, nil
 }
+
 
 func (u *memberUsecase) DeleteMember(ctx context.Context, in input.DeleteMemberInput) error {
 	if in.OrgID == "" || in.ID == "" {

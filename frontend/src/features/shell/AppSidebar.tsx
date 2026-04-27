@@ -89,7 +89,7 @@ const NAV_ITEMS: NavItem[] = [
       { labelKey: 'nav.stores', to: '/$subdomain/settings/stores' },
       { labelKey: 'nav.payments', to: '/$subdomain/settings/payments' },
       { labelKey: 'nav.taxes', to: '/$subdomain/settings/taxes' },
-      { labelKey: 'nav.members', to: '/$subdomain/settings/members' },
+      { labelKey: 'nav.staffs', to: '/$subdomain/settings/staffs' },
     ],
   },
 ]

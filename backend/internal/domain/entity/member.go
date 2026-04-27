@@ -12,6 +12,8 @@ type Member struct {
 	RoleID    string
 	RoleName  string
 	Status    string
+	AllStores bool
+	StoreIDs  []string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

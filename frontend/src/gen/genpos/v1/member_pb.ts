@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/member.proto.
  */
 export const file_genpos_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChZnZW5wb3MvdjEvbWVtYmVyLnByb3RvEglnZW5wb3MudjEi5AEKBk1lbWJlchIKCgJpZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRINCgVlbWFpbBgEIAEoCRINCgVwaG9uZRgFIAEoCRIPCgdyb2xlX2lkGAYgASgJEhEKCXJvbGVfbmFtZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiOQoKUm9sZU9wdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhEKCWlzX3N5c3RlbRgDIAEoCCJiChFDcmVhdGVNZW1iZXJJbnB1dBIMCgRuYW1lGAEgASgJEg0KBWVtYWlsGAIgASgJEg0KBXBob25lGAMgASgJEg8KB3JvbGVfaWQYBCABKAkSEAoIcGFzc3dvcmQYBSABKAkiUQoRVXBkYXRlTWVtYmVySW5wdXQSDAoEbmFtZRgBIAEoCRINCgVwaG9uZRgCIAEoCRIPCgdyb2xlX2lkGAMgASgJEg4KBnN0YXR1cxgEIAEoCSIUChJMaXN0TWVtYmVyc1JlcXVlc3QiOQoTTGlzdE1lbWJlcnNSZXNwb25zZRIiCgdtZW1iZXJzGAEgAygLMhEuZ2VucG9zLnYxLk1lbWJlciISChBMaXN0Um9sZXNSZXF1ZXN0IjkKEUxpc3RSb2xlc1Jlc3BvbnNlEiQKBXJvbGVzGAEgAygLMhUuZ2VucG9zLnYxLlJvbGVPcHRpb24iQwoTQ3JlYXRlTWVtYmVyUmVxdWVzdBIsCgZtZW1iZXIYASABKAsyHC5nZW5wb3MudjEuQ3JlYXRlTWVtYmVySW5wdXQiOQoUQ3JlYXRlTWVtYmVyUmVzcG9uc2USIQoGbWVtYmVyGAEgASgLMhEuZ2VucG9zLnYxLk1lbWJlciJPChNVcGRhdGVNZW1iZXJSZXF1ZXN0EgoKAmlkGAEgASgJEiwKBm1lbWJlchgCIAEoCzIcLmdlbnBvcy52MS5VcGRhdGVNZW1iZXJJbnB1dCI5ChRVcGRhdGVNZW1iZXJSZXNwb25zZRIhCgZtZW1iZXIYASABKAsyES5nZW5wb3MudjEuTWVtYmVyIiEKE0RlbGV0ZU1lbWJlclJlcXVlc3QSCgoCaWQYASABKAkiFgoURGVsZXRlTWVtYmVyUmVzcG9uc2UyogMKDU1lbWJlclNlcnZpY2USTgoLTGlzdE1lbWJlcnMSHS5nZW5wb3MudjEuTGlzdE1lbWJlcnNSZXF1ZXN0Gh4uZ2VucG9zLnYxLkxpc3RNZW1iZXJzUmVzcG9uc2UiABJICglMaXN0Um9sZXMSGy5nZW5wb3MudjEuTGlzdFJvbGVzUmVxdWVzdBocLmdlbnBvcy52MS5MaXN0Um9sZXNSZXNwb25zZSIAElEKDENyZWF0ZU1lbWJlchIeLmdlbnBvcy52MS5DcmVhdGVNZW1iZXJSZXF1ZXN0Gh8uZ2VucG9zLnYxLkNyZWF0ZU1lbWJlclJlc3BvbnNlIgASUQoMVXBkYXRlTWVtYmVyEh4uZ2VucG9zLnYxLlVwZGF0ZU1lbWJlclJlcXVlc3QaHy5nZW5wb3MudjEuVXBkYXRlTWVtYmVyUmVzcG9uc2UiABJRCgxEZWxldGVNZW1iZXISHi5nZW5wb3MudjEuRGVsZXRlTWVtYmVyUmVxdWVzdBofLmdlbnBvcy52MS5EZWxldGVNZW1iZXJSZXNwb25zZSIAQj9aPWdpdGh1Yi5jb20vZ2VucGljay9nZW5wb3MtbW9uby9iYWNrZW5kL2dlbi9nZW5wb3MvdjE7Z2VucG9zdjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChZnZW5wb3MvdjEvbWVtYmVyLnByb3RvEglnZW5wb3MudjEiiwIKBk1lbWJlchIKCgJpZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRINCgVlbWFpbBgEIAEoCRINCgVwaG9uZRgFIAEoCRIPCgdyb2xlX2lkGAYgASgJEhEKCXJvbGVfbmFtZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKYWxsX3N0b3JlcxgLIAEoCBIRCglzdG9yZV9pZHMYDCADKAkiOQoKUm9sZU9wdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhEKCWlzX3N5c3RlbRgDIAEoCCKJAQoRQ3JlYXRlTWVtYmVySW5wdXQSDAoEbmFtZRgBIAEoCRINCgVlbWFpbBgCIAEoCRINCgVwaG9uZRgDIAEoCRIPCgdyb2xlX2lkGAQgASgJEhAKCHBhc3N3b3JkGAUgASgJEhIKCmFsbF9zdG9yZXMYBiABKAgSEQoJc3RvcmVfaWRzGAcgAygJIngKEVVwZGF0ZU1lbWJlcklucHV0EgwKBG5hbWUYASABKAkSDQoFcGhvbmUYAiABKAkSDwoHcm9sZV9pZBgDIAEoCRIOCgZzdGF0dXMYBCABKAkSEgoKYWxsX3N0b3JlcxgFIAEoCBIRCglzdG9yZV9pZHMYBiADKAkiFAoSTGlzdE1lbWJlcnNSZXF1ZXN0IjkKE0xpc3RNZW1iZXJzUmVzcG9uc2USIgoHbWVtYmVycxgBIAMoCzIRLmdlbnBvcy52MS5NZW1iZXIiEgoQTGlzdFJvbGVzUmVxdWVzdCI5ChFMaXN0Um9sZXNSZXNwb25zZRIkCgVyb2xlcxgBIAMoCzIVLmdlbnBvcy52MS5Sb2xlT3B0aW9uIkMKE0NyZWF0ZU1lbWJlclJlcXVlc3QSLAoGbWVtYmVyGAEgASgLMhwuZ2VucG9zLnYxLkNyZWF0ZU1lbWJlcklucHV0IjkKFENyZWF0ZU1lbWJlclJlc3BvbnNlEiEKBm1lbWJlchgBIAEoCzIRLmdlbnBvcy52MS5NZW1iZXIiTwoTVXBkYXRlTWVtYmVyUmVxdWVzdBIKCgJpZBgBIAEoCRIsCgZtZW1iZXIYAiABKAsyHC5nZW5wb3MudjEuVXBkYXRlTWVtYmVySW5wdXQiOQoUVXBkYXRlTWVtYmVyUmVzcG9uc2USIQoGbWVtYmVyGAEgASgLMhEuZ2VucG9zLnYxLk1lbWJlciIhChNEZWxldGVNZW1iZXJSZXF1ZXN0EgoKAmlkGAEgASgJIhYKFERlbGV0ZU1lbWJlclJlc3BvbnNlMqIDCg1NZW1iZXJTZXJ2aWNlEk4KC0xpc3RNZW1iZXJzEh0uZ2VucG9zLnYxLkxpc3RNZW1iZXJzUmVxdWVzdBoeLmdlbnBvcy52MS5MaXN0TWVtYmVyc1Jlc3BvbnNlIgASSAoJTGlzdFJvbGVzEhsuZ2VucG9zLnYxLkxpc3RSb2xlc1JlcXVlc3QaHC5nZW5wb3MudjEuTGlzdFJvbGVzUmVzcG9uc2UiABJRCgxDcmVhdGVNZW1iZXISHi5nZW5wb3MudjEuQ3JlYXRlTWVtYmVyUmVxdWVzdBofLmdlbnBvcy52MS5DcmVhdGVNZW1iZXJSZXNwb25zZSIAElEKDFVwZGF0ZU1lbWJlchIeLmdlbnBvcy52MS5VcGRhdGVNZW1iZXJSZXF1ZXN0Gh8uZ2VucG9zLnYxLlVwZGF0ZU1lbWJlclJlc3BvbnNlIgASUQoMRGVsZXRlTWVtYmVyEh4uZ2VucG9zLnYxLkRlbGV0ZU1lbWJlclJlcXVlc3QaHy5nZW5wb3MudjEuRGVsZXRlTWVtYmVyUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.Member
@@ -69,6 +69,19 @@ export type Member = Message<"genpos.v1.Member"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 10;
    */
   updatedAt?: Timestamp;
+
+  /**
+   * When true, this member can operate any store in the org now and in the
+   * future. `store_ids` is ignored in that case.
+   *
+   * @generated from field: bool all_stores = 11;
+   */
+  allStores: boolean;
+
+  /**
+   * @generated from field: repeated string store_ids = 12;
+   */
+  storeIds: string[];
 };
 
 /**
@@ -133,6 +146,16 @@ export type CreateMemberInput = Message<"genpos.v1.CreateMemberInput"> & {
    * @generated from field: string password = 5;
    */
   password: string;
+
+  /**
+   * @generated from field: bool all_stores = 6;
+   */
+  allStores: boolean;
+
+  /**
+   * @generated from field: repeated string store_ids = 7;
+   */
+  storeIds: string[];
 };
 
 /**
@@ -165,6 +188,16 @@ export type UpdateMemberInput = Message<"genpos.v1.UpdateMemberInput"> & {
    * @generated from field: string status = 4;
    */
   status: string;
+
+  /**
+   * @generated from field: bool all_stores = 5;
+   */
+  allStores: boolean;
+
+  /**
+   * @generated from field: repeated string store_ids = 6;
+   */
+  storeIds: string[];
 };
 
 /**

@@ -17,27 +17,36 @@ import (
 )
 
 type orderMocks struct {
-	ctrl        *gomock.Controller
-	tenantDB    *gatewaymock.MockTenantDB
-	reader      *gatewaymock.MockOrderReader
-	writer      *gatewaymock.MockOrderWriter
-	storeReader *gatewaymock.MockOrgStoreReader
+	ctrl         *gomock.Controller
+	tenantDB     *gatewaymock.MockTenantDB
+	reader       *gatewaymock.MockOrderReader
+	writer       *gatewaymock.MockOrderWriter
+	storeReader  *gatewaymock.MockOrgStoreReader
+	memberReader *gatewaymock.MockMemberReader
 }
 
 func newOrderMocks(t *testing.T) *orderMocks {
 	t.Helper()
 	ctrl := gomock.NewController(t)
 	return &orderMocks{
-		ctrl:        ctrl,
-		tenantDB:    gatewaymock.NewMockTenantDB(ctrl),
-		reader:      gatewaymock.NewMockOrderReader(ctrl),
-		writer:      gatewaymock.NewMockOrderWriter(ctrl),
-		storeReader: gatewaymock.NewMockOrgStoreReader(ctrl),
+		ctrl:         ctrl,
+		tenantDB:     gatewaymock.NewMockTenantDB(ctrl),
+		reader:       gatewaymock.NewMockOrderReader(ctrl),
+		writer:       gatewaymock.NewMockOrderWriter(ctrl),
+		storeReader:  gatewaymock.NewMockOrgStoreReader(ctrl),
+		memberReader: gatewaymock.NewMockMemberReader(ctrl),
 	}
 }
 
 func (m *orderMocks) newUsecase() usecase.OrderUsecase {
-	return usecase.NewOrderUsecase(m.tenantDB, m.reader, m.writer, m.storeReader)
+	return usecase.NewOrderUsecase(m.tenantDB, m.reader, m.writer, m.storeReader, m.memberReader)
+}
+
+func (m *orderMocks) allowStoreAccess() {
+	m.memberReader.EXPECT().
+		HasStoreAccess(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(true, nil).
+		AnyTimes()
 }
 
 func (m *orderMocks) stubPassthroughRead() {
@@ -220,6 +229,7 @@ func Test_OrderUsecase_CreateOrder(t *testing.T) {
 			in: baseInput(),
 			setup: func(m *orderMocks) {
 				m.stubPassthroughWrite()
+				m.allowStoreAccess()
 				m.reader.EXPECT().
 					GetByExternalID(gomock.Any(), "pos", "ext-1").
 					Return(nil, errors.NotFound("order not found"))
@@ -289,6 +299,7 @@ func Test_OrderUsecase_CreateOrder(t *testing.T) {
 			}(),
 			setup: func(m *orderMocks) {
 				m.stubPassthroughWrite()
+				m.allowStoreAccess()
 				// FirstStoreID must NOT be called when StoreID is supplied
 				m.writer.EXPECT().
 					Create(gomock.Any(), gomock.Any()).
@@ -347,6 +358,7 @@ func Test_OrderUsecase_CreateOrder(t *testing.T) {
 			in: baseInput(),
 			setup: func(m *orderMocks) {
 				m.stubPassthroughWrite()
+				m.allowStoreAccess()
 				m.reader.EXPECT().
 					GetByExternalID(gomock.Any(), "pos", "ext-1").
 					Return(nil, errors.NotFound("order not found"))
@@ -359,6 +371,23 @@ func Test_OrderUsecase_CreateOrder(t *testing.T) {
 			},
 			wantErr:     true,
 			wantErrCode: errors.CodeInternal,
+		},
+		"rejects pos order when user is not assigned to the resolved store": {
+			in: func() input.CreateOrderInput {
+				in := baseInput()
+				in.StoreID = "store-explicit"
+				in.ExternalID = ""
+				return in
+			}(),
+			setup: func(m *orderMocks) {
+				m.stubPassthroughWrite()
+				m.memberReader.EXPECT().
+					HasStoreAccess(gomock.Any(), "user-1", "store-explicit").
+					Return(false, nil)
+				// writer.Create must not be called
+			},
+			wantErr:     true,
+			wantErrCode: errors.CodeForbidden,
 		},
 	}
 

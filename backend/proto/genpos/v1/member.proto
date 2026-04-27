@@ -27,6 +27,10 @@ message Member {
   string                    status     = 8;
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
+  // When true, this member can operate any store in the org now and in the
+  // future. `store_ids` is ignored in that case.
+  bool                      all_stores = 11;
+  repeated string           store_ids  = 12;
 }
 
 message RoleOption {
@@ -36,18 +40,22 @@ message RoleOption {
 }
 
 message CreateMemberInput {
-  string name     = 1;
-  string email    = 2;
-  string phone    = 3;
-  string role_id  = 4;
-  string password = 5;
+  string          name       = 1;
+  string          email      = 2;
+  string          phone      = 3;
+  string          role_id    = 4;
+  string          password   = 5;
+  bool            all_stores = 6;
+  repeated string store_ids  = 7;
 }
 
 message UpdateMemberInput {
-  string name    = 1;
-  string phone   = 2;
-  string role_id = 3;
-  string status  = 4;
+  string          name       = 1;
+  string          phone      = 2;
+  string          role_id    = 3;
+  string          status     = 4;
+  bool            all_stores = 5;
+  repeated string store_ids  = 6;
 }
 
 message ListMembersRequest {}

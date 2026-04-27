@@ -57,6 +57,21 @@ func (mr *MockMemberReaderMockRecorder) GetByID(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockMemberReader)(nil).GetByID), ctx, id)
 }
 
+// HasStoreAccess mocks base method.
+func (m *MockMemberReader) HasStoreAccess(ctx context.Context, userID, storeID string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasStoreAccess", ctx, userID, storeID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HasStoreAccess indicates an expected call of HasStoreAccess.
+func (mr *MockMemberReaderMockRecorder) HasStoreAccess(ctx, userID, storeID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasStoreAccess", reflect.TypeOf((*MockMemberReader)(nil).HasStoreAccess), ctx, userID, storeID)
+}
+
 // List mocks base method.
 func (m *MockMemberReader) List(ctx context.Context) ([]*entity.Member, error) {
 	m.ctrl.T.Helper()
@@ -124,6 +139,20 @@ func (m *MockMemberWriter) Create(ctx context.Context, params gateway.CreateMemb
 func (mr *MockMemberWriterMockRecorder) Create(ctx, params any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockMemberWriter)(nil).Create), ctx, params)
+}
+
+// ReplaceStores mocks base method.
+func (m *MockMemberWriter) ReplaceStores(ctx context.Context, orgID, userID string, storeIDs []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReplaceStores", ctx, orgID, userID, storeIDs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReplaceStores indicates an expected call of ReplaceStores.
+func (mr *MockMemberWriterMockRecorder) ReplaceStores(ctx, orgID, userID, storeIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReplaceStores", reflect.TypeOf((*MockMemberWriter)(nil).ReplaceStores), ctx, orgID, userID, storeIDs)
 }
 
 // SoftDelete mocks base method.

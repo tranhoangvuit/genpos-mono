@@ -30,6 +30,7 @@ type Querier interface {
 	CreateTaxRate(ctx context.Context, arg CreateTaxRateParams) (CreateTaxRateRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	DeleteCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) error
+	DeleteMemberStores(ctx context.Context, userID pgtype.UUID) error
 	DeleteProductImagesByProduct(ctx context.Context, productID pgtype.UUID) error
 	DeleteProductOptionsByProduct(ctx context.Context, productID pgtype.UUID) error
 	DeletePurchaseOrderItemsByPO(ctx context.Context, purchaseOrderID pgtype.UUID) error
@@ -58,7 +59,9 @@ type Querier interface {
 	GetSupplierByID(ctx context.Context, id pgtype.UUID) (GetSupplierByIDRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error)
+	HasStoreAccess(ctx context.Context, arg HasStoreAccessParams) (bool, error)
 	InsertCustomerGroupMember(ctx context.Context, arg InsertCustomerGroupMemberParams) error
+	InsertMemberStore(ctx context.Context, arg InsertMemberStoreParams) error
 	InsertOrder(ctx context.Context, arg InsertOrderParams) (InsertOrderRow, error)
 	InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) error
 	InsertOrderPayment(ctx context.Context, arg InsertOrderPaymentParams) error
@@ -74,6 +77,7 @@ type Querier interface {
 	ListCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) ([]CustomerGroupMember, error)
 	ListCustomerGroups(ctx context.Context) ([]ListCustomerGroupsRow, error)
 	ListCustomerSummaries(ctx context.Context) ([]ListCustomerSummariesRow, error)
+	ListMemberStoreIDs(ctx context.Context, userID pgtype.UUID) ([]pgtype.UUID, error)
 	ListMembers(ctx context.Context) ([]ListMembersRow, error)
 	ListOrderLineItems(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineItemsRow, error)
 	ListOrderPayments(ctx context.Context, orderID pgtype.UUID) ([]ListOrderPaymentsRow, error)

@@ -12,10 +12,10 @@ import (
 )
 
 const createMember = `-- name: CreateMember :one
-INSERT INTO users (org_id, role_id, name, email, phone, password_hash, status)
+INSERT INTO users (org_id, role_id, name, email, phone, password_hash, all_stores, status)
 VALUES ($1, $2, $3,
         $4, $5,
-        $6, 'active')
+        $6, $7, 'active')
 RETURNING id
 `
 
@@ -26,6 +26,7 @@ type CreateMemberParams struct {
 	Email        pgtype.Text `json:"email"`
 	Phone        pgtype.Text `json:"phone"`
 	PasswordHash pgtype.Text `json:"password_hash"`
+	AllStores    bool        `json:"all_stores"`
 }
 
 func (q *Queries) CreateMember(ctx context.Context, arg CreateMemberParams) (pgtype.UUID, error) {
@@ -36,15 +37,25 @@ func (q *Queries) CreateMember(ctx context.Context, arg CreateMemberParams) (pgt
 		arg.Email,
 		arg.Phone,
 		arg.PasswordHash,
+		arg.AllStores,
 	)
 	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
 
+const deleteMemberStores = `-- name: DeleteMemberStores :exec
+DELETE FROM user_stores WHERE user_id = $1
+`
+
+func (q *Queries) DeleteMemberStores(ctx context.Context, userID pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteMemberStores, userID)
+	return err
+}
+
 const getMemberByID = `-- name: GetMemberByID :one
 SELECT u.id, u.org_id, u.name, u.email, u.phone, u.role_id, r.name AS role_name,
-       u.status, u.created_at, u.updated_at
+       u.status, u.all_stores, u.created_at, u.updated_at
 FROM users u
 JOIN roles r ON r.id = u.role_id
 WHERE u.id = $1 AND u.deleted_at IS NULL
@@ -59,6 +70,7 @@ type GetMemberByIDRow struct {
 	RoleID    pgtype.UUID        `json:"role_id"`
 	RoleName  string             `json:"role_name"`
 	Status    string             `json:"status"`
+	AllStores bool               `json:"all_stores"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
@@ -75,15 +87,88 @@ func (q *Queries) GetMemberByID(ctx context.Context, id pgtype.UUID) (GetMemberB
 		&i.RoleID,
 		&i.RoleName,
 		&i.Status,
+		&i.AllStores,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
+const hasStoreAccess = `-- name: HasStoreAccess :one
+SELECT EXISTS (
+    SELECT 1 FROM users u
+    WHERE u.id = $1
+      AND u.deleted_at IS NULL
+      AND u.status = 'active'
+      AND (
+        u.all_stores
+        OR EXISTS (
+          SELECT 1 FROM user_stores us
+          WHERE us.user_id = u.id AND us.store_id = $2
+        )
+      )
+) AS has_access
+`
+
+type HasStoreAccessParams struct {
+	UserID  pgtype.UUID `json:"user_id"`
+	StoreID pgtype.UUID `json:"store_id"`
+}
+
+func (q *Queries) HasStoreAccess(ctx context.Context, arg HasStoreAccessParams) (bool, error) {
+	row := q.db.QueryRow(ctx, hasStoreAccess, arg.UserID, arg.StoreID)
+	var has_access bool
+	err := row.Scan(&has_access)
+	return has_access, err
+}
+
+const insertMemberStore = `-- name: InsertMemberStore :exec
+INSERT INTO user_stores (org_id, user_id, store_id)
+VALUES ($1, $2, $3)
+ON CONFLICT (org_id, user_id, store_id) DO NOTHING
+`
+
+type InsertMemberStoreParams struct {
+	OrgID   pgtype.UUID `json:"org_id"`
+	UserID  pgtype.UUID `json:"user_id"`
+	StoreID pgtype.UUID `json:"store_id"`
+}
+
+func (q *Queries) InsertMemberStore(ctx context.Context, arg InsertMemberStoreParams) error {
+	_, err := q.db.Exec(ctx, insertMemberStore, arg.OrgID, arg.UserID, arg.StoreID)
+	return err
+}
+
+const listMemberStoreIDs = `-- name: ListMemberStoreIDs :many
+SELECT store_id
+FROM user_stores
+WHERE user_id = $1
+ORDER BY store_id
+`
+
+func (q *Queries) ListMemberStoreIDs(ctx context.Context, userID pgtype.UUID) ([]pgtype.UUID, error) {
+	rows, err := q.db.Query(ctx, listMemberStoreIDs, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []pgtype.UUID{}
+	for rows.Next() {
+		var store_id pgtype.UUID
+		if err := rows.Scan(&store_id); err != nil {
+			return nil, err
+		}
+		items = append(items, store_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listMembers = `-- name: ListMembers :many
 SELECT u.id, u.org_id, u.name, u.email, u.phone, u.role_id, r.name AS role_name,
-       u.status, u.created_at, u.updated_at
+       u.status, u.all_stores, u.created_at, u.updated_at
 FROM users u
 JOIN roles r ON r.id = u.role_id
 WHERE u.deleted_at IS NULL
@@ -99,6 +184,7 @@ type ListMembersRow struct {
 	RoleID    pgtype.UUID        `json:"role_id"`
 	RoleName  string             `json:"role_name"`
 	Status    string             `json:"status"`
+	AllStores bool               `json:"all_stores"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
@@ -121,6 +207,7 @@ func (q *Queries) ListMembers(ctx context.Context) ([]ListMembersRow, error) {
 			&i.RoleID,
 			&i.RoleName,
 			&i.Status,
+			&i.AllStores,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -154,16 +241,18 @@ SET name       = $1,
     phone      = $2,
     role_id    = $3,
     status     = $4,
+    all_stores = $5,
     updated_at = now()
-WHERE id = $5 AND deleted_at IS NULL
+WHERE id = $6 AND deleted_at IS NULL
 `
 
 type UpdateMemberParams struct {
-	Name   string      `json:"name"`
-	Phone  pgtype.Text `json:"phone"`
-	RoleID pgtype.UUID `json:"role_id"`
-	Status string      `json:"status"`
-	ID     pgtype.UUID `json:"id"`
+	Name      string      `json:"name"`
+	Phone     pgtype.Text `json:"phone"`
+	RoleID    pgtype.UUID `json:"role_id"`
+	Status    string      `json:"status"`
+	AllStores bool        `json:"all_stores"`
+	ID        pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateMember(ctx context.Context, arg UpdateMemberParams) (int64, error) {
@@ -172,6 +261,7 @@ func (q *Queries) UpdateMember(ctx context.Context, arg UpdateMemberParams) (int
 		arg.Phone,
 		arg.RoleID,
 		arg.Status,
+		arg.AllStores,
 		arg.ID,
 	)
 	if err != nil {

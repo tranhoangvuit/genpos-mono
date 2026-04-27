@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/order.proto.
  */
 export const file_genpos_v1_order: GenFile = /*@__PURE__*/
-  fileDesc("ChVnZW5wb3MvdjEvb3JkZXIucHJvdG8SCWdlbnBvcy52MSLsAgoMT3JkZXJTdW1tYXJ5EgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEhAKCHN0b3JlX2lkGAggASgJEhIKCnN0b3JlX25hbWUYCSABKAkSEwoLcmVnaXN0ZXJfaWQYCiABKAkSDwoHdXNlcl9pZBgLIAEoCRIRCgl1c2VyX25hbWUYDCABKAkSEwoLY3VzdG9tZXJfaWQYDSABKAkSFQoNY3VzdG9tZXJfbmFtZRgOIAEoCRIuCgpjcmVhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZzb3VyY2UYECABKAkSEwoLZXh0ZXJuYWxfaWQYESABKAkigQEKEUxpc3RPcmRlcnNSZXF1ZXN0EhAKCHN0b3JlX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiPQoSTGlzdE9yZGVyc1Jlc3BvbnNlEicKBm9yZGVycxgBIAMoCzIXLmdlbnBvcy52MS5PcmRlclN1bW1hcnki8AEKDU9yZGVyTGluZUl0ZW0SCgoCaWQYASABKAkSEgoKdmFyaWFudF9pZBgCIAEoCRIUCgxwcm9kdWN0X25hbWUYAyABKAkSFAoMdmFyaWFudF9uYW1lGAQgASgJEgsKA3NrdRgFIAEoCRIQCghxdWFudGl0eRgGIAEoCRISCgp1bml0X3ByaWNlGAcgASgJEhAKCHRheF9yYXRlGAggASgJEhIKCnRheF9hbW91bnQYCSABKAkSFwoPZGlzY291bnRfYW1vdW50GAogASgJEhIKCmxpbmVfdG90YWwYCyABKAkSDQoFbm90ZXMYDCABKAki3gEKDE9yZGVyUGF5bWVudBIKCgJpZBgBIAEoCRIZChFwYXltZW50X21ldGhvZF9pZBgCIAEoCRIbChNwYXltZW50X21ldGhvZF9uYW1lGAMgASgJEg4KBmFtb3VudBgEIAEoCRIQCgh0ZW5kZXJlZBgFIAEoCRIVCg1jaGFuZ2VfYW1vdW50GAYgASgJEhEKCXJlZmVyZW5jZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi/wMKBU9yZGVyEgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEg0KBW5vdGVzGAggASgJEhAKCHN0b3JlX2lkGAkgASgJEhIKCnN0b3JlX25hbWUYCiABKAkSEwoLcmVnaXN0ZXJfaWQYCyABKAkSDwoHdXNlcl9pZBgMIAEoCRIRCgl1c2VyX25hbWUYDSABKAkSEwoLY3VzdG9tZXJfaWQYDiABKAkSFQoNY3VzdG9tZXJfbmFtZRgPIAEoCRIuCgpjcmVhdGVkX2F0GBAgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYESABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCmxpbmVfaXRlbXMYEiADKAsyGC5nZW5wb3MudjEuT3JkZXJMaW5lSXRlbRIpCghwYXltZW50cxgTIAMoCzIXLmdlbnBvcy52MS5PcmRlclBheW1lbnQSDgoGc291cmNlGBQgASgJEhMKC2V4dGVybmFsX2lkGBUgASgJIh0KD0dldE9yZGVyUmVxdWVzdBIKCgJpZBgBIAEoCSIzChBHZXRPcmRlclJlc3BvbnNlEh8KBW9yZGVyGAEgASgLMhAuZ2VucG9zLnYxLk9yZGVyMqIBCgxPcmRlclNlcnZpY2USSwoKTGlzdE9yZGVycxIcLmdlbnBvcy52MS5MaXN0T3JkZXJzUmVxdWVzdBodLmdlbnBvcy52MS5MaXN0T3JkZXJzUmVzcG9uc2UiABJFCghHZXRPcmRlchIaLmdlbnBvcy52MS5HZXRPcmRlclJlcXVlc3QaGy5nZW5wb3MudjEuR2V0T3JkZXJSZXNwb25zZSIAQj9aPWdpdGh1Yi5jb20vZ2VucGljay9nZW5wb3MtbW9uby9iYWNrZW5kL2dlbi9nZW5wb3MvdjE7Z2VucG9zdjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChVnZW5wb3MvdjEvb3JkZXIucHJvdG8SCWdlbnBvcy52MSLsAgoMT3JkZXJTdW1tYXJ5EgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEhAKCHN0b3JlX2lkGAggASgJEhIKCnN0b3JlX25hbWUYCSABKAkSEwoLcmVnaXN0ZXJfaWQYCiABKAkSDwoHdXNlcl9pZBgLIAEoCRIRCgl1c2VyX25hbWUYDCABKAkSEwoLY3VzdG9tZXJfaWQYDSABKAkSFQoNY3VzdG9tZXJfbmFtZRgOIAEoCRIuCgpjcmVhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZzb3VyY2UYECABKAkSEwoLZXh0ZXJuYWxfaWQYESABKAkigQEKEUxpc3RPcmRlcnNSZXF1ZXN0EhAKCHN0b3JlX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiPQoSTGlzdE9yZGVyc1Jlc3BvbnNlEicKBm9yZGVycxgBIAMoCzIXLmdlbnBvcy52MS5PcmRlclN1bW1hcnki8AEKDU9yZGVyTGluZUl0ZW0SCgoCaWQYASABKAkSEgoKdmFyaWFudF9pZBgCIAEoCRIUCgxwcm9kdWN0X25hbWUYAyABKAkSFAoMdmFyaWFudF9uYW1lGAQgASgJEgsKA3NrdRgFIAEoCRIQCghxdWFudGl0eRgGIAEoCRISCgp1bml0X3ByaWNlGAcgASgJEhAKCHRheF9yYXRlGAggASgJEhIKCnRheF9hbW91bnQYCSABKAkSFwoPZGlzY291bnRfYW1vdW50GAogASgJEhIKCmxpbmVfdG90YWwYCyABKAkSDQoFbm90ZXMYDCABKAki3gEKDE9yZGVyUGF5bWVudBIKCgJpZBgBIAEoCRIZChFwYXltZW50X21ldGhvZF9pZBgCIAEoCRIbChNwYXltZW50X21ldGhvZF9uYW1lGAMgASgJEg4KBmFtb3VudBgEIAEoCRIQCgh0ZW5kZXJlZBgFIAEoCRIVCg1jaGFuZ2VfYW1vdW50GAYgASgJEhEKCXJlZmVyZW5jZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi/wMKBU9yZGVyEgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEg0KBW5vdGVzGAggASgJEhAKCHN0b3JlX2lkGAkgASgJEhIKCnN0b3JlX25hbWUYCiABKAkSEwoLcmVnaXN0ZXJfaWQYCyABKAkSDwoHdXNlcl9pZBgMIAEoCRIRCgl1c2VyX25hbWUYDSABKAkSEwoLY3VzdG9tZXJfaWQYDiABKAkSFQoNY3VzdG9tZXJfbmFtZRgPIAEoCRIuCgpjcmVhdGVkX2F0GBAgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYESABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCmxpbmVfaXRlbXMYEiADKAsyGC5nZW5wb3MudjEuT3JkZXJMaW5lSXRlbRIpCghwYXltZW50cxgTIAMoCzIXLmdlbnBvcy52MS5PcmRlclBheW1lbnQSDgoGc291cmNlGBQgASgJEhMKC2V4dGVybmFsX2lkGBUgASgJIh0KD0dldE9yZGVyUmVxdWVzdBIKCgJpZBgBIAEoCSIzChBHZXRPcmRlclJlc3BvbnNlEh8KBW9yZGVyGAEgASgLMhAuZ2VucG9zLnYxLk9yZGVyIuoBChNDcmVhdGVPcmRlckxpbmVJdGVtEhIKCnZhcmlhbnRfaWQYASABKAkSFAoMcHJvZHVjdF9uYW1lGAIgASgJEhQKDHZhcmlhbnRfbmFtZRgDIAEoCRILCgNza3UYBCABKAkSEAoIcXVhbnRpdHkYBSABKAkSEgoKdW5pdF9wcmljZRgGIAEoCRIXCg9kaXNjb3VudF9hbW91bnQYByABKAkSEAoIdGF4X3JhdGUYCCABKAkSEgoKdGF4X2Ftb3VudBgJIAEoCRISCgpsaW5lX3RvdGFsGAogASgJEg0KBW5vdGVzGAsgASgJInsKEkNyZWF0ZU9yZGVyUGF5bWVudBIZChFwYXltZW50X21ldGhvZF9pZBgBIAEoCRIOCgZhbW91bnQYAiABKAkSEAoIdGVuZGVyZWQYAyABKAkSFQoNY2hhbmdlX2Ftb3VudBgEIAEoCRIRCglyZWZlcmVuY2UYBSABKAkiugMKEkNyZWF0ZU9yZGVyUmVxdWVzdBIOCgZzb3VyY2UYASABKAkSEwoLZXh0ZXJuYWxfaWQYAiABKAkSGgoSZXh0ZXJuYWxfc291cmNlX2lkGAMgASgJEhQKDG9yZGVyX251bWJlchgEIAEoCRIQCghzdG9yZV9pZBgFIAEoCRITCgtyZWdpc3Rlcl9pZBgGIAEoCRITCgtjdXN0b21lcl9pZBgHIAEoCRIPCgd1c2VyX2lkGAggASgJEg4KBnN0YXR1cxgJIAEoCRIQCghzdWJ0b3RhbBgKIAEoCRIRCgl0YXhfdG90YWwYCyABKAkSFgoOZGlzY291bnRfdG90YWwYDCABKAkSDQoFdG90YWwYDSABKAkSDQoFbm90ZXMYDiABKAkSMAoMY29tcGxldGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIyCgpsaW5lX2l0ZW1zGBAgAygLMh4uZ2VucG9zLnYxLkNyZWF0ZU9yZGVyTGluZUl0ZW0SLwoIcGF5bWVudHMYESADKAsyHS5nZW5wb3MudjEuQ3JlYXRlT3JkZXJQYXltZW50IjYKE0NyZWF0ZU9yZGVyUmVzcG9uc2USHwoFb3JkZXIYASABKAsyEC5nZW5wb3MudjEuT3JkZXIy8gEKDE9yZGVyU2VydmljZRJLCgpMaXN0T3JkZXJzEhwuZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXF1ZXN0Gh0uZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXNwb25zZSIAEkUKCEdldE9yZGVyEhouZ2VucG9zLnYxLkdldE9yZGVyUmVxdWVzdBobLmdlbnBvcy52MS5HZXRPcmRlclJlc3BvbnNlIgASTgoLQ3JlYXRlT3JkZXISHS5nZW5wb3MudjEuQ3JlYXRlT3JkZXJSZXF1ZXN0Gh4uZ2VucG9zLnYxLkNyZWF0ZU9yZGVyUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.OrderSummary
@@ -444,6 +444,240 @@ export const GetOrderResponseSchema: GenMessage<GetOrderResponse> = /*@__PURE__*
   messageDesc(file_genpos_v1_order, 7);
 
 /**
+ * ----- CreateOrder -----------------------------------------------------------
+ *
+ * @generated from message genpos.v1.CreateOrderLineItem
+ */
+export type CreateOrderLineItem = Message<"genpos.v1.CreateOrderLineItem"> & {
+  /**
+   * optional — empty when the variant has been deleted
+   *
+   * @generated from field: string variant_id = 1;
+   */
+  variantId: string;
+
+  /**
+   * @generated from field: string product_name = 2;
+   */
+  productName: string;
+
+  /**
+   * @generated from field: string variant_name = 3;
+   */
+  variantName: string;
+
+  /**
+   * @generated from field: string sku = 4;
+   */
+  sku: string;
+
+  /**
+   * decimal string
+   *
+   * @generated from field: string quantity = 5;
+   */
+  quantity: string;
+
+  /**
+   * @generated from field: string unit_price = 6;
+   */
+  unitPrice: string;
+
+  /**
+   * @generated from field: string discount_amount = 7;
+   */
+  discountAmount: string;
+
+  /**
+   * @generated from field: string tax_rate = 8;
+   */
+  taxRate: string;
+
+  /**
+   * @generated from field: string tax_amount = 9;
+   */
+  taxAmount: string;
+
+  /**
+   * @generated from field: string line_total = 10;
+   */
+  lineTotal: string;
+
+  /**
+   * @generated from field: string notes = 11;
+   */
+  notes: string;
+};
+
+/**
+ * Describes the message genpos.v1.CreateOrderLineItem.
+ * Use `create(CreateOrderLineItemSchema)` to create a new message.
+ */
+export const CreateOrderLineItemSchema: GenMessage<CreateOrderLineItem> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 8);
+
+/**
+ * @generated from message genpos.v1.CreateOrderPayment
+ */
+export type CreateOrderPayment = Message<"genpos.v1.CreateOrderPayment"> & {
+  /**
+   * @generated from field: string payment_method_id = 1;
+   */
+  paymentMethodId: string;
+
+  /**
+   * @generated from field: string amount = 2;
+   */
+  amount: string;
+
+  /**
+   * @generated from field: string tendered = 3;
+   */
+  tendered: string;
+
+  /**
+   * @generated from field: string change_amount = 4;
+   */
+  changeAmount: string;
+
+  /**
+   * @generated from field: string reference = 5;
+   */
+  reference: string;
+};
+
+/**
+ * Describes the message genpos.v1.CreateOrderPayment.
+ * Use `create(CreateOrderPaymentSchema)` to create a new message.
+ */
+export const CreateOrderPaymentSchema: GenMessage<CreateOrderPayment> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 9);
+
+/**
+ * @generated from message genpos.v1.CreateOrderRequest
+ */
+export type CreateOrderRequest = Message<"genpos.v1.CreateOrderRequest"> & {
+  /**
+   * Idempotency key. source defaults to "pos" if empty.
+   *
+   * @generated from field: string source = 1;
+   */
+  source: string;
+
+  /**
+   * client's local order UUID
+   *
+   * @generated from field: string external_id = 2;
+   */
+  externalId: string;
+
+  /**
+   * @generated from field: string external_source_id = 3;
+   */
+  externalSourceId: string;
+
+  /**
+   * @generated from field: string order_number = 4;
+   */
+  orderNumber: string;
+
+  /**
+   * optional — defaults to org's first store
+   *
+   * @generated from field: string store_id = 5;
+   */
+  storeId: string;
+
+  /**
+   * @generated from field: string register_id = 6;
+   */
+  registerId: string;
+
+  /**
+   * @generated from field: string customer_id = 7;
+   */
+  customerId: string;
+
+  /**
+   * required for source="pos"
+   *
+   * @generated from field: string user_id = 8;
+   */
+  userId: string;
+
+  /**
+   * defaults to "completed"
+   *
+   * @generated from field: string status = 9;
+   */
+  status: string;
+
+  /**
+   * @generated from field: string subtotal = 10;
+   */
+  subtotal: string;
+
+  /**
+   * @generated from field: string tax_total = 11;
+   */
+  taxTotal: string;
+
+  /**
+   * @generated from field: string discount_total = 12;
+   */
+  discountTotal: string;
+
+  /**
+   * @generated from field: string total = 13;
+   */
+  total: string;
+
+  /**
+   * @generated from field: string notes = 14;
+   */
+  notes: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp completed_at = 15;
+   */
+  completedAt?: Timestamp;
+
+  /**
+   * @generated from field: repeated genpos.v1.CreateOrderLineItem line_items = 16;
+   */
+  lineItems: CreateOrderLineItem[];
+
+  /**
+   * @generated from field: repeated genpos.v1.CreateOrderPayment payments = 17;
+   */
+  payments: CreateOrderPayment[];
+};
+
+/**
+ * Describes the message genpos.v1.CreateOrderRequest.
+ * Use `create(CreateOrderRequestSchema)` to create a new message.
+ */
+export const CreateOrderRequestSchema: GenMessage<CreateOrderRequest> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 10);
+
+/**
+ * @generated from message genpos.v1.CreateOrderResponse
+ */
+export type CreateOrderResponse = Message<"genpos.v1.CreateOrderResponse"> & {
+  /**
+   * @generated from field: genpos.v1.Order order = 1;
+   */
+  order?: Order;
+};
+
+/**
+ * Describes the message genpos.v1.CreateOrderResponse.
+ * Use `create(CreateOrderResponseSchema)` to create a new message.
+ */
+export const CreateOrderResponseSchema: GenMessage<CreateOrderResponse> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 11);
+
+/**
  * ----- OrderService ----------------------------------------------------------
  *
  * @generated from service genpos.v1.OrderService
@@ -464,6 +698,19 @@ export const OrderService: GenService<{
     methodKind: "unary";
     input: typeof GetOrderRequestSchema;
     output: typeof GetOrderResponseSchema;
+  },
+  /**
+   * CreateOrder accepts a completed order from a non-cloud channel (today: the
+   * desk POS). Idempotent on (source, external_id) — resubmitting with the
+   * same key returns the previously persisted order rather than creating a
+   * duplicate. external_id is the client's local UUID.
+   *
+   * @generated from rpc genpos.v1.OrderService.CreateOrder
+   */
+  createOrder: {
+    methodKind: "unary";
+    input: typeof CreateOrderRequestSchema;
+    output: typeof CreateOrderResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_genpos_v1_order, 0);
