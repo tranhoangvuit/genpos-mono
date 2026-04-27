@@ -74,7 +74,9 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	poHandler := grpchandler.NewPurchaseOrderHandler(logger, poUsecase)
 
 	orderReader := datastore.NewOrderReader()
-	orderUsecase := usecase.NewOrderUsecase(tenantDB, orderReader)
+	orderWriter := datastore.NewOrderWriter()
+	orgStoreReader := datastore.NewOrgStoreReader()
+	orderUsecase := usecase.NewOrderUsecase(tenantDB, orderReader, orderWriter, orgStoreReader)
 	orderHandler := grpchandler.NewOrderHandler(logger, orderUsecase)
 
 	stockTakeReader := datastore.NewStockTakeReader()

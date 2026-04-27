@@ -11,6 +11,105 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getFirstStoreIDForOrg = `-- name: GetFirstStoreIDForOrg :one
+SELECT id
+FROM stores
+WHERE org_id = $1 AND deleted_at IS NULL
+ORDER BY created_at ASC
+LIMIT 1
+`
+
+func (q *Queries) GetFirstStoreIDForOrg(ctx context.Context, orgID pgtype.UUID) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, getFirstStoreIDForOrg, orgID)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getOrderByExternalID = `-- name: GetOrderByExternalID :one
+SELECT o.id,
+       o.order_number,
+       o.status,
+       o.subtotal::TEXT       AS subtotal,
+       o.tax_total::TEXT      AS tax_total,
+       o.discount_total::TEXT AS discount_total,
+       o.total::TEXT          AS total,
+       COALESCE(o.notes, '')  AS notes,
+       o.store_id,
+       COALESCE(s.name, '')   AS store_name,
+       o.register_id,
+       o.user_id,
+       COALESCE(u.name, '')   AS user_name,
+       o.customer_id,
+       COALESCE(c.name, '')         AS customer_name,
+       o.created_at,
+       o.completed_at,
+       o.source,
+       COALESCE(o.external_id, '')  AS external_id
+FROM orders o
+LEFT JOIN stores    s ON s.id = o.store_id    AND s.deleted_at IS NULL
+LEFT JOIN users     u ON u.id = o.user_id     AND u.deleted_at IS NULL
+LEFT JOIN customers c ON c.id = o.customer_id AND c.deleted_at IS NULL
+WHERE o.source = $1
+  AND o.external_id = $2
+  AND o.deleted_at IS NULL
+LIMIT 1
+`
+
+type GetOrderByExternalIDParams struct {
+	Source     string      `json:"source"`
+	ExternalID pgtype.Text `json:"external_id"`
+}
+
+type GetOrderByExternalIDRow struct {
+	ID            pgtype.UUID        `json:"id"`
+	OrderNumber   string             `json:"order_number"`
+	Status        string             `json:"status"`
+	Subtotal      string             `json:"subtotal"`
+	TaxTotal      string             `json:"tax_total"`
+	DiscountTotal string             `json:"discount_total"`
+	Total         string             `json:"total"`
+	Notes         string             `json:"notes"`
+	StoreID       pgtype.UUID        `json:"store_id"`
+	StoreName     string             `json:"store_name"`
+	RegisterID    pgtype.UUID        `json:"register_id"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	UserName      string             `json:"user_name"`
+	CustomerID    pgtype.UUID        `json:"customer_id"`
+	CustomerName  string             `json:"customer_name"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	CompletedAt   pgtype.Timestamptz `json:"completed_at"`
+	Source        string             `json:"source"`
+	ExternalID    string             `json:"external_id"`
+}
+
+func (q *Queries) GetOrderByExternalID(ctx context.Context, arg GetOrderByExternalIDParams) (GetOrderByExternalIDRow, error) {
+	row := q.db.QueryRow(ctx, getOrderByExternalID, arg.Source, arg.ExternalID)
+	var i GetOrderByExternalIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.OrderNumber,
+		&i.Status,
+		&i.Subtotal,
+		&i.TaxTotal,
+		&i.DiscountTotal,
+		&i.Total,
+		&i.Notes,
+		&i.StoreID,
+		&i.StoreName,
+		&i.RegisterID,
+		&i.UserID,
+		&i.UserName,
+		&i.CustomerID,
+		&i.CustomerName,
+		&i.CreatedAt,
+		&i.CompletedAt,
+		&i.Source,
+		&i.ExternalID,
+	)
+	return i, err
+}
+
 const getOrderByID = `-- name: GetOrderByID :one
 SELECT o.id,
        o.order_number,
@@ -85,6 +184,201 @@ func (q *Queries) GetOrderByID(ctx context.Context, id pgtype.UUID) (GetOrderByI
 		&i.ExternalID,
 	)
 	return i, err
+}
+
+const insertOrder = `-- name: InsertOrder :one
+INSERT INTO orders (
+    org_id, store_id, register_id, customer_id, user_id,
+    order_number, status, subtotal, tax_total, discount_total, total,
+    notes, completed_at, source, external_id, external_source_id
+) VALUES (
+    $1, $2, $3,
+    $4, $5,
+    $6, $7,
+    $8::NUMERIC, $9::NUMERIC,
+    $10::NUMERIC, $11::NUMERIC,
+    $12, $13,
+    $14, $15, $16
+)
+RETURNING id, org_id, store_id, register_id, customer_id, user_id,
+          order_number, status,
+          subtotal::TEXT       AS subtotal,
+          tax_total::TEXT      AS tax_total,
+          discount_total::TEXT AS discount_total,
+          total::TEXT          AS total,
+          COALESCE(notes, '')  AS notes,
+          completed_at, source,
+          COALESCE(external_id, '') AS external_id,
+          created_at, updated_at
+`
+
+type InsertOrderParams struct {
+	OrgID            pgtype.UUID        `json:"org_id"`
+	StoreID          pgtype.UUID        `json:"store_id"`
+	RegisterID       pgtype.UUID        `json:"register_id"`
+	CustomerID       pgtype.UUID        `json:"customer_id"`
+	UserID           pgtype.UUID        `json:"user_id"`
+	OrderNumber      string             `json:"order_number"`
+	Status           string             `json:"status"`
+	Subtotal         pgtype.Numeric     `json:"subtotal"`
+	TaxTotal         pgtype.Numeric     `json:"tax_total"`
+	DiscountTotal    pgtype.Numeric     `json:"discount_total"`
+	Total            pgtype.Numeric     `json:"total"`
+	Notes            pgtype.Text        `json:"notes"`
+	CompletedAt      pgtype.Timestamptz `json:"completed_at"`
+	Source           string             `json:"source"`
+	ExternalID       pgtype.Text        `json:"external_id"`
+	ExternalSourceID pgtype.Text        `json:"external_source_id"`
+}
+
+type InsertOrderRow struct {
+	ID            pgtype.UUID        `json:"id"`
+	OrgID         pgtype.UUID        `json:"org_id"`
+	StoreID       pgtype.UUID        `json:"store_id"`
+	RegisterID    pgtype.UUID        `json:"register_id"`
+	CustomerID    pgtype.UUID        `json:"customer_id"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	OrderNumber   string             `json:"order_number"`
+	Status        string             `json:"status"`
+	Subtotal      string             `json:"subtotal"`
+	TaxTotal      string             `json:"tax_total"`
+	DiscountTotal string             `json:"discount_total"`
+	Total         string             `json:"total"`
+	Notes         string             `json:"notes"`
+	CompletedAt   pgtype.Timestamptz `json:"completed_at"`
+	Source        string             `json:"source"`
+	ExternalID    string             `json:"external_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
+func (q *Queries) InsertOrder(ctx context.Context, arg InsertOrderParams) (InsertOrderRow, error) {
+	row := q.db.QueryRow(ctx, insertOrder,
+		arg.OrgID,
+		arg.StoreID,
+		arg.RegisterID,
+		arg.CustomerID,
+		arg.UserID,
+		arg.OrderNumber,
+		arg.Status,
+		arg.Subtotal,
+		arg.TaxTotal,
+		arg.DiscountTotal,
+		arg.Total,
+		arg.Notes,
+		arg.CompletedAt,
+		arg.Source,
+		arg.ExternalID,
+		arg.ExternalSourceID,
+	)
+	var i InsertOrderRow
+	err := row.Scan(
+		&i.ID,
+		&i.OrgID,
+		&i.StoreID,
+		&i.RegisterID,
+		&i.CustomerID,
+		&i.UserID,
+		&i.OrderNumber,
+		&i.Status,
+		&i.Subtotal,
+		&i.TaxTotal,
+		&i.DiscountTotal,
+		&i.Total,
+		&i.Notes,
+		&i.CompletedAt,
+		&i.Source,
+		&i.ExternalID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const insertOrderLineItem = `-- name: InsertOrderLineItem :exec
+INSERT INTO order_line_items (
+    org_id, order_id, variant_id, product_name, variant_name, sku,
+    quantity, unit_price, tax_rate, tax_amount, discount_amount, line_total, notes
+) VALUES (
+    $1, $2, $3,
+    $4, $5, $6,
+    $7::NUMERIC, $8::NUMERIC,
+    $9::NUMERIC, $10::NUMERIC,
+    $11::NUMERIC, $12::NUMERIC,
+    $13
+)
+`
+
+type InsertOrderLineItemParams struct {
+	OrgID          pgtype.UUID    `json:"org_id"`
+	OrderID        pgtype.UUID    `json:"order_id"`
+	VariantID      pgtype.UUID    `json:"variant_id"`
+	ProductName    string         `json:"product_name"`
+	VariantName    string         `json:"variant_name"`
+	Sku            pgtype.Text    `json:"sku"`
+	Quantity       pgtype.Numeric `json:"quantity"`
+	UnitPrice      pgtype.Numeric `json:"unit_price"`
+	TaxRate        pgtype.Numeric `json:"tax_rate"`
+	TaxAmount      pgtype.Numeric `json:"tax_amount"`
+	DiscountAmount pgtype.Numeric `json:"discount_amount"`
+	LineTotal      pgtype.Numeric `json:"line_total"`
+	Notes          pgtype.Text    `json:"notes"`
+}
+
+func (q *Queries) InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) error {
+	_, err := q.db.Exec(ctx, insertOrderLineItem,
+		arg.OrgID,
+		arg.OrderID,
+		arg.VariantID,
+		arg.ProductName,
+		arg.VariantName,
+		arg.Sku,
+		arg.Quantity,
+		arg.UnitPrice,
+		arg.TaxRate,
+		arg.TaxAmount,
+		arg.DiscountAmount,
+		arg.LineTotal,
+		arg.Notes,
+	)
+	return err
+}
+
+const insertOrderPayment = `-- name: InsertOrderPayment :exec
+INSERT INTO payments (
+    org_id, order_id, payment_method_id, amount, tendered, change_amount,
+    reference, status
+) VALUES (
+    $1, $2, $3,
+    $4::NUMERIC, $5::NUMERIC,
+    $6::NUMERIC, $7,
+    $8
+)
+`
+
+type InsertOrderPaymentParams struct {
+	OrgID           pgtype.UUID    `json:"org_id"`
+	OrderID         pgtype.UUID    `json:"order_id"`
+	PaymentMethodID pgtype.UUID    `json:"payment_method_id"`
+	Amount          pgtype.Numeric `json:"amount"`
+	Tendered        pgtype.Numeric `json:"tendered"`
+	ChangeAmount    pgtype.Numeric `json:"change_amount"`
+	Reference       pgtype.Text    `json:"reference"`
+	Status          string         `json:"status"`
+}
+
+func (q *Queries) InsertOrderPayment(ctx context.Context, arg InsertOrderPaymentParams) error {
+	_, err := q.db.Exec(ctx, insertOrderPayment,
+		arg.OrgID,
+		arg.OrderID,
+		arg.PaymentMethodID,
+		arg.Amount,
+		arg.Tendered,
+		arg.ChangeAmount,
+		arg.Reference,
+		arg.Status,
+	)
+	return err
 }
 
 const listOrderLineItems = `-- name: ListOrderLineItems :many

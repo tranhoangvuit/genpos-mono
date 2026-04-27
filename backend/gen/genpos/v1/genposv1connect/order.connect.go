@@ -37,12 +37,20 @@ const (
 	OrderServiceListOrdersProcedure = "/genpos.v1.OrderService/ListOrders"
 	// OrderServiceGetOrderProcedure is the fully-qualified name of the OrderService's GetOrder RPC.
 	OrderServiceGetOrderProcedure = "/genpos.v1.OrderService/GetOrder"
+	// OrderServiceCreateOrderProcedure is the fully-qualified name of the OrderService's CreateOrder
+	// RPC.
+	OrderServiceCreateOrderProcedure = "/genpos.v1.OrderService/CreateOrder"
 )
 
 // OrderServiceClient is a client for the genpos.v1.OrderService service.
 type OrderServiceClient interface {
 	ListOrders(context.Context, *connect.Request[v1.ListOrdersRequest]) (*connect.Response[v1.ListOrdersResponse], error)
 	GetOrder(context.Context, *connect.Request[v1.GetOrderRequest]) (*connect.Response[v1.GetOrderResponse], error)
+	// CreateOrder accepts a completed order from a non-cloud channel (today: the
+	// desk POS). Idempotent on (source, external_id) — resubmitting with the
+	// same key returns the previously persisted order rather than creating a
+	// duplicate. external_id is the client's local UUID.
+	CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error)
 }
 
 // NewOrderServiceClient constructs a client for the genpos.v1.OrderService service. By default, it
@@ -68,13 +76,20 @@ func NewOrderServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(orderServiceMethods.ByName("GetOrder")),
 			connect.WithClientOptions(opts...),
 		),
+		createOrder: connect.NewClient[v1.CreateOrderRequest, v1.CreateOrderResponse](
+			httpClient,
+			baseURL+OrderServiceCreateOrderProcedure,
+			connect.WithSchema(orderServiceMethods.ByName("CreateOrder")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // orderServiceClient implements OrderServiceClient.
 type orderServiceClient struct {
-	listOrders *connect.Client[v1.ListOrdersRequest, v1.ListOrdersResponse]
-	getOrder   *connect.Client[v1.GetOrderRequest, v1.GetOrderResponse]
+	listOrders  *connect.Client[v1.ListOrdersRequest, v1.ListOrdersResponse]
+	getOrder    *connect.Client[v1.GetOrderRequest, v1.GetOrderResponse]
+	createOrder *connect.Client[v1.CreateOrderRequest, v1.CreateOrderResponse]
 }
 
 // ListOrders calls genpos.v1.OrderService.ListOrders.
@@ -87,10 +102,20 @@ func (c *orderServiceClient) GetOrder(ctx context.Context, req *connect.Request[
 	return c.getOrder.CallUnary(ctx, req)
 }
 
+// CreateOrder calls genpos.v1.OrderService.CreateOrder.
+func (c *orderServiceClient) CreateOrder(ctx context.Context, req *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error) {
+	return c.createOrder.CallUnary(ctx, req)
+}
+
 // OrderServiceHandler is an implementation of the genpos.v1.OrderService service.
 type OrderServiceHandler interface {
 	ListOrders(context.Context, *connect.Request[v1.ListOrdersRequest]) (*connect.Response[v1.ListOrdersResponse], error)
 	GetOrder(context.Context, *connect.Request[v1.GetOrderRequest]) (*connect.Response[v1.GetOrderResponse], error)
+	// CreateOrder accepts a completed order from a non-cloud channel (today: the
+	// desk POS). Idempotent on (source, external_id) — resubmitting with the
+	// same key returns the previously persisted order rather than creating a
+	// duplicate. external_id is the client's local UUID.
+	CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error)
 }
 
 // NewOrderServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -112,12 +137,20 @@ func NewOrderServiceHandler(svc OrderServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(orderServiceMethods.ByName("GetOrder")),
 		connect.WithHandlerOptions(opts...),
 	)
+	orderServiceCreateOrderHandler := connect.NewUnaryHandler(
+		OrderServiceCreateOrderProcedure,
+		svc.CreateOrder,
+		connect.WithSchema(orderServiceMethods.ByName("CreateOrder")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/genpos.v1.OrderService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrderServiceListOrdersProcedure:
 			orderServiceListOrdersHandler.ServeHTTP(w, r)
 		case OrderServiceGetOrderProcedure:
 			orderServiceGetOrderHandler.ServeHTTP(w, r)
+		case OrderServiceCreateOrderProcedure:
+			orderServiceCreateOrderHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -133,4 +166,8 @@ func (UnimplementedOrderServiceHandler) ListOrders(context.Context, *connect.Req
 
 func (UnimplementedOrderServiceHandler) GetOrder(context.Context, *connect.Request[v1.GetOrderRequest]) (*connect.Response[v1.GetOrderResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.OrderService.GetOrder is not implemented"))
+}
+
+func (UnimplementedOrderServiceHandler) CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.OrderService.CreateOrder is not implemented"))
 }

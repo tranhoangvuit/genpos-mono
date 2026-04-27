@@ -42,7 +42,9 @@ type Querier interface {
 	GetCustomerGroupByID(ctx context.Context, id pgtype.UUID) (GetCustomerGroupByIDRow, error)
 	GetCustomerGroupByName(ctx context.Context, name string) (GetCustomerGroupByNameRow, error)
 	GetFirstStoreForOrg(ctx context.Context, orgID pgtype.UUID) (GetFirstStoreForOrgRow, error)
+	GetFirstStoreIDForOrg(ctx context.Context, orgID pgtype.UUID) (pgtype.UUID, error)
 	GetMemberByID(ctx context.Context, id pgtype.UUID) (GetMemberByIDRow, error)
+	GetOrderByExternalID(ctx context.Context, arg GetOrderByExternalIDParams) (GetOrderByExternalIDRow, error)
 	GetOrderByID(ctx context.Context, id pgtype.UUID) (GetOrderByIDRow, error)
 	GetOrgByID(ctx context.Context, id pgtype.UUID) (GetOrgByIDRow, error)
 	GetOrgBySlug(ctx context.Context, slug string) (GetOrgBySlugRow, error)
@@ -57,6 +59,9 @@ type Querier interface {
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error)
 	InsertCustomerGroupMember(ctx context.Context, arg InsertCustomerGroupMemberParams) error
+	InsertOrder(ctx context.Context, arg InsertOrderParams) (InsertOrderRow, error)
+	InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) error
+	InsertOrderPayment(ctx context.Context, arg InsertOrderPaymentParams) error
 	InsertProductImage(ctx context.Context, arg InsertProductImageParams) (ProductImage, error)
 	InsertProductOption(ctx context.Context, arg InsertProductOptionParams) (ProductOption, error)
 	InsertProductOptionValue(ctx context.Context, arg InsertProductOptionValueParams) (ProductOptionValue, error)

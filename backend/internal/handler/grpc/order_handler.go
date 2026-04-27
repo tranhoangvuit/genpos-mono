@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -55,6 +56,74 @@ func (h *OrderHandler) ListOrders(
 		pb = append(pb, toOrderSummaryProto(o))
 	}
 	return connect.NewResponse(&genposv1.ListOrdersResponse{Orders: pb}), nil
+}
+
+func (h *OrderHandler) CreateOrder(
+	ctx context.Context,
+	req *connect.Request[genposv1.CreateOrderRequest],
+) (*connect.Response[genposv1.CreateOrderResponse], error) {
+	authCtx, err := h.requireAuth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	msg := req.Msg
+
+	completedAt := time.Time{}
+	if ts := msg.GetCompletedAt(); ts != nil {
+		completedAt = ts.AsTime()
+	}
+
+	items := make([]input.CreateOrderLineItemInput, 0, len(msg.GetLineItems()))
+	for _, it := range msg.GetLineItems() {
+		items = append(items, input.CreateOrderLineItemInput{
+			VariantID:      it.GetVariantId(),
+			ProductName:    it.GetProductName(),
+			VariantName:    it.GetVariantName(),
+			SKU:            it.GetSku(),
+			Quantity:       it.GetQuantity(),
+			UnitPrice:      it.GetUnitPrice(),
+			DiscountAmount: it.GetDiscountAmount(),
+			TaxRate:        it.GetTaxRate(),
+			TaxAmount:      it.GetTaxAmount(),
+			LineTotal:      it.GetLineTotal(),
+			Notes:          it.GetNotes(),
+		})
+	}
+	payments := make([]input.CreateOrderPaymentInput, 0, len(msg.GetPayments()))
+	for _, p := range msg.GetPayments() {
+		payments = append(payments, input.CreateOrderPaymentInput{
+			PaymentMethodID: p.GetPaymentMethodId(),
+			Amount:          p.GetAmount(),
+			Tendered:        p.GetTendered(),
+			ChangeAmount:    p.GetChangeAmount(),
+			Reference:       p.GetReference(),
+		})
+	}
+
+	o, err := h.usecase.CreateOrder(ctx, input.CreateOrderInput{
+		OrgID:            authCtx.OrgID,
+		Source:           msg.GetSource(),
+		ExternalID:       msg.GetExternalId(),
+		ExternalSourceID: msg.GetExternalSourceId(),
+		OrderNumber:      msg.GetOrderNumber(),
+		StoreID:          msg.GetStoreId(),
+		RegisterID:       msg.GetRegisterId(),
+		CustomerID:       msg.GetCustomerId(),
+		UserID:           msg.GetUserId(),
+		Status:           msg.GetStatus(),
+		Subtotal:         msg.GetSubtotal(),
+		TaxTotal:         msg.GetTaxTotal(),
+		DiscountTotal:    msg.GetDiscountTotal(),
+		Total:            msg.GetTotal(),
+		Notes:            msg.GetNotes(),
+		CompletedAt:      completedAt,
+		LineItems:        items,
+		Payments:         payments,
+	})
+	if err != nil {
+		return nil, h.logAndConvert(ctx, "create order", err)
+	}
+	return connect.NewResponse(&genposv1.CreateOrderResponse{Order: toOrderProto(o)}), nil
 }
 
 func (h *OrderHandler) GetOrder(

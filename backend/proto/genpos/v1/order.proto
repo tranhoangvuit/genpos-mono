@@ -10,6 +10,11 @@ import "google/protobuf/timestamp.proto";
 service OrderService {
   rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+  // CreateOrder accepts a completed order from a non-cloud channel (today: the
+  // desk POS). Idempotent on (source, external_id) — resubmitting with the
+  // same key returns the previously persisted order rather than creating a
+  // duplicate. external_id is the client's local UUID.
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
 }
 
 message OrderSummary {
@@ -98,3 +103,51 @@ message Order {
 
 message GetOrderRequest  { string id = 1; }
 message GetOrderResponse { Order order = 1; }
+
+// ----- CreateOrder -----------------------------------------------------------
+message CreateOrderLineItem {
+  string variant_id      = 1; // optional — empty when the variant has been deleted
+  string product_name    = 2;
+  string variant_name    = 3;
+  string sku             = 4;
+  string quantity        = 5; // decimal string
+  string unit_price      = 6;
+  string discount_amount = 7;
+  string tax_rate        = 8;
+  string tax_amount      = 9;
+  string line_total      = 10;
+  string notes           = 11;
+}
+
+message CreateOrderPayment {
+  string payment_method_id = 1;
+  string amount            = 2;
+  string tendered          = 3;
+  string change_amount     = 4;
+  string reference         = 5;
+}
+
+message CreateOrderRequest {
+  // Idempotency key. source defaults to "pos" if empty.
+  string                    source             = 1;
+  string                    external_id        = 2; // client's local order UUID
+  string                    external_source_id = 3;
+
+  string                    order_number       = 4;
+  string                    store_id           = 5; // optional — defaults to org's first store
+  string                    register_id        = 6;
+  string                    customer_id        = 7;
+  string                    user_id            = 8; // required for source="pos"
+  string                    status             = 9; // defaults to "completed"
+  string                    subtotal           = 10;
+  string                    tax_total          = 11;
+  string                    discount_total     = 12;
+  string                    total              = 13;
+  string                    notes              = 14;
+  google.protobuf.Timestamp completed_at       = 15;
+
+  repeated CreateOrderLineItem line_items      = 16;
+  repeated CreateOrderPayment  payments        = 17;
+}
+
+message CreateOrderResponse { Order order = 1; }

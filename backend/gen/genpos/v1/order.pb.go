@@ -833,6 +833,424 @@ func (x *GetOrderResponse) GetOrder() *Order {
 	return nil
 }
 
+// ----- CreateOrder -----------------------------------------------------------
+type CreateOrderLineItem struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	VariantId      string                 `protobuf:"bytes,1,opt,name=variant_id,json=variantId,proto3" json:"variant_id,omitempty"` // optional — empty when the variant has been deleted
+	ProductName    string                 `protobuf:"bytes,2,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	VariantName    string                 `protobuf:"bytes,3,opt,name=variant_name,json=variantName,proto3" json:"variant_name,omitempty"`
+	Sku            string                 `protobuf:"bytes,4,opt,name=sku,proto3" json:"sku,omitempty"`
+	Quantity       string                 `protobuf:"bytes,5,opt,name=quantity,proto3" json:"quantity,omitempty"` // decimal string
+	UnitPrice      string                 `protobuf:"bytes,6,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
+	DiscountAmount string                 `protobuf:"bytes,7,opt,name=discount_amount,json=discountAmount,proto3" json:"discount_amount,omitempty"`
+	TaxRate        string                 `protobuf:"bytes,8,opt,name=tax_rate,json=taxRate,proto3" json:"tax_rate,omitempty"`
+	TaxAmount      string                 `protobuf:"bytes,9,opt,name=tax_amount,json=taxAmount,proto3" json:"tax_amount,omitempty"`
+	LineTotal      string                 `protobuf:"bytes,10,opt,name=line_total,json=lineTotal,proto3" json:"line_total,omitempty"`
+	Notes          string                 `protobuf:"bytes,11,opt,name=notes,proto3" json:"notes,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CreateOrderLineItem) Reset() {
+	*x = CreateOrderLineItem{}
+	mi := &file_genpos_v1_order_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderLineItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderLineItem) ProtoMessage() {}
+
+func (x *CreateOrderLineItem) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderLineItem.ProtoReflect.Descriptor instead.
+func (*CreateOrderLineItem) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CreateOrderLineItem) GetVariantId() string {
+	if x != nil {
+		return x.VariantId
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetVariantName() string {
+	if x != nil {
+		return x.VariantName
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetQuantity() string {
+	if x != nil {
+		return x.Quantity
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetUnitPrice() string {
+	if x != nil {
+		return x.UnitPrice
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetDiscountAmount() string {
+	if x != nil {
+		return x.DiscountAmount
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetTaxRate() string {
+	if x != nil {
+		return x.TaxRate
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetTaxAmount() string {
+	if x != nil {
+		return x.TaxAmount
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetLineTotal() string {
+	if x != nil {
+		return x.LineTotal
+	}
+	return ""
+}
+
+func (x *CreateOrderLineItem) GetNotes() string {
+	if x != nil {
+		return x.Notes
+	}
+	return ""
+}
+
+type CreateOrderPayment struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	PaymentMethodId string                 `protobuf:"bytes,1,opt,name=payment_method_id,json=paymentMethodId,proto3" json:"payment_method_id,omitempty"`
+	Amount          string                 `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Tendered        string                 `protobuf:"bytes,3,opt,name=tendered,proto3" json:"tendered,omitempty"`
+	ChangeAmount    string                 `protobuf:"bytes,4,opt,name=change_amount,json=changeAmount,proto3" json:"change_amount,omitempty"`
+	Reference       string                 `protobuf:"bytes,5,opt,name=reference,proto3" json:"reference,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreateOrderPayment) Reset() {
+	*x = CreateOrderPayment{}
+	mi := &file_genpos_v1_order_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderPayment) ProtoMessage() {}
+
+func (x *CreateOrderPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderPayment.ProtoReflect.Descriptor instead.
+func (*CreateOrderPayment) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CreateOrderPayment) GetPaymentMethodId() string {
+	if x != nil {
+		return x.PaymentMethodId
+	}
+	return ""
+}
+
+func (x *CreateOrderPayment) GetAmount() string {
+	if x != nil {
+		return x.Amount
+	}
+	return ""
+}
+
+func (x *CreateOrderPayment) GetTendered() string {
+	if x != nil {
+		return x.Tendered
+	}
+	return ""
+}
+
+func (x *CreateOrderPayment) GetChangeAmount() string {
+	if x != nil {
+		return x.ChangeAmount
+	}
+	return ""
+}
+
+func (x *CreateOrderPayment) GetReference() string {
+	if x != nil {
+		return x.Reference
+	}
+	return ""
+}
+
+type CreateOrderRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Idempotency key. source defaults to "pos" if empty.
+	Source           string                 `protobuf:"bytes,1,opt,name=source,proto3" json:"source,omitempty"`
+	ExternalId       string                 `protobuf:"bytes,2,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"` // client's local order UUID
+	ExternalSourceId string                 `protobuf:"bytes,3,opt,name=external_source_id,json=externalSourceId,proto3" json:"external_source_id,omitempty"`
+	OrderNumber      string                 `protobuf:"bytes,4,opt,name=order_number,json=orderNumber,proto3" json:"order_number,omitempty"`
+	StoreId          string                 `protobuf:"bytes,5,opt,name=store_id,json=storeId,proto3" json:"store_id,omitempty"` // optional — defaults to org's first store
+	RegisterId       string                 `protobuf:"bytes,6,opt,name=register_id,json=registerId,proto3" json:"register_id,omitempty"`
+	CustomerId       string                 `protobuf:"bytes,7,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
+	UserId           string                 `protobuf:"bytes,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // required for source="pos"
+	Status           string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`               // defaults to "completed"
+	Subtotal         string                 `protobuf:"bytes,10,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	TaxTotal         string                 `protobuf:"bytes,11,opt,name=tax_total,json=taxTotal,proto3" json:"tax_total,omitempty"`
+	DiscountTotal    string                 `protobuf:"bytes,12,opt,name=discount_total,json=discountTotal,proto3" json:"discount_total,omitempty"`
+	Total            string                 `protobuf:"bytes,13,opt,name=total,proto3" json:"total,omitempty"`
+	Notes            string                 `protobuf:"bytes,14,opt,name=notes,proto3" json:"notes,omitempty"`
+	CompletedAt      *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	LineItems        []*CreateOrderLineItem `protobuf:"bytes,16,rep,name=line_items,json=lineItems,proto3" json:"line_items,omitempty"`
+	Payments         []*CreateOrderPayment  `protobuf:"bytes,17,rep,name=payments,proto3" json:"payments,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CreateOrderRequest) Reset() {
+	*x = CreateOrderRequest{}
+	mi := &file_genpos_v1_order_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderRequest) ProtoMessage() {}
+
+func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrderRequest) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CreateOrderRequest) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetExternalSourceId() string {
+	if x != nil {
+		return x.ExternalSourceId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetOrderNumber() string {
+	if x != nil {
+		return x.OrderNumber
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetStoreId() string {
+	if x != nil {
+		return x.StoreId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetRegisterId() string {
+	if x != nil {
+		return x.RegisterId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetCustomerId() string {
+	if x != nil {
+		return x.CustomerId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetSubtotal() string {
+	if x != nil {
+		return x.Subtotal
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetTaxTotal() string {
+	if x != nil {
+		return x.TaxTotal
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetDiscountTotal() string {
+	if x != nil {
+		return x.DiscountTotal
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetTotal() string {
+	if x != nil {
+		return x.Total
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetNotes() string {
+	if x != nil {
+		return x.Notes
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetCompletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
+func (x *CreateOrderRequest) GetLineItems() []*CreateOrderLineItem {
+	if x != nil {
+		return x.LineItems
+	}
+	return nil
+}
+
+func (x *CreateOrderRequest) GetPayments() []*CreateOrderPayment {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+type CreateOrderResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Order         *Order                 `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateOrderResponse) Reset() {
+	*x = CreateOrderResponse{}
+	mi := &file_genpos_v1_order_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderResponse) ProtoMessage() {}
+
+func (x *CreateOrderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderResponse.ProtoReflect.Descriptor instead.
+func (*CreateOrderResponse) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CreateOrderResponse) GetOrder() *Order {
+	if x != nil {
+		return x.Order
+	}
+	return nil
+}
+
 var File_genpos_v1_order_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_order_proto_rawDesc = "" +
@@ -929,11 +1347,60 @@ const file_genpos_v1_order_proto_rawDesc = "" +
 	"\x0fGetOrderRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\":\n" +
 	"\x10GetOrderResponse\x12&\n" +
-	"\x05order\x18\x01 \x01(\v2\x10.genpos.v1.OrderR\x05order2\xa2\x01\n" +
+	"\x05order\x18\x01 \x01(\v2\x10.genpos.v1.OrderR\x05order\"\xdf\x02\n" +
+	"\x13CreateOrderLineItem\x12\x1d\n" +
+	"\n" +
+	"variant_id\x18\x01 \x01(\tR\tvariantId\x12!\n" +
+	"\fproduct_name\x18\x02 \x01(\tR\vproductName\x12!\n" +
+	"\fvariant_name\x18\x03 \x01(\tR\vvariantName\x12\x10\n" +
+	"\x03sku\x18\x04 \x01(\tR\x03sku\x12\x1a\n" +
+	"\bquantity\x18\x05 \x01(\tR\bquantity\x12\x1d\n" +
+	"\n" +
+	"unit_price\x18\x06 \x01(\tR\tunitPrice\x12'\n" +
+	"\x0fdiscount_amount\x18\a \x01(\tR\x0ediscountAmount\x12\x19\n" +
+	"\btax_rate\x18\b \x01(\tR\ataxRate\x12\x1d\n" +
+	"\n" +
+	"tax_amount\x18\t \x01(\tR\ttaxAmount\x12\x1d\n" +
+	"\n" +
+	"line_total\x18\n" +
+	" \x01(\tR\tlineTotal\x12\x14\n" +
+	"\x05notes\x18\v \x01(\tR\x05notes\"\xb7\x01\n" +
+	"\x12CreateOrderPayment\x12*\n" +
+	"\x11payment_method_id\x18\x01 \x01(\tR\x0fpaymentMethodId\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\tR\x06amount\x12\x1a\n" +
+	"\btendered\x18\x03 \x01(\tR\btendered\x12#\n" +
+	"\rchange_amount\x18\x04 \x01(\tR\fchangeAmount\x12\x1c\n" +
+	"\treference\x18\x05 \x01(\tR\treference\"\xf1\x04\n" +
+	"\x12CreateOrderRequest\x12\x16\n" +
+	"\x06source\x18\x01 \x01(\tR\x06source\x12\x1f\n" +
+	"\vexternal_id\x18\x02 \x01(\tR\n" +
+	"externalId\x12,\n" +
+	"\x12external_source_id\x18\x03 \x01(\tR\x10externalSourceId\x12!\n" +
+	"\forder_number\x18\x04 \x01(\tR\vorderNumber\x12\x19\n" +
+	"\bstore_id\x18\x05 \x01(\tR\astoreId\x12\x1f\n" +
+	"\vregister_id\x18\x06 \x01(\tR\n" +
+	"registerId\x12\x1f\n" +
+	"\vcustomer_id\x18\a \x01(\tR\n" +
+	"customerId\x12\x17\n" +
+	"\auser_id\x18\b \x01(\tR\x06userId\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12\x1a\n" +
+	"\bsubtotal\x18\n" +
+	" \x01(\tR\bsubtotal\x12\x1b\n" +
+	"\ttax_total\x18\v \x01(\tR\btaxTotal\x12%\n" +
+	"\x0ediscount_total\x18\f \x01(\tR\rdiscountTotal\x12\x14\n" +
+	"\x05total\x18\r \x01(\tR\x05total\x12\x14\n" +
+	"\x05notes\x18\x0e \x01(\tR\x05notes\x12=\n" +
+	"\fcompleted_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12=\n" +
+	"\n" +
+	"line_items\x18\x10 \x03(\v2\x1e.genpos.v1.CreateOrderLineItemR\tlineItems\x129\n" +
+	"\bpayments\x18\x11 \x03(\v2\x1d.genpos.v1.CreateOrderPaymentR\bpayments\"=\n" +
+	"\x13CreateOrderResponse\x12&\n" +
+	"\x05order\x18\x01 \x01(\v2\x10.genpos.v1.OrderR\x05order2\xf2\x01\n" +
 	"\fOrderService\x12K\n" +
 	"\n" +
 	"ListOrders\x12\x1c.genpos.v1.ListOrdersRequest\x1a\x1d.genpos.v1.ListOrdersResponse\"\x00\x12E\n" +
-	"\bGetOrder\x12\x1a.genpos.v1.GetOrderRequest\x1a\x1b.genpos.v1.GetOrderResponse\"\x00B\x9f\x01\n" +
+	"\bGetOrder\x12\x1a.genpos.v1.GetOrderRequest\x1a\x1b.genpos.v1.GetOrderResponse\"\x00\x12N\n" +
+	"\vCreateOrder\x12\x1d.genpos.v1.CreateOrderRequest\x1a\x1e.genpos.v1.CreateOrderResponse\"\x00B\x9f\x01\n" +
 	"\rcom.genpos.v1B\n" +
 	"OrderProtoP\x01Z=github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1\xa2\x02\x03GXX\xaa\x02\tGenpos.V1\xca\x02\tGenpos\\V1\xe2\x02\x15Genpos\\V1\\GPBMetadata\xea\x02\n" +
 	"Genpos::V1b\x06proto3"
@@ -950,7 +1417,7 @@ func file_genpos_v1_order_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_order_proto_rawDescData
 }
 
-var file_genpos_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_genpos_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_genpos_v1_order_proto_goTypes = []any{
 	(*OrderSummary)(nil),          // 0: genpos.v1.OrderSummary
 	(*ListOrdersRequest)(nil),     // 1: genpos.v1.ListOrdersRequest
@@ -960,28 +1427,38 @@ var file_genpos_v1_order_proto_goTypes = []any{
 	(*Order)(nil),                 // 5: genpos.v1.Order
 	(*GetOrderRequest)(nil),       // 6: genpos.v1.GetOrderRequest
 	(*GetOrderResponse)(nil),      // 7: genpos.v1.GetOrderResponse
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*CreateOrderLineItem)(nil),   // 8: genpos.v1.CreateOrderLineItem
+	(*CreateOrderPayment)(nil),    // 9: genpos.v1.CreateOrderPayment
+	(*CreateOrderRequest)(nil),    // 10: genpos.v1.CreateOrderRequest
+	(*CreateOrderResponse)(nil),   // 11: genpos.v1.CreateOrderResponse
+	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
 }
 var file_genpos_v1_order_proto_depIdxs = []int32{
-	8,  // 0: genpos.v1.OrderSummary.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 1: genpos.v1.ListOrdersRequest.date_from:type_name -> google.protobuf.Timestamp
-	8,  // 2: genpos.v1.ListOrdersRequest.date_to:type_name -> google.protobuf.Timestamp
+	12, // 0: genpos.v1.OrderSummary.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: genpos.v1.ListOrdersRequest.date_from:type_name -> google.protobuf.Timestamp
+	12, // 2: genpos.v1.ListOrdersRequest.date_to:type_name -> google.protobuf.Timestamp
 	0,  // 3: genpos.v1.ListOrdersResponse.orders:type_name -> genpos.v1.OrderSummary
-	8,  // 4: genpos.v1.OrderPayment.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 5: genpos.v1.Order.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 6: genpos.v1.Order.completed_at:type_name -> google.protobuf.Timestamp
+	12, // 4: genpos.v1.OrderPayment.created_at:type_name -> google.protobuf.Timestamp
+	12, // 5: genpos.v1.Order.created_at:type_name -> google.protobuf.Timestamp
+	12, // 6: genpos.v1.Order.completed_at:type_name -> google.protobuf.Timestamp
 	3,  // 7: genpos.v1.Order.line_items:type_name -> genpos.v1.OrderLineItem
 	4,  // 8: genpos.v1.Order.payments:type_name -> genpos.v1.OrderPayment
 	5,  // 9: genpos.v1.GetOrderResponse.order:type_name -> genpos.v1.Order
-	1,  // 10: genpos.v1.OrderService.ListOrders:input_type -> genpos.v1.ListOrdersRequest
-	6,  // 11: genpos.v1.OrderService.GetOrder:input_type -> genpos.v1.GetOrderRequest
-	2,  // 12: genpos.v1.OrderService.ListOrders:output_type -> genpos.v1.ListOrdersResponse
-	7,  // 13: genpos.v1.OrderService.GetOrder:output_type -> genpos.v1.GetOrderResponse
-	12, // [12:14] is the sub-list for method output_type
-	10, // [10:12] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	12, // 10: genpos.v1.CreateOrderRequest.completed_at:type_name -> google.protobuf.Timestamp
+	8,  // 11: genpos.v1.CreateOrderRequest.line_items:type_name -> genpos.v1.CreateOrderLineItem
+	9,  // 12: genpos.v1.CreateOrderRequest.payments:type_name -> genpos.v1.CreateOrderPayment
+	5,  // 13: genpos.v1.CreateOrderResponse.order:type_name -> genpos.v1.Order
+	1,  // 14: genpos.v1.OrderService.ListOrders:input_type -> genpos.v1.ListOrdersRequest
+	6,  // 15: genpos.v1.OrderService.GetOrder:input_type -> genpos.v1.GetOrderRequest
+	10, // 16: genpos.v1.OrderService.CreateOrder:input_type -> genpos.v1.CreateOrderRequest
+	2,  // 17: genpos.v1.OrderService.ListOrders:output_type -> genpos.v1.ListOrdersResponse
+	7,  // 18: genpos.v1.OrderService.GetOrder:output_type -> genpos.v1.GetOrderResponse
+	11, // 19: genpos.v1.OrderService.CreateOrder:output_type -> genpos.v1.CreateOrderResponse
+	17, // [17:20] is the sub-list for method output_type
+	14, // [14:17] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_genpos_v1_order_proto_init() }
@@ -995,7 +1472,7 @@ func file_genpos_v1_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_order_proto_rawDesc), len(file_genpos_v1_order_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
