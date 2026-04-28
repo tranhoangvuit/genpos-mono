@@ -89,6 +89,7 @@ type OrderUsecase interface {
 	ListOrders(ctx context.Context, in input.ListDailySalesInput) ([]*entity.OrderSummary, error)
 	GetOrder(ctx context.Context, in input.GetOrderInput) (*entity.Order, error)
 	CreateOrder(ctx context.Context, in input.CreateOrderInput) (*entity.Order, error)
+	ComputeOrder(ctx context.Context, in input.ComputeOrderInput) (*entity.OrderComputation, error)
 }
 
 // CustomerUsecase is the service contract consumed by the CustomerService handler.

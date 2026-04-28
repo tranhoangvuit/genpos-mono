@@ -40,6 +40,9 @@ const (
 	// OrderServiceCreateOrderProcedure is the fully-qualified name of the OrderService's CreateOrder
 	// RPC.
 	OrderServiceCreateOrderProcedure = "/genpos.v1.OrderService/CreateOrder"
+	// OrderServiceComputeOrderProcedure is the fully-qualified name of the OrderService's ComputeOrder
+	// RPC.
+	OrderServiceComputeOrderProcedure = "/genpos.v1.OrderService/ComputeOrder"
 )
 
 // OrderServiceClient is a client for the genpos.v1.OrderService service.
@@ -51,6 +54,12 @@ type OrderServiceClient interface {
 	// same key returns the previously persisted order rather than creating a
 	// duplicate. external_id is the client's local UUID.
 	CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error)
+	// ComputeOrder runs the tax + adjustment resolver against a cart and
+	// returns the per-line and order-level breakdown the cart engine would
+	// persist if the cart were finalised. Stateless — nothing is written.
+	// Useful for online channels that can't run the resolver locally and for
+	// admin "preview tax" surfaces.
+	ComputeOrder(context.Context, *connect.Request[v1.ComputeOrderRequest]) (*connect.Response[v1.ComputeOrderResponse], error)
 }
 
 // NewOrderServiceClient constructs a client for the genpos.v1.OrderService service. By default, it
@@ -82,14 +91,21 @@ func NewOrderServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(orderServiceMethods.ByName("CreateOrder")),
 			connect.WithClientOptions(opts...),
 		),
+		computeOrder: connect.NewClient[v1.ComputeOrderRequest, v1.ComputeOrderResponse](
+			httpClient,
+			baseURL+OrderServiceComputeOrderProcedure,
+			connect.WithSchema(orderServiceMethods.ByName("ComputeOrder")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // orderServiceClient implements OrderServiceClient.
 type orderServiceClient struct {
-	listOrders  *connect.Client[v1.ListOrdersRequest, v1.ListOrdersResponse]
-	getOrder    *connect.Client[v1.GetOrderRequest, v1.GetOrderResponse]
-	createOrder *connect.Client[v1.CreateOrderRequest, v1.CreateOrderResponse]
+	listOrders   *connect.Client[v1.ListOrdersRequest, v1.ListOrdersResponse]
+	getOrder     *connect.Client[v1.GetOrderRequest, v1.GetOrderResponse]
+	createOrder  *connect.Client[v1.CreateOrderRequest, v1.CreateOrderResponse]
+	computeOrder *connect.Client[v1.ComputeOrderRequest, v1.ComputeOrderResponse]
 }
 
 // ListOrders calls genpos.v1.OrderService.ListOrders.
@@ -107,6 +123,11 @@ func (c *orderServiceClient) CreateOrder(ctx context.Context, req *connect.Reque
 	return c.createOrder.CallUnary(ctx, req)
 }
 
+// ComputeOrder calls genpos.v1.OrderService.ComputeOrder.
+func (c *orderServiceClient) ComputeOrder(ctx context.Context, req *connect.Request[v1.ComputeOrderRequest]) (*connect.Response[v1.ComputeOrderResponse], error) {
+	return c.computeOrder.CallUnary(ctx, req)
+}
+
 // OrderServiceHandler is an implementation of the genpos.v1.OrderService service.
 type OrderServiceHandler interface {
 	ListOrders(context.Context, *connect.Request[v1.ListOrdersRequest]) (*connect.Response[v1.ListOrdersResponse], error)
@@ -116,6 +137,12 @@ type OrderServiceHandler interface {
 	// same key returns the previously persisted order rather than creating a
 	// duplicate. external_id is the client's local UUID.
 	CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error)
+	// ComputeOrder runs the tax + adjustment resolver against a cart and
+	// returns the per-line and order-level breakdown the cart engine would
+	// persist if the cart were finalised. Stateless — nothing is written.
+	// Useful for online channels that can't run the resolver locally and for
+	// admin "preview tax" surfaces.
+	ComputeOrder(context.Context, *connect.Request[v1.ComputeOrderRequest]) (*connect.Response[v1.ComputeOrderResponse], error)
 }
 
 // NewOrderServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -143,6 +170,12 @@ func NewOrderServiceHandler(svc OrderServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(orderServiceMethods.ByName("CreateOrder")),
 		connect.WithHandlerOptions(opts...),
 	)
+	orderServiceComputeOrderHandler := connect.NewUnaryHandler(
+		OrderServiceComputeOrderProcedure,
+		svc.ComputeOrder,
+		connect.WithSchema(orderServiceMethods.ByName("ComputeOrder")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/genpos.v1.OrderService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrderServiceListOrdersProcedure:
@@ -151,6 +184,8 @@ func NewOrderServiceHandler(svc OrderServiceHandler, opts ...connect.HandlerOpti
 			orderServiceGetOrderHandler.ServeHTTP(w, r)
 		case OrderServiceCreateOrderProcedure:
 			orderServiceCreateOrderHandler.ServeHTTP(w, r)
+		case OrderServiceComputeOrderProcedure:
+			orderServiceComputeOrderHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -170,4 +205,8 @@ func (UnimplementedOrderServiceHandler) GetOrder(context.Context, *connect.Reque
 
 func (UnimplementedOrderServiceHandler) CreateOrder(context.Context, *connect.Request[v1.CreateOrderRequest]) (*connect.Response[v1.CreateOrderResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.OrderService.CreateOrder is not implemented"))
+}
+
+func (UnimplementedOrderServiceHandler) ComputeOrder(context.Context, *connect.Request[v1.ComputeOrderRequest]) (*connect.Response[v1.ComputeOrderResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("genpos.v1.OrderService.ComputeOrder is not implemented"))
 }

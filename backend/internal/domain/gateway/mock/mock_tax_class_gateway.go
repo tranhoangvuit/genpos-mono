@@ -167,3 +167,42 @@ func (mr *MockTaxClassWriterMockRecorder) Update(ctx, params any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTaxClassWriter)(nil).Update), ctx, params)
 }
+
+// MockVariantTaxResolver is a mock of VariantTaxResolver interface.
+type MockVariantTaxResolver struct {
+	ctrl     *gomock.Controller
+	recorder *MockVariantTaxResolverMockRecorder
+	isgomock struct{}
+}
+
+// MockVariantTaxResolverMockRecorder is the mock recorder for MockVariantTaxResolver.
+type MockVariantTaxResolverMockRecorder struct {
+	mock *MockVariantTaxResolver
+}
+
+// NewMockVariantTaxResolver creates a new mock instance.
+func NewMockVariantTaxResolver(ctrl *gomock.Controller) *MockVariantTaxResolver {
+	mock := &MockVariantTaxResolver{ctrl: ctrl}
+	mock.recorder = &MockVariantTaxResolverMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockVariantTaxResolver) EXPECT() *MockVariantTaxResolverMockRecorder {
+	return m.recorder
+}
+
+// RatesForVariants mocks base method.
+func (m *MockVariantTaxResolver) RatesForVariants(ctx context.Context, variantIDs []string) ([]gateway.VariantTaxRate, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RatesForVariants", ctx, variantIDs)
+	ret0, _ := ret[0].([]gateway.VariantTaxRate)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RatesForVariants indicates an expected call of RatesForVariants.
+func (mr *MockVariantTaxResolverMockRecorder) RatesForVariants(ctx, variantIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RatesForVariants", reflect.TypeOf((*MockVariantTaxResolver)(nil).RatesForVariants), ctx, variantIDs)
+}

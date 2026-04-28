@@ -23,6 +23,7 @@ type orderMocks struct {
 	writer       *gatewaymock.MockOrderWriter
 	storeReader  *gatewaymock.MockOrgStoreReader
 	memberReader *gatewaymock.MockMemberReader
+	taxResolver  *gatewaymock.MockVariantTaxResolver
 }
 
 func newOrderMocks(t *testing.T) *orderMocks {
@@ -35,11 +36,14 @@ func newOrderMocks(t *testing.T) *orderMocks {
 		writer:       gatewaymock.NewMockOrderWriter(ctrl),
 		storeReader:  gatewaymock.NewMockOrgStoreReader(ctrl),
 		memberReader: gatewaymock.NewMockMemberReader(ctrl),
+		taxResolver:  gatewaymock.NewMockVariantTaxResolver(ctrl),
 	}
 }
 
 func (m *orderMocks) newUsecase() usecase.OrderUsecase {
-	return usecase.NewOrderUsecase(m.tenantDB, m.reader, m.writer, m.storeReader, m.memberReader)
+	return usecase.NewOrderUsecase(
+		m.tenantDB, m.reader, m.writer, m.storeReader, m.memberReader, m.taxResolver,
+	)
 }
 
 func (m *orderMocks) allowStoreAccess() {
@@ -188,6 +192,165 @@ func Test_OrderUsecase_ListOrders(t *testing.T) {
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("orders mismatch (-want +got):\n%s", diff)
 			}
+		})
+	}
+}
+
+func Test_OrderUsecase_ComputeOrder(t *testing.T) {
+	t.Parallel()
+
+	cases := map[string]struct {
+		in          input.ComputeOrderInput
+		setup       func(*orderMocks)
+		assert      func(t *testing.T, got *entity.OrderComputation)
+		wantErr     bool
+		wantErrCode string
+	}{
+		"resolves variant rates and returns per-line breakdown": {
+			in: input.ComputeOrderInput{
+				OrgID: "org-1",
+				Lines: []input.ComputeOrderLineInput{{
+					VariantID: "var-1", Quantity: "2", UnitPrice: "100",
+				}},
+			},
+			setup: func(m *orderMocks) {
+				m.stubPassthroughRead()
+				m.taxResolver.EXPECT().
+					RatesForVariants(gomock.Any(), []string{"var-1"}).
+					Return([]gateway.VariantTaxRate{{
+						VariantID:    "var-1",
+						TaxRateID:    "rate-1",
+						NameSnapshot: "VAT",
+						Rate:         "0.1000",
+						IsInclusive:  false,
+						IsCompound:   false,
+						Sequence:     0,
+					}}, nil)
+			},
+			assert: func(t *testing.T, got *entity.OrderComputation) {
+				if got.Subtotal != "200.0000" {
+					t.Errorf("subtotal: want 200.0000, got %s", got.Subtotal)
+				}
+				if got.TaxTotal != "20.0000" {
+					t.Errorf("tax_total: want 20.0000, got %s", got.TaxTotal)
+				}
+				if got.Total != "220.0000" {
+					t.Errorf("total: want 220.0000, got %s", got.Total)
+				}
+				if len(got.Lines) != 1 || len(got.Lines[0].Taxes) != 1 {
+					t.Fatalf("expected 1 line with 1 tax, got %+v", got.Lines)
+				}
+				tax := got.Lines[0].Taxes[0]
+				if tax.NameSnapshot != "VAT" || tax.Amount != "20.0000" {
+					t.Errorf("tax row mismatch: %+v", tax)
+				}
+			},
+		},
+		"variant with no tax_class produces a line with no taxes": {
+			in: input.ComputeOrderInput{
+				OrgID: "org-1",
+				Lines: []input.ComputeOrderLineInput{{
+					VariantID: "var-no-tax", Quantity: "1", UnitPrice: "50",
+				}},
+			},
+			setup: func(m *orderMocks) {
+				m.stubPassthroughRead()
+				m.taxResolver.EXPECT().
+					RatesForVariants(gomock.Any(), []string{"var-no-tax"}).
+					Return(nil, nil)
+			},
+			assert: func(t *testing.T, got *entity.OrderComputation) {
+				if got.TaxTotal != "0.0000" {
+					t.Errorf("tax_total: want 0.0000, got %s", got.TaxTotal)
+				}
+				if got.Total != "50.0000" {
+					t.Errorf("total: want 50.0000, got %s", got.Total)
+				}
+				if len(got.Lines[0].Taxes) != 0 {
+					t.Errorf("expected no taxes, got %d", len(got.Lines[0].Taxes))
+				}
+			},
+		},
+		"order-level tip increases total without affecting tax_total": {
+			in: input.ComputeOrderInput{
+				OrgID: "org-1",
+				Lines: []input.ComputeOrderLineInput{{
+					VariantID: "var-1", Quantity: "1", UnitPrice: "100",
+				}},
+				Adjustments: []input.CreateOrderAdjustmentInput{{
+					Sequence: 1, Kind: "tip", SourceType: "manual",
+					NameSnapshot: "Tip", CalculationType: "fixed_amount",
+					CalculationValue: "10", AppliesBeforeTax: false,
+					ProrateStrategy: "no_prorate",
+				}},
+			},
+			setup: func(m *orderMocks) {
+				m.stubPassthroughRead()
+				m.taxResolver.EXPECT().
+					RatesForVariants(gomock.Any(), []string{"var-1"}).
+					Return([]gateway.VariantTaxRate{{
+						VariantID: "var-1", TaxRateID: "rate-1",
+						NameSnapshot: "VAT", Rate: "0.1000",
+						IsInclusive: false, IsCompound: false, Sequence: 0,
+					}}, nil)
+			},
+			assert: func(t *testing.T, got *entity.OrderComputation) {
+				// 100 * 1 = 100 sub, +10 tax (10%) + 10 tip = 120 total.
+				if got.Total != "120.0000" {
+					t.Errorf("total: want 120.0000, got %s", got.Total)
+				}
+				if got.TaxTotal != "10.0000" {
+					t.Errorf("tax_total: want 10.0000 (tip is not taxed), got %s", got.TaxTotal)
+				}
+				if len(got.Adjustments) != 1 {
+					t.Errorf("expected 1 order adjustment, got %d", len(got.Adjustments))
+				}
+			},
+		},
+		"rejects empty lines": {
+			in:          input.ComputeOrderInput{OrgID: "org-1"},
+			setup:       func(_ *orderMocks) {},
+			wantErr:     true,
+			wantErrCode: errors.CodeBadRequest,
+		},
+		"rejects line missing variant id": {
+			in: input.ComputeOrderInput{
+				OrgID: "org-1",
+				Lines: []input.ComputeOrderLineInput{{Quantity: "1", UnitPrice: "10"}},
+			},
+			setup:       func(_ *orderMocks) {},
+			wantErr:     true,
+			wantErrCode: errors.CodeBadRequest,
+		},
+		"rejects empty org id": {
+			in:          input.ComputeOrderInput{Lines: []input.ComputeOrderLineInput{{VariantID: "var-1"}}},
+			setup:       func(_ *orderMocks) {},
+			wantErr:     true,
+			wantErrCode: errors.CodeBadRequest,
+		},
+	}
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			m := newOrderMocks(t)
+			tc.setup(m)
+
+			got, err := m.newUsecase().ComputeOrder(context.Background(), tc.in)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("expected error, got nil")
+				}
+				if tc.wantErrCode != "" && errors.GetCode(err) != tc.wantErrCode {
+					t.Errorf("error code: want %s, got %s", tc.wantErrCode, errors.GetCode(err))
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			tc.assert(t, got)
 		})
 	}
 }

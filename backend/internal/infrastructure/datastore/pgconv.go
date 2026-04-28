@@ -41,6 +41,21 @@ func uuidStrings(ids []pgtype.UUID) []string {
 	return out
 }
 
+// uuidArray parses a slice of UUID strings for `= ANY($1::UUID[])` lookups.
+// Returns the first parse error so callers can surface a 400 rather than
+// proceed with a malformed query.
+func uuidArray(ids []string) ([]pgtype.UUID, error) {
+	out := make([]pgtype.UUID, 0, len(ids))
+	for _, s := range ids {
+		uid, err := parseUUID(s)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, uid)
+	}
+	return out, nil
+}
+
 // numericFromString parses a decimal string into pgtype.Numeric.
 func numericFromString(s string) (pgtype.Numeric, error) {
 	var n pgtype.Numeric

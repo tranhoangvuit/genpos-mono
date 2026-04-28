@@ -1752,6 +1752,337 @@ func (x *CreateOrderResponse) GetOrder() *Order {
 	return nil
 }
 
+// ----- ComputeOrder ---------------------------------------------------------
+// ComputeOrderLineInput is one cart line. variant_id is required -- the server
+// resolves the tax_class through it. unit_price is gross when the variant's
+// rate is inclusive and pre-tax otherwise; quantity and unit_price are
+// decimal strings to preserve NUMERIC(12,4) precision on the wire.
+type ComputeOrderLineInput struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	VariantId string                 `protobuf:"bytes,1,opt,name=variant_id,json=variantId,proto3" json:"variant_id,omitempty"`
+	Quantity  string                 `protobuf:"bytes,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	UnitPrice string                 `protobuf:"bytes,3,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
+	// Optional override. When set, forces the inclusive/exclusive treatment
+	// for this line regardless of the rate definition. Useful for one-off
+	// re-pricing from an external channel that already split out the tax.
+	IsTaxInclusiveOverride bool                   `protobuf:"varint,4,opt,name=is_tax_inclusive_override,json=isTaxInclusiveOverride,proto3" json:"is_tax_inclusive_override,omitempty"`
+	HasInclusiveOverride   bool                   `protobuf:"varint,5,opt,name=has_inclusive_override,json=hasInclusiveOverride,proto3" json:"has_inclusive_override,omitempty"`
+	Adjustments            []*OrderLineAdjustment `protobuf:"bytes,6,rep,name=adjustments,proto3" json:"adjustments,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ComputeOrderLineInput) Reset() {
+	*x = ComputeOrderLineInput{}
+	mi := &file_genpos_v1_order_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ComputeOrderLineInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ComputeOrderLineInput) ProtoMessage() {}
+
+func (x *ComputeOrderLineInput) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ComputeOrderLineInput.ProtoReflect.Descriptor instead.
+func (*ComputeOrderLineInput) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ComputeOrderLineInput) GetVariantId() string {
+	if x != nil {
+		return x.VariantId
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineInput) GetQuantity() string {
+	if x != nil {
+		return x.Quantity
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineInput) GetUnitPrice() string {
+	if x != nil {
+		return x.UnitPrice
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineInput) GetIsTaxInclusiveOverride() bool {
+	if x != nil {
+		return x.IsTaxInclusiveOverride
+	}
+	return false
+}
+
+func (x *ComputeOrderLineInput) GetHasInclusiveOverride() bool {
+	if x != nil {
+		return x.HasInclusiveOverride
+	}
+	return false
+}
+
+func (x *ComputeOrderLineInput) GetAdjustments() []*OrderLineAdjustment {
+	if x != nil {
+		return x.Adjustments
+	}
+	return nil
+}
+
+type ComputeOrderRequest struct {
+	state       protoimpl.MessageState   `protogen:"open.v1"`
+	Lines       []*ComputeOrderLineInput `protobuf:"bytes,1,rep,name=lines,proto3" json:"lines,omitempty"`
+	Adjustments []*OrderAdjustment       `protobuf:"bytes,2,rep,name=adjustments,proto3" json:"adjustments,omitempty"`
+	// "per_line" (default) or "per_order". Drives money rounding strategy.
+	Round         string `protobuf:"bytes,3,opt,name=round,proto3" json:"round,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ComputeOrderRequest) Reset() {
+	*x = ComputeOrderRequest{}
+	mi := &file_genpos_v1_order_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ComputeOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ComputeOrderRequest) ProtoMessage() {}
+
+func (x *ComputeOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ComputeOrderRequest.ProtoReflect.Descriptor instead.
+func (*ComputeOrderRequest) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ComputeOrderRequest) GetLines() []*ComputeOrderLineInput {
+	if x != nil {
+		return x.Lines
+	}
+	return nil
+}
+
+func (x *ComputeOrderRequest) GetAdjustments() []*OrderAdjustment {
+	if x != nil {
+		return x.Adjustments
+	}
+	return nil
+}
+
+func (x *ComputeOrderRequest) GetRound() string {
+	if x != nil {
+		return x.Round
+	}
+	return ""
+}
+
+// ComputeOrderLineResult mirrors OrderLineItem's tax/adjustment children but
+// without DB ids -- the cart hasn't been persisted yet.
+type ComputeOrderLineResult struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TaxableBase    string                 `protobuf:"bytes,1,opt,name=taxable_base,json=taxableBase,proto3" json:"taxable_base,omitempty"`
+	DiscountAmount string                 `protobuf:"bytes,2,opt,name=discount_amount,json=discountAmount,proto3" json:"discount_amount,omitempty"`
+	TaxAmount      string                 `protobuf:"bytes,3,opt,name=tax_amount,json=taxAmount,proto3" json:"tax_amount,omitempty"`
+	EffectiveRate  string                 `protobuf:"bytes,4,opt,name=effective_rate,json=effectiveRate,proto3" json:"effective_rate,omitempty"`
+	LineTotal      string                 `protobuf:"bytes,5,opt,name=line_total,json=lineTotal,proto3" json:"line_total,omitempty"`
+	Taxes          []*OrderLineItemTax    `protobuf:"bytes,6,rep,name=taxes,proto3" json:"taxes,omitempty"`
+	Adjustments    []*OrderLineAdjustment `protobuf:"bytes,7,rep,name=adjustments,proto3" json:"adjustments,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ComputeOrderLineResult) Reset() {
+	*x = ComputeOrderLineResult{}
+	mi := &file_genpos_v1_order_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ComputeOrderLineResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ComputeOrderLineResult) ProtoMessage() {}
+
+func (x *ComputeOrderLineResult) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ComputeOrderLineResult.ProtoReflect.Descriptor instead.
+func (*ComputeOrderLineResult) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ComputeOrderLineResult) GetTaxableBase() string {
+	if x != nil {
+		return x.TaxableBase
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineResult) GetDiscountAmount() string {
+	if x != nil {
+		return x.DiscountAmount
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineResult) GetTaxAmount() string {
+	if x != nil {
+		return x.TaxAmount
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineResult) GetEffectiveRate() string {
+	if x != nil {
+		return x.EffectiveRate
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineResult) GetLineTotal() string {
+	if x != nil {
+		return x.LineTotal
+	}
+	return ""
+}
+
+func (x *ComputeOrderLineResult) GetTaxes() []*OrderLineItemTax {
+	if x != nil {
+		return x.Taxes
+	}
+	return nil
+}
+
+func (x *ComputeOrderLineResult) GetAdjustments() []*OrderLineAdjustment {
+	if x != nil {
+		return x.Adjustments
+	}
+	return nil
+}
+
+type ComputeOrderResponse struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Lines         []*ComputeOrderLineResult `protobuf:"bytes,1,rep,name=lines,proto3" json:"lines,omitempty"`
+	Adjustments   []*OrderAdjustment        `protobuf:"bytes,2,rep,name=adjustments,proto3" json:"adjustments,omitempty"`
+	Subtotal      string                    `protobuf:"bytes,3,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	TaxTotal      string                    `protobuf:"bytes,4,opt,name=tax_total,json=taxTotal,proto3" json:"tax_total,omitempty"`
+	DiscountTotal string                    `protobuf:"bytes,5,opt,name=discount_total,json=discountTotal,proto3" json:"discount_total,omitempty"`
+	Total         string                    `protobuf:"bytes,6,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ComputeOrderResponse) Reset() {
+	*x = ComputeOrderResponse{}
+	mi := &file_genpos_v1_order_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ComputeOrderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ComputeOrderResponse) ProtoMessage() {}
+
+func (x *ComputeOrderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_genpos_v1_order_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ComputeOrderResponse.ProtoReflect.Descriptor instead.
+func (*ComputeOrderResponse) Descriptor() ([]byte, []int) {
+	return file_genpos_v1_order_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ComputeOrderResponse) GetLines() []*ComputeOrderLineResult {
+	if x != nil {
+		return x.Lines
+	}
+	return nil
+}
+
+func (x *ComputeOrderResponse) GetAdjustments() []*OrderAdjustment {
+	if x != nil {
+		return x.Adjustments
+	}
+	return nil
+}
+
+func (x *ComputeOrderResponse) GetSubtotal() string {
+	if x != nil {
+		return x.Subtotal
+	}
+	return ""
+}
+
+func (x *ComputeOrderResponse) GetTaxTotal() string {
+	if x != nil {
+		return x.TaxTotal
+	}
+	return ""
+}
+
+func (x *ComputeOrderResponse) GetDiscountTotal() string {
+	if x != nil {
+		return x.DiscountTotal
+	}
+	return ""
+}
+
+func (x *ComputeOrderResponse) GetTotal() string {
+	if x != nil {
+		return x.Total
+	}
+	return ""
+}
+
 var File_genpos_v1_order_proto protoreflect.FileDescriptor
 
 const file_genpos_v1_order_proto_rawDesc = "" +
@@ -1956,12 +2287,43 @@ const file_genpos_v1_order_proto_rawDesc = "" +
 	"\bpayments\x18\x11 \x03(\v2\x1d.genpos.v1.CreateOrderPaymentR\bpayments\x12<\n" +
 	"\vadjustments\x18\x12 \x03(\v2\x1a.genpos.v1.OrderAdjustmentR\vadjustments\"=\n" +
 	"\x13CreateOrderResponse\x12&\n" +
-	"\x05order\x18\x01 \x01(\v2\x10.genpos.v1.OrderR\x05order2\xf2\x01\n" +
+	"\x05order\x18\x01 \x01(\v2\x10.genpos.v1.OrderR\x05order\"\xa4\x02\n" +
+	"\x15ComputeOrderLineInput\x12\x1d\n" +
+	"\n" +
+	"variant_id\x18\x01 \x01(\tR\tvariantId\x12\x1a\n" +
+	"\bquantity\x18\x02 \x01(\tR\bquantity\x12\x1d\n" +
+	"\n" +
+	"unit_price\x18\x03 \x01(\tR\tunitPrice\x129\n" +
+	"\x19is_tax_inclusive_override\x18\x04 \x01(\bR\x16isTaxInclusiveOverride\x124\n" +
+	"\x16has_inclusive_override\x18\x05 \x01(\bR\x14hasInclusiveOverride\x12@\n" +
+	"\vadjustments\x18\x06 \x03(\v2\x1e.genpos.v1.OrderLineAdjustmentR\vadjustments\"\xa1\x01\n" +
+	"\x13ComputeOrderRequest\x126\n" +
+	"\x05lines\x18\x01 \x03(\v2 .genpos.v1.ComputeOrderLineInputR\x05lines\x12<\n" +
+	"\vadjustments\x18\x02 \x03(\v2\x1a.genpos.v1.OrderAdjustmentR\vadjustments\x12\x14\n" +
+	"\x05round\x18\x03 \x01(\tR\x05round\"\xbe\x02\n" +
+	"\x16ComputeOrderLineResult\x12!\n" +
+	"\ftaxable_base\x18\x01 \x01(\tR\vtaxableBase\x12'\n" +
+	"\x0fdiscount_amount\x18\x02 \x01(\tR\x0ediscountAmount\x12\x1d\n" +
+	"\n" +
+	"tax_amount\x18\x03 \x01(\tR\ttaxAmount\x12%\n" +
+	"\x0eeffective_rate\x18\x04 \x01(\tR\reffectiveRate\x12\x1d\n" +
+	"\n" +
+	"line_total\x18\x05 \x01(\tR\tlineTotal\x121\n" +
+	"\x05taxes\x18\x06 \x03(\v2\x1b.genpos.v1.OrderLineItemTaxR\x05taxes\x12@\n" +
+	"\vadjustments\x18\a \x03(\v2\x1e.genpos.v1.OrderLineAdjustmentR\vadjustments\"\x83\x02\n" +
+	"\x14ComputeOrderResponse\x127\n" +
+	"\x05lines\x18\x01 \x03(\v2!.genpos.v1.ComputeOrderLineResultR\x05lines\x12<\n" +
+	"\vadjustments\x18\x02 \x03(\v2\x1a.genpos.v1.OrderAdjustmentR\vadjustments\x12\x1a\n" +
+	"\bsubtotal\x18\x03 \x01(\tR\bsubtotal\x12\x1b\n" +
+	"\ttax_total\x18\x04 \x01(\tR\btaxTotal\x12%\n" +
+	"\x0ediscount_total\x18\x05 \x01(\tR\rdiscountTotal\x12\x14\n" +
+	"\x05total\x18\x06 \x01(\tR\x05total2\xc5\x02\n" +
 	"\fOrderService\x12K\n" +
 	"\n" +
 	"ListOrders\x12\x1c.genpos.v1.ListOrdersRequest\x1a\x1d.genpos.v1.ListOrdersResponse\"\x00\x12E\n" +
 	"\bGetOrder\x12\x1a.genpos.v1.GetOrderRequest\x1a\x1b.genpos.v1.GetOrderResponse\"\x00\x12N\n" +
-	"\vCreateOrder\x12\x1d.genpos.v1.CreateOrderRequest\x1a\x1e.genpos.v1.CreateOrderResponse\"\x00B\x9f\x01\n" +
+	"\vCreateOrder\x12\x1d.genpos.v1.CreateOrderRequest\x1a\x1e.genpos.v1.CreateOrderResponse\"\x00\x12Q\n" +
+	"\fComputeOrder\x12\x1e.genpos.v1.ComputeOrderRequest\x1a\x1f.genpos.v1.ComputeOrderResponse\"\x00B\x9f\x01\n" +
 	"\rcom.genpos.v1B\n" +
 	"OrderProtoP\x01Z=github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1\xa2\x02\x03GXX\xaa\x02\tGenpos.V1\xca\x02\tGenpos\\V1\xe2\x02\x15Genpos\\V1\\GPBMetadata\xea\x02\n" +
 	"Genpos::V1b\x06proto3"
@@ -1978,59 +2340,72 @@ func file_genpos_v1_order_proto_rawDescGZIP() []byte {
 	return file_genpos_v1_order_proto_rawDescData
 }
 
-var file_genpos_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_genpos_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_genpos_v1_order_proto_goTypes = []any{
-	(*OrderSummary)(nil),          // 0: genpos.v1.OrderSummary
-	(*ListOrdersRequest)(nil),     // 1: genpos.v1.ListOrdersRequest
-	(*ListOrdersResponse)(nil),    // 2: genpos.v1.ListOrdersResponse
-	(*OrderLineItemTax)(nil),      // 3: genpos.v1.OrderLineItemTax
-	(*OrderLineAdjustment)(nil),   // 4: genpos.v1.OrderLineAdjustment
-	(*OrderAdjustment)(nil),       // 5: genpos.v1.OrderAdjustment
-	(*OrderLineItem)(nil),         // 6: genpos.v1.OrderLineItem
-	(*OrderPayment)(nil),          // 7: genpos.v1.OrderPayment
-	(*Order)(nil),                 // 8: genpos.v1.Order
-	(*GetOrderRequest)(nil),       // 9: genpos.v1.GetOrderRequest
-	(*GetOrderResponse)(nil),      // 10: genpos.v1.GetOrderResponse
-	(*CreateOrderLineItem)(nil),   // 11: genpos.v1.CreateOrderLineItem
-	(*CreateOrderPayment)(nil),    // 12: genpos.v1.CreateOrderPayment
-	(*CreateOrderRequest)(nil),    // 13: genpos.v1.CreateOrderRequest
-	(*CreateOrderResponse)(nil),   // 14: genpos.v1.CreateOrderResponse
-	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
+	(*OrderSummary)(nil),           // 0: genpos.v1.OrderSummary
+	(*ListOrdersRequest)(nil),      // 1: genpos.v1.ListOrdersRequest
+	(*ListOrdersResponse)(nil),     // 2: genpos.v1.ListOrdersResponse
+	(*OrderLineItemTax)(nil),       // 3: genpos.v1.OrderLineItemTax
+	(*OrderLineAdjustment)(nil),    // 4: genpos.v1.OrderLineAdjustment
+	(*OrderAdjustment)(nil),        // 5: genpos.v1.OrderAdjustment
+	(*OrderLineItem)(nil),          // 6: genpos.v1.OrderLineItem
+	(*OrderPayment)(nil),           // 7: genpos.v1.OrderPayment
+	(*Order)(nil),                  // 8: genpos.v1.Order
+	(*GetOrderRequest)(nil),        // 9: genpos.v1.GetOrderRequest
+	(*GetOrderResponse)(nil),       // 10: genpos.v1.GetOrderResponse
+	(*CreateOrderLineItem)(nil),    // 11: genpos.v1.CreateOrderLineItem
+	(*CreateOrderPayment)(nil),     // 12: genpos.v1.CreateOrderPayment
+	(*CreateOrderRequest)(nil),     // 13: genpos.v1.CreateOrderRequest
+	(*CreateOrderResponse)(nil),    // 14: genpos.v1.CreateOrderResponse
+	(*ComputeOrderLineInput)(nil),  // 15: genpos.v1.ComputeOrderLineInput
+	(*ComputeOrderRequest)(nil),    // 16: genpos.v1.ComputeOrderRequest
+	(*ComputeOrderLineResult)(nil), // 17: genpos.v1.ComputeOrderLineResult
+	(*ComputeOrderResponse)(nil),   // 18: genpos.v1.ComputeOrderResponse
+	(*timestamppb.Timestamp)(nil),  // 19: google.protobuf.Timestamp
 }
 var file_genpos_v1_order_proto_depIdxs = []int32{
-	15, // 0: genpos.v1.OrderSummary.created_at:type_name -> google.protobuf.Timestamp
-	15, // 1: genpos.v1.ListOrdersRequest.date_from:type_name -> google.protobuf.Timestamp
-	15, // 2: genpos.v1.ListOrdersRequest.date_to:type_name -> google.protobuf.Timestamp
+	19, // 0: genpos.v1.OrderSummary.created_at:type_name -> google.protobuf.Timestamp
+	19, // 1: genpos.v1.ListOrdersRequest.date_from:type_name -> google.protobuf.Timestamp
+	19, // 2: genpos.v1.ListOrdersRequest.date_to:type_name -> google.protobuf.Timestamp
 	0,  // 3: genpos.v1.ListOrdersResponse.orders:type_name -> genpos.v1.OrderSummary
-	15, // 4: genpos.v1.OrderLineAdjustment.applied_at:type_name -> google.protobuf.Timestamp
-	15, // 5: genpos.v1.OrderAdjustment.applied_at:type_name -> google.protobuf.Timestamp
+	19, // 4: genpos.v1.OrderLineAdjustment.applied_at:type_name -> google.protobuf.Timestamp
+	19, // 5: genpos.v1.OrderAdjustment.applied_at:type_name -> google.protobuf.Timestamp
 	3,  // 6: genpos.v1.OrderLineItem.taxes:type_name -> genpos.v1.OrderLineItemTax
 	4,  // 7: genpos.v1.OrderLineItem.adjustments:type_name -> genpos.v1.OrderLineAdjustment
-	15, // 8: genpos.v1.OrderPayment.created_at:type_name -> google.protobuf.Timestamp
-	15, // 9: genpos.v1.Order.created_at:type_name -> google.protobuf.Timestamp
-	15, // 10: genpos.v1.Order.completed_at:type_name -> google.protobuf.Timestamp
+	19, // 8: genpos.v1.OrderPayment.created_at:type_name -> google.protobuf.Timestamp
+	19, // 9: genpos.v1.Order.created_at:type_name -> google.protobuf.Timestamp
+	19, // 10: genpos.v1.Order.completed_at:type_name -> google.protobuf.Timestamp
 	6,  // 11: genpos.v1.Order.line_items:type_name -> genpos.v1.OrderLineItem
 	7,  // 12: genpos.v1.Order.payments:type_name -> genpos.v1.OrderPayment
 	5,  // 13: genpos.v1.Order.adjustments:type_name -> genpos.v1.OrderAdjustment
 	8,  // 14: genpos.v1.GetOrderResponse.order:type_name -> genpos.v1.Order
 	3,  // 15: genpos.v1.CreateOrderLineItem.taxes:type_name -> genpos.v1.OrderLineItemTax
 	4,  // 16: genpos.v1.CreateOrderLineItem.adjustments:type_name -> genpos.v1.OrderLineAdjustment
-	15, // 17: genpos.v1.CreateOrderRequest.completed_at:type_name -> google.protobuf.Timestamp
+	19, // 17: genpos.v1.CreateOrderRequest.completed_at:type_name -> google.protobuf.Timestamp
 	11, // 18: genpos.v1.CreateOrderRequest.line_items:type_name -> genpos.v1.CreateOrderLineItem
 	12, // 19: genpos.v1.CreateOrderRequest.payments:type_name -> genpos.v1.CreateOrderPayment
 	5,  // 20: genpos.v1.CreateOrderRequest.adjustments:type_name -> genpos.v1.OrderAdjustment
 	8,  // 21: genpos.v1.CreateOrderResponse.order:type_name -> genpos.v1.Order
-	1,  // 22: genpos.v1.OrderService.ListOrders:input_type -> genpos.v1.ListOrdersRequest
-	9,  // 23: genpos.v1.OrderService.GetOrder:input_type -> genpos.v1.GetOrderRequest
-	13, // 24: genpos.v1.OrderService.CreateOrder:input_type -> genpos.v1.CreateOrderRequest
-	2,  // 25: genpos.v1.OrderService.ListOrders:output_type -> genpos.v1.ListOrdersResponse
-	10, // 26: genpos.v1.OrderService.GetOrder:output_type -> genpos.v1.GetOrderResponse
-	14, // 27: genpos.v1.OrderService.CreateOrder:output_type -> genpos.v1.CreateOrderResponse
-	25, // [25:28] is the sub-list for method output_type
-	22, // [22:25] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	4,  // 22: genpos.v1.ComputeOrderLineInput.adjustments:type_name -> genpos.v1.OrderLineAdjustment
+	15, // 23: genpos.v1.ComputeOrderRequest.lines:type_name -> genpos.v1.ComputeOrderLineInput
+	5,  // 24: genpos.v1.ComputeOrderRequest.adjustments:type_name -> genpos.v1.OrderAdjustment
+	3,  // 25: genpos.v1.ComputeOrderLineResult.taxes:type_name -> genpos.v1.OrderLineItemTax
+	4,  // 26: genpos.v1.ComputeOrderLineResult.adjustments:type_name -> genpos.v1.OrderLineAdjustment
+	17, // 27: genpos.v1.ComputeOrderResponse.lines:type_name -> genpos.v1.ComputeOrderLineResult
+	5,  // 28: genpos.v1.ComputeOrderResponse.adjustments:type_name -> genpos.v1.OrderAdjustment
+	1,  // 29: genpos.v1.OrderService.ListOrders:input_type -> genpos.v1.ListOrdersRequest
+	9,  // 30: genpos.v1.OrderService.GetOrder:input_type -> genpos.v1.GetOrderRequest
+	13, // 31: genpos.v1.OrderService.CreateOrder:input_type -> genpos.v1.CreateOrderRequest
+	16, // 32: genpos.v1.OrderService.ComputeOrder:input_type -> genpos.v1.ComputeOrderRequest
+	2,  // 33: genpos.v1.OrderService.ListOrders:output_type -> genpos.v1.ListOrdersResponse
+	10, // 34: genpos.v1.OrderService.GetOrder:output_type -> genpos.v1.GetOrderResponse
+	14, // 35: genpos.v1.OrderService.CreateOrder:output_type -> genpos.v1.CreateOrderResponse
+	18, // 36: genpos.v1.OrderService.ComputeOrder:output_type -> genpos.v1.ComputeOrderResponse
+	33, // [33:37] is the sub-list for method output_type
+	29, // [29:33] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_genpos_v1_order_proto_init() }
@@ -2044,7 +2419,7 @@ func file_genpos_v1_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_genpos_v1_order_proto_rawDesc), len(file_genpos_v1_order_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

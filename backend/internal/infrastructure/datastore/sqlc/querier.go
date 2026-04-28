@@ -111,6 +111,12 @@ type Querier interface {
 	ListTaxClassRatesByClassIDs(ctx context.Context, classIds []pgtype.UUID) ([]ListTaxClassRatesByClassIDsRow, error)
 	ListTaxClasses(ctx context.Context) ([]ListTaxClassesRow, error)
 	ListTaxRates(ctx context.Context) ([]ListTaxRatesRow, error)
+	// Resolves a set of variant ids into the snapshot tax rows the cart engine
+	// needs: variant -> tax_class -> tax_class_rates -> tax_rates. Returns one
+	// row per (variant, rate) pairing, in class-defined sequence order. Variants
+	// without a tax_class (or whose class has no active rates) simply produce
+	// no rows -- the caller treats their absence as "no automatic tax".
+	ListTaxRatesForVariants(ctx context.Context, variantIds []pgtype.UUID) ([]ListTaxRatesForVariantsRow, error)
 	ListVariantPickerItems(ctx context.Context) ([]ListVariantPickerItemsRow, error)
 	RevokeRefreshToken(ctx context.Context, arg RevokeRefreshTokenParams) error
 	// Seeds stock_take_items from current on-hand for all active variants in the

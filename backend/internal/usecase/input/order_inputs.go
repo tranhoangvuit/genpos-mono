@@ -89,6 +89,29 @@ type CreateOrderPaymentInput struct {
 	Reference       string
 }
 
+// ComputeOrderLineInput is one cart line for OrderUsecase.ComputeOrder.
+// VariantID is required -- the engine resolves the tax_class through it.
+// HasInclusiveOverride distinguishes "caller did not set the field" (false)
+// from "caller forced exclusive treatment" (true with InclusiveOverride =
+// false), since proto bool defaults to false.
+type ComputeOrderLineInput struct {
+	VariantID            string
+	Quantity             string
+	UnitPrice            string
+	HasInclusiveOverride bool
+	InclusiveOverride    bool
+	Adjustments          []CreateOrderLineAdjustmentInput
+}
+
+// ComputeOrderInput is the usecase input for OrderUsecase.ComputeOrder.
+// Stateless -- nothing is persisted.
+type ComputeOrderInput struct {
+	OrgID       string
+	Lines       []ComputeOrderLineInput
+	Adjustments []CreateOrderAdjustmentInput
+	Round       string // "per_line" (default) or "per_order"
+}
+
 // CreateOrderInput is the usecase input for OrderUsecase.CreateOrder. The
 // (Source, ExternalID) pair acts as the idempotency key.
 type CreateOrderInput struct {

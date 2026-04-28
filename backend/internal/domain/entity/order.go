@@ -123,6 +123,30 @@ type OrderAdjustment struct {
 	ApprovedBy         string
 }
 
+// OrderComputation is the wire-friendly version of pkg/tax.Result. Decimal
+// values are formatted at NUMERIC(12,4) precision so a client sees the same
+// strings it would after a CreateOrder round-trip.
+type OrderComputation struct {
+	Lines         []*OrderComputationLine
+	Adjustments   []*OrderAdjustment
+	Subtotal      string
+	TaxTotal      string
+	DiscountTotal string
+	Total         string
+}
+
+// OrderComputationLine mirrors OrderLineItem's tax/adjustment children
+// without the persisted ids -- the cart hasn't been saved.
+type OrderComputationLine struct {
+	TaxableBase    string
+	DiscountAmount string
+	TaxAmount      string
+	EffectiveRate  string
+	LineTotal      string
+	Taxes          []*OrderLineItemTax
+	Adjustments    []*OrderLineAdjustment
+}
+
 type OrderPayment struct {
 	ID                string
 	PaymentMethodID   string

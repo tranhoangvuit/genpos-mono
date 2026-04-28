@@ -49,3 +49,23 @@ type TaxClassWriter interface {
 	ClearDefaults(ctx context.Context) error
 	ReplaceRates(ctx context.Context, orgID, classID string, rates []TaxClassRateParams) error
 }
+
+// VariantTaxRate is one snapshot rate the cart engine receives when
+// resolving a variant's tax class. Mirrors entity.TaxRate fields plus the
+// class-level sequence/compound flags.
+type VariantTaxRate struct {
+	VariantID    string
+	TaxRateID    string
+	NameSnapshot string
+	Rate         string // decimal fraction string (e.g. "0.1000")
+	IsInclusive  bool
+	IsCompound   bool
+	Sequence     int32
+}
+
+// VariantTaxResolver bridges product variants to the tax_class chain.
+// Returned rows are the raw join output -- the usecase groups them by
+// variant id for the resolver's per-line LineInput.TaxRates.
+type VariantTaxResolver interface {
+	RatesForVariants(ctx context.Context, variantIDs []string) ([]VariantTaxRate, error)
+}

@@ -4,11 +4,14 @@ import (
 	"context"
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/genpick/genpos-mono/backend/internal/domain/entity"
 	"github.com/genpick/genpos-mono/backend/internal/domain/gateway"
 	"github.com/genpick/genpos-mono/backend/internal/usecase/input"
 	"github.com/genpick/genpos-mono/backend/pkg/errors"
 	"github.com/genpick/genpos-mono/backend/pkg/money"
+	"github.com/genpick/genpos-mono/backend/pkg/tax"
 )
 
 type orderUsecase struct {
@@ -17,6 +20,7 @@ type orderUsecase struct {
 	writer       gateway.OrderWriter
 	storeReader  gateway.OrgStoreReader
 	memberReader gateway.MemberReader
+	taxResolver  gateway.VariantTaxResolver
 }
 
 // NewOrderUsecase constructs an OrderUsecase.
@@ -26,6 +30,7 @@ func NewOrderUsecase(
 	writer gateway.OrderWriter,
 	storeReader gateway.OrgStoreReader,
 	memberReader gateway.MemberReader,
+	taxResolver gateway.VariantTaxResolver,
 ) OrderUsecase {
 	return &orderUsecase{
 		tenantDB:     tenantDB,
@@ -33,6 +38,7 @@ func NewOrderUsecase(
 		writer:       writer,
 		storeReader:  storeReader,
 		memberReader: memberReader,
+		taxResolver:  taxResolver,
 	}
 }
 
@@ -504,4 +510,275 @@ func (u *orderUsecase) ListOrders(ctx context.Context, in input.ListDailySalesIn
 		return nil, errors.Wrap(err, "list orders")
 	}
 	return out, nil
+}
+
+// ComputeOrder runs the tax + adjustment resolver against a cart and
+// returns the per-line + order-level breakdown without persisting anything.
+// The variant lookup happens inside a tenant-scoped read tx so RLS keeps
+// rates/classes from another org out of reach.
+func (u *orderUsecase) ComputeOrder(ctx context.Context, in input.ComputeOrderInput) (*entity.OrderComputation, error) {
+	if in.OrgID == "" {
+		return nil, errors.BadRequest("org id is required")
+	}
+	if len(in.Lines) == 0 {
+		return nil, errors.BadRequest("at least one line is required")
+	}
+
+	variantIDs := make([]string, 0, len(in.Lines))
+	for _, l := range in.Lines {
+		if l.VariantID == "" {
+			return nil, errors.BadRequest("variant id is required for each line")
+		}
+		variantIDs = append(variantIDs, l.VariantID)
+	}
+
+	var ratesByVariant map[string][]gateway.VariantTaxRate
+	if err := u.tenantDB.ReadWithTenant(ctx, in.OrgID, func(ctx context.Context) error {
+		rows, err := u.taxResolver.RatesForVariants(ctx, variantIDs)
+		if err != nil {
+			return err
+		}
+		ratesByVariant = make(map[string][]gateway.VariantTaxRate, len(rows))
+		for _, r := range rows {
+			ratesByVariant[r.VariantID] = append(ratesByVariant[r.VariantID], r)
+		}
+		return nil
+	}); err != nil {
+		return nil, errors.Wrap(err, "resolve variant tax rates")
+	}
+
+	cart, cErr := buildCartInput(in, ratesByVariant)
+	if cErr != nil {
+		return nil, cErr
+	}
+	result, rErr := tax.Resolve(*cart)
+	if rErr != nil {
+		return nil, rErr
+	}
+	return computationFromResult(result, in.Adjustments), nil
+}
+
+// buildCartInput maps the wire input + resolver lookup output into the pure
+// CartInput the tax engine expects. Decimal parsing failures are reported as
+// 400s so the handler can surface a precise error to the caller.
+func buildCartInput(
+	in input.ComputeOrderInput,
+	ratesByVariant map[string][]gateway.VariantTaxRate,
+) (*tax.CartInput, error) {
+	round := in.Round
+	if round == "" {
+		round = string(money.RoundPerLine)
+	}
+	cart := &tax.CartInput{
+		Lines: make([]tax.LineInput, 0, len(in.Lines)),
+		Round: round,
+	}
+	for i, l := range in.Lines {
+		qty, err := money.Parse(l.Quantity)
+		if err != nil {
+			return nil, errors.BadRequest("invalid line quantity")
+		}
+		unit, err := money.Parse(l.UnitPrice)
+		if err != nil {
+			return nil, errors.BadRequest("invalid line unit price")
+		}
+		ratesRaw := ratesByVariant[l.VariantID]
+		// Default to the rate's stored is_inclusive when present; the
+		// override flag forces the line to ignore the snapshot, which is
+		// useful for external channels that already extracted the tax.
+		isInclusive := false
+		if len(ratesRaw) > 0 {
+			isInclusive = ratesRaw[0].IsInclusive
+		}
+		if l.HasInclusiveOverride {
+			isInclusive = l.InclusiveOverride
+		}
+		rates := make([]tax.RateRef, 0, len(ratesRaw))
+		for _, r := range ratesRaw {
+			rate, pErr := money.Parse(r.Rate)
+			if pErr != nil {
+				return nil, errors.Internal("invalid stored tax rate")
+			}
+			rates = append(rates, tax.RateRef{
+				TaxRateID:    r.TaxRateID,
+				NameSnapshot: r.NameSnapshot,
+				Rate:         rate,
+				IsInclusive:  isInclusive,
+				IsCompound:   r.IsCompound,
+				Sequence:     int(r.Sequence),
+			})
+		}
+		adjs, err := buildLineAdjustmentsForResolver(l.Adjustments, i)
+		if err != nil {
+			return nil, err
+		}
+		cart.Lines = append(cart.Lines, tax.LineInput{
+			Quantity:       qty,
+			UnitPrice:      unit,
+			IsTaxInclusive: isInclusive,
+			TaxRates:       rates,
+			Adjustments:    adjs,
+		})
+	}
+	orderAdj, err := buildOrderAdjustmentsForResolver(in.Adjustments)
+	if err != nil {
+		return nil, err
+	}
+	cart.OrderAdjustments = orderAdj
+	return cart, nil
+}
+
+func buildLineAdjustmentsForResolver(in []input.CreateOrderLineAdjustmentInput, lineIdx int) ([]tax.LineAdjustment, error) {
+	if len(in) == 0 {
+		return nil, nil
+	}
+	out := make([]tax.LineAdjustment, 0, len(in))
+	for _, a := range in {
+		if a.Kind == "" || a.SourceType == "" || a.NameSnapshot == "" || a.CalculationType == "" {
+			return nil, errors.BadRequest("line adjustment kind, source_type, name_snapshot, calculation_type are required")
+		}
+		val, err := money.Parse(a.CalculationValue)
+		if err != nil {
+			return nil, errors.BadRequest("invalid line adjustment calculation_value")
+		}
+		out = append(out, tax.LineAdjustment{
+			Sequence:           int(a.Sequence),
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceID:           a.SourceID,
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   val,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			AppliedBy:          a.AppliedBy,
+			ApprovedBy:         a.ApprovedBy,
+		})
+	}
+	_ = lineIdx
+	return out, nil
+}
+
+func buildOrderAdjustmentsForResolver(in []input.CreateOrderAdjustmentInput) ([]tax.OrderAdjustment, error) {
+	if len(in) == 0 {
+		return nil, nil
+	}
+	out := make([]tax.OrderAdjustment, 0, len(in))
+	for _, a := range in {
+		if a.Kind == "" || a.SourceType == "" || a.NameSnapshot == "" || a.CalculationType == "" {
+			return nil, errors.BadRequest("order adjustment kind, source_type, name_snapshot, calculation_type are required")
+		}
+		if a.ProrateStrategy == "" {
+			return nil, errors.BadRequest("order adjustment prorate_strategy is required")
+		}
+		val, err := money.Parse(a.CalculationValue)
+		if err != nil {
+			return nil, errors.BadRequest("invalid order adjustment calculation_value")
+		}
+		out = append(out, tax.OrderAdjustment{
+			Sequence:           int(a.Sequence),
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceID:           a.SourceID,
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   val,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			ProrateStrategy:    a.ProrateStrategy,
+			AppliedBy:          a.AppliedBy,
+			ApprovedBy:         a.ApprovedBy,
+		})
+	}
+	return out, nil
+}
+
+// computationFromResult formats the resolver's decimal output as the
+// fixed-precision strings the wire types use. The order-level adjustment
+// snapshot fields (kind, source_type, etc.) come back in resolver order;
+// the inputs they were derived from are zipped in to preserve any field the
+// resolver doesn't echo (CalculationType etc. are already on the resolver
+// type, but reusing the input keeps the path explicit).
+func computationFromResult(result *tax.Result, _ []input.CreateOrderAdjustmentInput) *entity.OrderComputation {
+	out := &entity.OrderComputation{
+		Subtotal:      money.String(result.Subtotal),
+		TaxTotal:      money.String(result.TaxTotal),
+		DiscountTotal: money.String(result.DiscountTotal),
+		Total:         money.String(result.Total),
+		Lines:         make([]*entity.OrderComputationLine, 0, len(result.Lines)),
+	}
+	for _, l := range result.Lines {
+		line := &entity.OrderComputationLine{
+			TaxableBase:    money.String(l.TaxableBase),
+			DiscountAmount: money.String(l.DiscountAmount),
+			TaxAmount:      money.String(l.TaxAmount),
+			EffectiveRate:  money.RateString(l.EffectiveRate),
+			LineTotal:      money.String(l.LineTotal),
+		}
+		for _, t := range l.Taxes {
+			line.Taxes = append(line.Taxes, &entity.OrderLineItemTax{
+				Sequence:     int32(t.Sequence),
+				TaxRateID:    t.TaxRateID,
+				NameSnapshot: t.NameSnapshot,
+				RateSnapshot: money.RateString(t.RateSnapshot),
+				IsInclusive:  t.IsInclusive,
+				IsCompound:   t.IsCompound,
+				TaxableBase:  money.String(t.TaxableBase),
+				Amount:       money.String(t.Amount),
+			})
+		}
+		for _, a := range l.Adjustments {
+			line.Adjustments = append(line.Adjustments, resolvedLineAdjustmentToEntity(a))
+		}
+		out.Lines = append(out.Lines, line)
+	}
+	for _, a := range result.OrderAdjustments {
+		out.Adjustments = append(out.Adjustments, &entity.OrderAdjustment{
+			Sequence:           int32(a.Sequence),
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceID:           a.SourceID,
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   formatCalcValue(a.CalculationType, a.CalculationValue),
+			Amount:             money.String(a.Amount),
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			ProrateStrategy:    a.ProrateStrategy,
+			AppliedBy:          a.AppliedBy,
+			ApprovedBy:         a.ApprovedBy,
+		})
+	}
+	return out
+}
+
+func resolvedLineAdjustmentToEntity(a tax.ResolvedAdjustment) *entity.OrderLineAdjustment {
+	return &entity.OrderLineAdjustment{
+		Sequence:           int32(a.Sequence),
+		Kind:               a.Kind,
+		SourceType:         a.SourceType,
+		SourceID:           a.SourceID,
+		SourceCodeSnapshot: a.SourceCodeSnapshot,
+		NameSnapshot:       a.NameSnapshot,
+		Reason:             a.Reason,
+		CalculationType:    a.CalculationType,
+		CalculationValue:   formatCalcValue(a.CalculationType, a.CalculationValue),
+		Amount:             money.String(a.Amount),
+		AppliesBeforeTax:   a.AppliesBeforeTax,
+		AppliedBy:          a.AppliedBy,
+		ApprovedBy:         a.ApprovedBy,
+	}
+}
+
+// formatCalcValue picks the right fixed-precision rendering for the value
+// based on its semantic type. Percentages are stored as fractions (0.10 = 10%)
+// and use rate scale; fixed-amount and fixed-price values are money.
+func formatCalcValue(calcType string, v decimal.Decimal) string {
+	if calcType == tax.CalcPercentage {
+		return money.RateString(v)
+	}
+	return money.String(v)
 }

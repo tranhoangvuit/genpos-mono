@@ -129,6 +129,64 @@ func (h *OrderHandler) CreateOrder(
 	return connect.NewResponse(&genposv1.CreateOrderResponse{Order: toOrderProto(o)}), nil
 }
 
+func (h *OrderHandler) ComputeOrder(
+	ctx context.Context,
+	req *connect.Request[genposv1.ComputeOrderRequest],
+) (*connect.Response[genposv1.ComputeOrderResponse], error) {
+	authCtx, err := h.requireAuth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	msg := req.Msg
+	lines := make([]input.ComputeOrderLineInput, 0, len(msg.GetLines()))
+	for _, l := range msg.GetLines() {
+		lines = append(lines, input.ComputeOrderLineInput{
+			VariantID:            l.GetVariantId(),
+			Quantity:             l.GetQuantity(),
+			UnitPrice:            l.GetUnitPrice(),
+			HasInclusiveOverride: l.GetHasInclusiveOverride(),
+			InclusiveOverride:    l.GetIsTaxInclusiveOverride(),
+			Adjustments:          toLineAdjustmentsInput(l.GetAdjustments()),
+		})
+	}
+	res, err := h.usecase.ComputeOrder(ctx, input.ComputeOrderInput{
+		OrgID:       authCtx.OrgID,
+		Lines:       lines,
+		Adjustments: toOrderAdjustmentsInput(msg.GetAdjustments()),
+		Round:       msg.GetRound(),
+	})
+	if err != nil {
+		return nil, h.logAndConvert(ctx, "compute order", err)
+	}
+	return connect.NewResponse(toComputeOrderResponse(res)), nil
+}
+
+func toComputeOrderResponse(r *entity.OrderComputation) *genposv1.ComputeOrderResponse {
+	if r == nil {
+		return &genposv1.ComputeOrderResponse{}
+	}
+	out := &genposv1.ComputeOrderResponse{
+		Subtotal:      r.Subtotal,
+		TaxTotal:      r.TaxTotal,
+		DiscountTotal: r.DiscountTotal,
+		Total:         r.Total,
+		Adjustments:   toOrderAdjustmentsProto(r.Adjustments),
+		Lines:         make([]*genposv1.ComputeOrderLineResult, 0, len(r.Lines)),
+	}
+	for _, l := range r.Lines {
+		out.Lines = append(out.Lines, &genposv1.ComputeOrderLineResult{
+			TaxableBase:    l.TaxableBase,
+			DiscountAmount: l.DiscountAmount,
+			TaxAmount:      l.TaxAmount,
+			EffectiveRate:  l.EffectiveRate,
+			LineTotal:      l.LineTotal,
+			Taxes:          toLineTaxesProto(l.Taxes),
+			Adjustments:    toLineAdjustmentsProto(l.Adjustments),
+		})
+	}
+	return out
+}
+
 func (h *OrderHandler) GetOrder(
 	ctx context.Context,
 	req *connect.Request[genposv1.GetOrderRequest],

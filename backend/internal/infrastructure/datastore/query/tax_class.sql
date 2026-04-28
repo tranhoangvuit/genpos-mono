@@ -15,6 +15,26 @@ FROM tax_class_rates
 WHERE tax_class_id = ANY(sqlc.arg('class_ids')::UUID[]) AND deleted_at IS NULL
 ORDER BY tax_class_id, sequence;
 
+-- name: ListTaxRatesForVariants :many
+-- Resolves a set of variant ids into the snapshot tax rows the cart engine
+-- needs: variant -> tax_class -> tax_class_rates -> tax_rates. Returns one
+-- row per (variant, rate) pairing, in class-defined sequence order. Variants
+-- without a tax_class (or whose class has no active rates) simply produce
+-- no rows -- the caller treats their absence as "no automatic tax".
+SELECT pv.id            AS variant_id,
+       tcr.sequence     AS sequence,
+       tcr.is_compound  AS is_compound,
+       tr.id            AS tax_rate_id,
+       tr.name          AS name_snapshot,
+       tr.rate::TEXT    AS rate,
+       tr.is_inclusive  AS is_inclusive
+FROM product_variants pv
+JOIN tax_class_rates tcr ON tcr.tax_class_id = pv.tax_class_id AND tcr.deleted_at IS NULL
+JOIN tax_rates       tr  ON tr.id = tcr.tax_rate_id            AND tr.deleted_at IS NULL
+WHERE pv.id = ANY(sqlc.arg('variant_ids')::UUID[])
+  AND pv.deleted_at IS NULL
+ORDER BY pv.id, tcr.sequence;
+
 -- name: CreateTaxClass :one
 INSERT INTO tax_classes (org_id, name, description, is_default, sort_order)
 VALUES (sqlc.arg('org_id'), sqlc.arg('name'), sqlc.arg('description'),

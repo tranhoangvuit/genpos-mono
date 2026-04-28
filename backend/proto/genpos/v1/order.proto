@@ -15,6 +15,12 @@ service OrderService {
   // same key returns the previously persisted order rather than creating a
   // duplicate. external_id is the client's local UUID.
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+  // ComputeOrder runs the tax + adjustment resolver against a cart and
+  // returns the per-line and order-level breakdown the cart engine would
+  // persist if the cart were finalised. Stateless — nothing is written.
+  // Useful for online channels that can't run the resolver locally and for
+  // admin "preview tax" surfaces.
+  rpc ComputeOrder(ComputeOrderRequest) returns (ComputeOrderResponse) {}
 }
 
 message OrderSummary {
@@ -231,3 +237,48 @@ message CreateOrderRequest {
 }
 
 message CreateOrderResponse { Order order = 1; }
+
+// ----- ComputeOrder ---------------------------------------------------------
+// ComputeOrderLineInput is one cart line. variant_id is required -- the server
+// resolves the tax_class through it. unit_price is gross when the variant's
+// rate is inclusive and pre-tax otherwise; quantity and unit_price are
+// decimal strings to preserve NUMERIC(12,4) precision on the wire.
+message ComputeOrderLineInput {
+  string                       variant_id  = 1;
+  string                       quantity    = 2;
+  string                       unit_price  = 3;
+  // Optional override. When set, forces the inclusive/exclusive treatment
+  // for this line regardless of the rate definition. Useful for one-off
+  // re-pricing from an external channel that already split out the tax.
+  bool                         is_tax_inclusive_override = 4;
+  bool                         has_inclusive_override    = 5;
+  repeated OrderLineAdjustment adjustments = 6;
+}
+
+message ComputeOrderRequest {
+  repeated ComputeOrderLineInput lines       = 1;
+  repeated OrderAdjustment       adjustments = 2;
+  // "per_line" (default) or "per_order". Drives money rounding strategy.
+  string                         round       = 3;
+}
+
+// ComputeOrderLineResult mirrors OrderLineItem's tax/adjustment children but
+// without DB ids -- the cart hasn't been persisted yet.
+message ComputeOrderLineResult {
+  string                       taxable_base    = 1;
+  string                       discount_amount = 2;
+  string                       tax_amount      = 3;
+  string                       effective_rate  = 4;
+  string                       line_total      = 5;
+  repeated OrderLineItemTax    taxes           = 6;
+  repeated OrderLineAdjustment adjustments     = 7;
+}
+
+message ComputeOrderResponse {
+  repeated ComputeOrderLineResult lines           = 1;
+  repeated OrderAdjustment        adjustments     = 2;
+  string                          subtotal        = 3;
+  string                          tax_total       = 4;
+  string                          discount_total  = 5;
+  string                          total           = 6;
+}

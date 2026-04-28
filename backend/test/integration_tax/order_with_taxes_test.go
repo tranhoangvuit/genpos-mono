@@ -48,6 +48,7 @@ func Test_Integration_OrderWithTaxes(t *testing.T) {
 		datastore.NewOrderWriter(),
 		datastore.NewOrgStoreReader(),
 		datastore.NewMemberReader(),
+		datastore.NewVariantTaxResolver(),
 	)
 
 	t.Run("rich children round-trip and recompute aggregates", func(t *testing.T) {

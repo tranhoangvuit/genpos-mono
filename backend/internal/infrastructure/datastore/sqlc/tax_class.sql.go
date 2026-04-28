@@ -245,6 +245,65 @@ func (q *Queries) ListTaxClasses(ctx context.Context) ([]ListTaxClassesRow, erro
 	return items, nil
 }
 
+const listTaxRatesForVariants = `-- name: ListTaxRatesForVariants :many
+SELECT pv.id            AS variant_id,
+       tcr.sequence     AS sequence,
+       tcr.is_compound  AS is_compound,
+       tr.id            AS tax_rate_id,
+       tr.name          AS name_snapshot,
+       tr.rate::TEXT    AS rate,
+       tr.is_inclusive  AS is_inclusive
+FROM product_variants pv
+JOIN tax_class_rates tcr ON tcr.tax_class_id = pv.tax_class_id AND tcr.deleted_at IS NULL
+JOIN tax_rates       tr  ON tr.id = tcr.tax_rate_id            AND tr.deleted_at IS NULL
+WHERE pv.id = ANY($1::UUID[])
+  AND pv.deleted_at IS NULL
+ORDER BY pv.id, tcr.sequence
+`
+
+type ListTaxRatesForVariantsRow struct {
+	VariantID    pgtype.UUID `json:"variant_id"`
+	Sequence     int32       `json:"sequence"`
+	IsCompound   bool        `json:"is_compound"`
+	TaxRateID    pgtype.UUID `json:"tax_rate_id"`
+	NameSnapshot string      `json:"name_snapshot"`
+	Rate         string      `json:"rate"`
+	IsInclusive  bool        `json:"is_inclusive"`
+}
+
+// Resolves a set of variant ids into the snapshot tax rows the cart engine
+// needs: variant -> tax_class -> tax_class_rates -> tax_rates. Returns one
+// row per (variant, rate) pairing, in class-defined sequence order. Variants
+// without a tax_class (or whose class has no active rates) simply produce
+// no rows -- the caller treats their absence as "no automatic tax".
+func (q *Queries) ListTaxRatesForVariants(ctx context.Context, variantIds []pgtype.UUID) ([]ListTaxRatesForVariantsRow, error) {
+	rows, err := q.db.Query(ctx, listTaxRatesForVariants, variantIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListTaxRatesForVariantsRow{}
+	for rows.Next() {
+		var i ListTaxRatesForVariantsRow
+		if err := rows.Scan(
+			&i.VariantID,
+			&i.Sequence,
+			&i.IsCompound,
+			&i.TaxRateID,
+			&i.NameSnapshot,
+			&i.Rate,
+			&i.IsInclusive,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const softDeleteTaxClass = `-- name: SoftDeleteTaxClass :execrows
 UPDATE tax_classes
 SET deleted_at = now(), updated_at = now()
