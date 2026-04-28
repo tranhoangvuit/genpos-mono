@@ -189,6 +189,10 @@ func (w *productWriter) InsertVariant(ctx context.Context, p gateway.CreateProdu
 	if err != nil {
 		return nil, errors.BadRequest("invalid cost price")
 	}
+	taxClassID, err := uuidOrNull(p.TaxClassID)
+	if err != nil {
+		return nil, errors.BadRequest("invalid tax class id")
+	}
 	r, err := sqlc.New(dbtx).InsertProductVariant(ctx, sqlc.InsertProductVariantParams{
 		OrgID:      orgID,
 		ProductID:  productID,
@@ -200,6 +204,7 @@ func (w *productWriter) InsertVariant(ctx context.Context, p gateway.CreateProdu
 		TrackStock: p.TrackStock,
 		IsActive:   p.IsActive,
 		SortOrder:  p.SortOrder,
+		TaxClassID: taxClassID,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "insert variant")
@@ -215,6 +220,7 @@ func (w *productWriter) InsertVariant(ctx context.Context, p gateway.CreateProdu
 		TrackStock: r.TrackStock,
 		IsActive:   r.IsActive,
 		SortOrder:  r.SortOrder,
+		TaxClassID: uuidString(r.TaxClassID),
 	}, nil
 }
 

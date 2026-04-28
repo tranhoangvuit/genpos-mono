@@ -41,6 +41,7 @@ type VariantInput struct {
 	IsActive     bool
 	SortOrder    int32
 	OptionValues []string // aligns with OptionInput.Name positionally
+	TaxClassID   string   // optional FK to tax_classes; empty = no auto tax
 }
 
 type ProductImageInput struct {

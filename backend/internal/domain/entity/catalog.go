@@ -44,6 +44,9 @@ type ProductVariant struct {
 	IsActive       bool
 	SortOrder      int32
 	OptionValueIDs []string
+	// TaxClassID is the optional FK that the cart engine uses to resolve
+	// per-line tax rows at sale time. Empty string = no automatic tax.
+	TaxClassID string
 }
 
 // ProductImage represents an image attached to a product or a specific variant.

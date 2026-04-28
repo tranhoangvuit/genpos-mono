@@ -85,6 +85,7 @@ type CreateProductVariantParams struct {
 	TrackStock bool
 	IsActive   bool
 	SortOrder  int32
+	TaxClassID string // optional -- empty = no automatic tax resolution
 }
 
 type CreateProductImageParams struct {

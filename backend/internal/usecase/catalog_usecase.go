@@ -294,6 +294,7 @@ func (u *catalogUsecase) writeProductGraph(ctx context.Context, orgID, productID
 			TrackStock: v.TrackStock,
 			IsActive:   v.IsActive,
 			SortOrder:  int32(vi),
+			TaxClassID: v.TaxClassID,
 		})
 		if err != nil {
 			return err

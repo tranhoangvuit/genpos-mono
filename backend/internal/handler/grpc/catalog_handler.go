@@ -334,6 +334,7 @@ func toProductDetailProto(p *entity.ProductDetail) *genposv1.ProductDetail {
 			IsActive:       v.IsActive,
 			SortOrder:      v.SortOrder,
 			OptionValueIds: v.OptionValueIDs,
+			TaxClassId:     v.TaxClassID,
 		})
 	}
 	for _, img := range p.Images {
@@ -364,6 +365,7 @@ func fromProductInputProto(p *genposv1.ProductInput) input.ProductInput {
 			IsActive:     v.GetIsActive(),
 			SortOrder:    v.GetSortOrder(),
 			OptionValues: v.GetOptionValues(),
+			TaxClassID:   v.GetTaxClassId(),
 		})
 	}
 	images := make([]input.ProductImageInput, 0, len(p.GetImages()))

@@ -43,13 +43,14 @@ RETURNING id, org_id, option_id, value, sort_order, created_at, updated_at;
 
 -- name: InsertProductVariant :one
 INSERT INTO product_variants (org_id, product_id, name, sku, barcode, price, cost_price,
-                              track_stock, is_active, sort_order)
+                              track_stock, is_active, sort_order, tax_class_id)
 VALUES (sqlc.arg('org_id'), sqlc.arg('product_id'), sqlc.arg('name'),
         sqlc.narg('sku'), sqlc.narg('barcode'),
         sqlc.arg('price'), sqlc.arg('cost_price'),
-        sqlc.arg('track_stock'), sqlc.arg('is_active'), sqlc.arg('sort_order'))
+        sqlc.arg('track_stock'), sqlc.arg('is_active'), sqlc.arg('sort_order'),
+        sqlc.narg('tax_class_id'))
 RETURNING id, org_id, product_id, name, sku, barcode, price, cost_price,
-          track_stock, is_active, sort_order, created_at, updated_at;
+          track_stock, is_active, sort_order, tax_class_id, created_at, updated_at;
 
 -- name: InsertProductVariantOptionValue :exec
 INSERT INTO product_variant_option_values (org_id, variant_id, option_value_id)
@@ -76,7 +77,7 @@ ORDER BY pov.option_id, pov.sort_order ASC;
 
 -- name: ListProductVariants :many
 SELECT id, org_id, product_id, name, sku, barcode, price, cost_price,
-       track_stock, is_active, sort_order, created_at, updated_at
+       track_stock, is_active, sort_order, tax_class_id, created_at, updated_at
 FROM product_variants
 WHERE product_id = sqlc.arg('product_id') AND deleted_at IS NULL
 ORDER BY sort_order ASC;

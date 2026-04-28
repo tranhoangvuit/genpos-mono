@@ -153,6 +153,7 @@ func loadDetail(ctx context.Context, q *sqlc.Queries,
 			TrackStock: vr.TrackStock,
 			IsActive:   vr.IsActive,
 			SortOrder:  vr.SortOrder,
+			TaxClassID: uuidString(vr.TaxClassID),
 		}
 		variantsByID[vt.ID] = vt
 		detail.Variants = append(detail.Variants, vt)

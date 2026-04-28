@@ -263,13 +263,14 @@ func (q *Queries) InsertProductOptionValue(ctx context.Context, arg InsertProduc
 
 const insertProductVariant = `-- name: InsertProductVariant :one
 INSERT INTO product_variants (org_id, product_id, name, sku, barcode, price, cost_price,
-                              track_stock, is_active, sort_order)
+                              track_stock, is_active, sort_order, tax_class_id)
 VALUES ($1, $2, $3,
         $4, $5,
         $6, $7,
-        $8, $9, $10)
+        $8, $9, $10,
+        $11)
 RETURNING id, org_id, product_id, name, sku, barcode, price, cost_price,
-          track_stock, is_active, sort_order, created_at, updated_at
+          track_stock, is_active, sort_order, tax_class_id, created_at, updated_at
 `
 
 type InsertProductVariantParams struct {
@@ -283,6 +284,7 @@ type InsertProductVariantParams struct {
 	TrackStock bool           `json:"track_stock"`
 	IsActive   bool           `json:"is_active"`
 	SortOrder  int32          `json:"sort_order"`
+	TaxClassID pgtype.UUID    `json:"tax_class_id"`
 }
 
 type InsertProductVariantRow struct {
@@ -297,6 +299,7 @@ type InsertProductVariantRow struct {
 	TrackStock bool               `json:"track_stock"`
 	IsActive   bool               `json:"is_active"`
 	SortOrder  int32              `json:"sort_order"`
+	TaxClassID pgtype.UUID        `json:"tax_class_id"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
 }
@@ -313,6 +316,7 @@ func (q *Queries) InsertProductVariant(ctx context.Context, arg InsertProductVar
 		arg.TrackStock,
 		arg.IsActive,
 		arg.SortOrder,
+		arg.TaxClassID,
 	)
 	var i InsertProductVariantRow
 	err := row.Scan(
@@ -327,6 +331,7 @@ func (q *Queries) InsertProductVariant(ctx context.Context, arg InsertProductVar
 		&i.TrackStock,
 		&i.IsActive,
 		&i.SortOrder,
+		&i.TaxClassID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -490,7 +495,7 @@ func (q *Queries) ListProductVariantOptionValues(ctx context.Context, productID 
 
 const listProductVariants = `-- name: ListProductVariants :many
 SELECT id, org_id, product_id, name, sku, barcode, price, cost_price,
-       track_stock, is_active, sort_order, created_at, updated_at
+       track_stock, is_active, sort_order, tax_class_id, created_at, updated_at
 FROM product_variants
 WHERE product_id = $1 AND deleted_at IS NULL
 ORDER BY sort_order ASC
@@ -508,6 +513,7 @@ type ListProductVariantsRow struct {
 	TrackStock bool               `json:"track_stock"`
 	IsActive   bool               `json:"is_active"`
 	SortOrder  int32              `json:"sort_order"`
+	TaxClassID pgtype.UUID        `json:"tax_class_id"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
 }
@@ -533,6 +539,7 @@ func (q *Queries) ListProductVariants(ctx context.Context, productID pgtype.UUID
 			&i.TrackStock,
 			&i.IsActive,
 			&i.SortOrder,
+			&i.TaxClassID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
