@@ -97,6 +97,9 @@ message ProductVariant {
   bool            is_active        = 8;
   int32           sort_order       = 9;
   repeated string option_value_ids = 10;
+  // Optional. When set, the cart engine resolves this class's rates into
+  // per-line tax rows at sale time. Empty string = no automatic tax.
+  string          tax_class_id     = 11;
 }
 
 message ProductImage {
@@ -140,6 +143,8 @@ message VariantInput {
   // References option_values by display string (zero-based index-paired with options).
   // Empty when product has no options.
   repeated string option_values    = 9;
+  // Optional default tax class. Empty = no automatic tax.
+  string          tax_class_id     = 10;
 }
 
 message ProductImageInput {

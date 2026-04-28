@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file genpos/v1/order.proto.
  */
 export const file_genpos_v1_order: GenFile = /*@__PURE__*/
-  fileDesc("ChVnZW5wb3MvdjEvb3JkZXIucHJvdG8SCWdlbnBvcy52MSLsAgoMT3JkZXJTdW1tYXJ5EgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEhAKCHN0b3JlX2lkGAggASgJEhIKCnN0b3JlX25hbWUYCSABKAkSEwoLcmVnaXN0ZXJfaWQYCiABKAkSDwoHdXNlcl9pZBgLIAEoCRIRCgl1c2VyX25hbWUYDCABKAkSEwoLY3VzdG9tZXJfaWQYDSABKAkSFQoNY3VzdG9tZXJfbmFtZRgOIAEoCRIuCgpjcmVhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZzb3VyY2UYECABKAkSEwoLZXh0ZXJuYWxfaWQYESABKAkigQEKEUxpc3RPcmRlcnNSZXF1ZXN0EhAKCHN0b3JlX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiPQoSTGlzdE9yZGVyc1Jlc3BvbnNlEicKBm9yZGVycxgBIAMoCzIXLmdlbnBvcy52MS5PcmRlclN1bW1hcnki8AEKDU9yZGVyTGluZUl0ZW0SCgoCaWQYASABKAkSEgoKdmFyaWFudF9pZBgCIAEoCRIUCgxwcm9kdWN0X25hbWUYAyABKAkSFAoMdmFyaWFudF9uYW1lGAQgASgJEgsKA3NrdRgFIAEoCRIQCghxdWFudGl0eRgGIAEoCRISCgp1bml0X3ByaWNlGAcgASgJEhAKCHRheF9yYXRlGAggASgJEhIKCnRheF9hbW91bnQYCSABKAkSFwoPZGlzY291bnRfYW1vdW50GAogASgJEhIKCmxpbmVfdG90YWwYCyABKAkSDQoFbm90ZXMYDCABKAki3gEKDE9yZGVyUGF5bWVudBIKCgJpZBgBIAEoCRIZChFwYXltZW50X21ldGhvZF9pZBgCIAEoCRIbChNwYXltZW50X21ldGhvZF9uYW1lGAMgASgJEg4KBmFtb3VudBgEIAEoCRIQCgh0ZW5kZXJlZBgFIAEoCRIVCg1jaGFuZ2VfYW1vdW50GAYgASgJEhEKCXJlZmVyZW5jZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi/wMKBU9yZGVyEgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEg0KBW5vdGVzGAggASgJEhAKCHN0b3JlX2lkGAkgASgJEhIKCnN0b3JlX25hbWUYCiABKAkSEwoLcmVnaXN0ZXJfaWQYCyABKAkSDwoHdXNlcl9pZBgMIAEoCRIRCgl1c2VyX25hbWUYDSABKAkSEwoLY3VzdG9tZXJfaWQYDiABKAkSFQoNY3VzdG9tZXJfbmFtZRgPIAEoCRIuCgpjcmVhdGVkX2F0GBAgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYESABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCmxpbmVfaXRlbXMYEiADKAsyGC5nZW5wb3MudjEuT3JkZXJMaW5lSXRlbRIpCghwYXltZW50cxgTIAMoCzIXLmdlbnBvcy52MS5PcmRlclBheW1lbnQSDgoGc291cmNlGBQgASgJEhMKC2V4dGVybmFsX2lkGBUgASgJIh0KD0dldE9yZGVyUmVxdWVzdBIKCgJpZBgBIAEoCSIzChBHZXRPcmRlclJlc3BvbnNlEh8KBW9yZGVyGAEgASgLMhAuZ2VucG9zLnYxLk9yZGVyIuoBChNDcmVhdGVPcmRlckxpbmVJdGVtEhIKCnZhcmlhbnRfaWQYASABKAkSFAoMcHJvZHVjdF9uYW1lGAIgASgJEhQKDHZhcmlhbnRfbmFtZRgDIAEoCRILCgNza3UYBCABKAkSEAoIcXVhbnRpdHkYBSABKAkSEgoKdW5pdF9wcmljZRgGIAEoCRIXCg9kaXNjb3VudF9hbW91bnQYByABKAkSEAoIdGF4X3JhdGUYCCABKAkSEgoKdGF4X2Ftb3VudBgJIAEoCRISCgpsaW5lX3RvdGFsGAogASgJEg0KBW5vdGVzGAsgASgJInsKEkNyZWF0ZU9yZGVyUGF5bWVudBIZChFwYXltZW50X21ldGhvZF9pZBgBIAEoCRIOCgZhbW91bnQYAiABKAkSEAoIdGVuZGVyZWQYAyABKAkSFQoNY2hhbmdlX2Ftb3VudBgEIAEoCRIRCglyZWZlcmVuY2UYBSABKAkiugMKEkNyZWF0ZU9yZGVyUmVxdWVzdBIOCgZzb3VyY2UYASABKAkSEwoLZXh0ZXJuYWxfaWQYAiABKAkSGgoSZXh0ZXJuYWxfc291cmNlX2lkGAMgASgJEhQKDG9yZGVyX251bWJlchgEIAEoCRIQCghzdG9yZV9pZBgFIAEoCRITCgtyZWdpc3Rlcl9pZBgGIAEoCRITCgtjdXN0b21lcl9pZBgHIAEoCRIPCgd1c2VyX2lkGAggASgJEg4KBnN0YXR1cxgJIAEoCRIQCghzdWJ0b3RhbBgKIAEoCRIRCgl0YXhfdG90YWwYCyABKAkSFgoOZGlzY291bnRfdG90YWwYDCABKAkSDQoFdG90YWwYDSABKAkSDQoFbm90ZXMYDiABKAkSMAoMY29tcGxldGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIyCgpsaW5lX2l0ZW1zGBAgAygLMh4uZ2VucG9zLnYxLkNyZWF0ZU9yZGVyTGluZUl0ZW0SLwoIcGF5bWVudHMYESADKAsyHS5nZW5wb3MudjEuQ3JlYXRlT3JkZXJQYXltZW50IjYKE0NyZWF0ZU9yZGVyUmVzcG9uc2USHwoFb3JkZXIYASABKAsyEC5nZW5wb3MudjEuT3JkZXIy8gEKDE9yZGVyU2VydmljZRJLCgpMaXN0T3JkZXJzEhwuZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXF1ZXN0Gh0uZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXNwb25zZSIAEkUKCEdldE9yZGVyEhouZ2VucG9zLnYxLkdldE9yZGVyUmVxdWVzdBobLmdlbnBvcy52MS5HZXRPcmRlclJlc3BvbnNlIgASTgoLQ3JlYXRlT3JkZXISHS5nZW5wb3MudjEuQ3JlYXRlT3JkZXJSZXF1ZXN0Gh4uZ2VucG9zLnYxLkNyZWF0ZU9yZGVyUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChVnZW5wb3MvdjEvb3JkZXIucHJvdG8SCWdlbnBvcy52MSLsAgoMT3JkZXJTdW1tYXJ5EgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEhAKCHN0b3JlX2lkGAggASgJEhIKCnN0b3JlX25hbWUYCSABKAkSEwoLcmVnaXN0ZXJfaWQYCiABKAkSDwoHdXNlcl9pZBgLIAEoCRIRCgl1c2VyX25hbWUYDCABKAkSEwoLY3VzdG9tZXJfaWQYDSABKAkSFQoNY3VzdG9tZXJfbmFtZRgOIAEoCRIuCgpjcmVhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZzb3VyY2UYECABKAkSEwoLZXh0ZXJuYWxfaWQYESABKAkigQEKEUxpc3RPcmRlcnNSZXF1ZXN0EhAKCHN0b3JlX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiPQoSTGlzdE9yZGVyc1Jlc3BvbnNlEicKBm9yZGVycxgBIAMoCzIXLmdlbnBvcy52MS5PcmRlclN1bW1hcnkixAEKEE9yZGVyTGluZUl0ZW1UYXgSCgoCaWQYASABKAkSEAoIc2VxdWVuY2UYAiABKAUSEwoLdGF4X3JhdGVfaWQYAyABKAkSFQoNbmFtZV9zbmFwc2hvdBgEIAEoCRIVCg1yYXRlX3NuYXBzaG90GAUgASgJEhQKDGlzX2luY2x1c2l2ZRgGIAEoCBITCgtpc19jb21wb3VuZBgHIAEoCBIUCgx0YXhhYmxlX2Jhc2UYCCABKAkSDgoGYW1vdW50GAkgASgJIugCChNPcmRlckxpbmVBZGp1c3RtZW50EgoKAmlkGAEgASgJEhAKCHNlcXVlbmNlGAIgASgFEgwKBGtpbmQYAyABKAkSEwoLc291cmNlX3R5cGUYBCABKAkSEQoJc291cmNlX2lkGAUgASgJEhwKFHNvdXJjZV9jb2RlX3NuYXBzaG90GAYgASgJEhUKDW5hbWVfc25hcHNob3QYByABKAkSDgoGcmVhc29uGAggASgJEhgKEGNhbGN1bGF0aW9uX3R5cGUYCSABKAkSGQoRY2FsY3VsYXRpb25fdmFsdWUYCiABKAkSDgoGYW1vdW50GAsgASgJEhoKEmFwcGxpZXNfYmVmb3JlX3RheBgMIAEoCBISCgphcHBsaWVkX2J5GA0gASgJEi4KCmFwcGxpZWRfYXQYDiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2FwcHJvdmVkX2J5GA8gASgJIv4CCg9PcmRlckFkanVzdG1lbnQSCgoCaWQYASABKAkSEAoIc2VxdWVuY2UYAiABKAUSDAoEa2luZBgDIAEoCRITCgtzb3VyY2VfdHlwZRgEIAEoCRIRCglzb3VyY2VfaWQYBSABKAkSHAoUc291cmNlX2NvZGVfc25hcHNob3QYBiABKAkSFQoNbmFtZV9zbmFwc2hvdBgHIAEoCRIOCgZyZWFzb24YCCABKAkSGAoQY2FsY3VsYXRpb25fdHlwZRgJIAEoCRIZChFjYWxjdWxhdGlvbl92YWx1ZRgKIAEoCRIOCgZhbW91bnQYCyABKAkSGgoSYXBwbGllc19iZWZvcmVfdGF4GAwgASgIEhgKEHByb3JhdGVfc3RyYXRlZ3kYDSABKAkSEgoKYXBwbGllZF9ieRgOIAEoCRIuCgphcHBsaWVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgthcHByb3ZlZF9ieRgQIAEoCSLRAgoNT3JkZXJMaW5lSXRlbRIKCgJpZBgBIAEoCRISCgp2YXJpYW50X2lkGAIgASgJEhQKDHByb2R1Y3RfbmFtZRgDIAEoCRIUCgx2YXJpYW50X25hbWUYBCABKAkSCwoDc2t1GAUgASgJEhAKCHF1YW50aXR5GAYgASgJEhIKCnVuaXRfcHJpY2UYByABKAkSEAoIdGF4X3JhdGUYCCABKAkSEgoKdGF4X2Ftb3VudBgJIAEoCRIXCg9kaXNjb3VudF9hbW91bnQYCiABKAkSEgoKbGluZV90b3RhbBgLIAEoCRINCgVub3RlcxgMIAEoCRIqCgV0YXhlcxgNIAMoCzIbLmdlbnBvcy52MS5PcmRlckxpbmVJdGVtVGF4EjMKC2FkanVzdG1lbnRzGA4gAygLMh4uZ2VucG9zLnYxLk9yZGVyTGluZUFkanVzdG1lbnQi3gEKDE9yZGVyUGF5bWVudBIKCgJpZBgBIAEoCRIZChFwYXltZW50X21ldGhvZF9pZBgCIAEoCRIbChNwYXltZW50X21ldGhvZF9uYW1lGAMgASgJEg4KBmFtb3VudBgEIAEoCRIQCgh0ZW5kZXJlZBgFIAEoCRIVCg1jaGFuZ2VfYW1vdW50GAYgASgJEhEKCXJlZmVyZW5jZRgHIAEoCRIOCgZzdGF0dXMYCCABKAkSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAisAQKBU9yZGVyEgoKAmlkGAEgASgJEhQKDG9yZGVyX251bWJlchgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEAoIc3VidG90YWwYBCABKAkSEQoJdGF4X3RvdGFsGAUgASgJEhYKDmRpc2NvdW50X3RvdGFsGAYgASgJEg0KBXRvdGFsGAcgASgJEg0KBW5vdGVzGAggASgJEhAKCHN0b3JlX2lkGAkgASgJEhIKCnN0b3JlX25hbWUYCiABKAkSEwoLcmVnaXN0ZXJfaWQYCyABKAkSDwoHdXNlcl9pZBgMIAEoCRIRCgl1c2VyX25hbWUYDSABKAkSEwoLY3VzdG9tZXJfaWQYDiABKAkSFQoNY3VzdG9tZXJfbmFtZRgPIAEoCRIuCgpjcmVhdGVkX2F0GBAgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYESABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCmxpbmVfaXRlbXMYEiADKAsyGC5nZW5wb3MudjEuT3JkZXJMaW5lSXRlbRIpCghwYXltZW50cxgTIAMoCzIXLmdlbnBvcy52MS5PcmRlclBheW1lbnQSDgoGc291cmNlGBQgASgJEhMKC2V4dGVybmFsX2lkGBUgASgJEi8KC2FkanVzdG1lbnRzGBYgAygLMhouZ2VucG9zLnYxLk9yZGVyQWRqdXN0bWVudCIdCg9HZXRPcmRlclJlcXVlc3QSCgoCaWQYASABKAkiMwoQR2V0T3JkZXJSZXNwb25zZRIfCgVvcmRlchgBIAEoCzIQLmdlbnBvcy52MS5PcmRlciLLAgoTQ3JlYXRlT3JkZXJMaW5lSXRlbRISCgp2YXJpYW50X2lkGAEgASgJEhQKDHByb2R1Y3RfbmFtZRgCIAEoCRIUCgx2YXJpYW50X25hbWUYAyABKAkSCwoDc2t1GAQgASgJEhAKCHF1YW50aXR5GAUgASgJEhIKCnVuaXRfcHJpY2UYBiABKAkSFwoPZGlzY291bnRfYW1vdW50GAcgASgJEhAKCHRheF9yYXRlGAggASgJEhIKCnRheF9hbW91bnQYCSABKAkSEgoKbGluZV90b3RhbBgKIAEoCRINCgVub3RlcxgLIAEoCRIqCgV0YXhlcxgMIAMoCzIbLmdlbnBvcy52MS5PcmRlckxpbmVJdGVtVGF4EjMKC2FkanVzdG1lbnRzGA0gAygLMh4uZ2VucG9zLnYxLk9yZGVyTGluZUFkanVzdG1lbnQiewoSQ3JlYXRlT3JkZXJQYXltZW50EhkKEXBheW1lbnRfbWV0aG9kX2lkGAEgASgJEg4KBmFtb3VudBgCIAEoCRIQCgh0ZW5kZXJlZBgDIAEoCRIVCg1jaGFuZ2VfYW1vdW50GAQgASgJEhEKCXJlZmVyZW5jZRgFIAEoCSLrAwoSQ3JlYXRlT3JkZXJSZXF1ZXN0Eg4KBnNvdXJjZRgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRIaChJleHRlcm5hbF9zb3VyY2VfaWQYAyABKAkSFAoMb3JkZXJfbnVtYmVyGAQgASgJEhAKCHN0b3JlX2lkGAUgASgJEhMKC3JlZ2lzdGVyX2lkGAYgASgJEhMKC2N1c3RvbWVyX2lkGAcgASgJEg8KB3VzZXJfaWQYCCABKAkSDgoGc3RhdHVzGAkgASgJEhAKCHN1YnRvdGFsGAogASgJEhEKCXRheF90b3RhbBgLIAEoCRIWCg5kaXNjb3VudF90b3RhbBgMIAEoCRINCgV0b3RhbBgNIAEoCRINCgVub3RlcxgOIAEoCRIwCgxjb21wbGV0ZWRfYXQYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjIKCmxpbmVfaXRlbXMYECADKAsyHi5nZW5wb3MudjEuQ3JlYXRlT3JkZXJMaW5lSXRlbRIvCghwYXltZW50cxgRIAMoCzIdLmdlbnBvcy52MS5DcmVhdGVPcmRlclBheW1lbnQSLwoLYWRqdXN0bWVudHMYEiADKAsyGi5nZW5wb3MudjEuT3JkZXJBZGp1c3RtZW50IjYKE0NyZWF0ZU9yZGVyUmVzcG9uc2USHwoFb3JkZXIYASABKAsyEC5nZW5wb3MudjEuT3JkZXIy8gEKDE9yZGVyU2VydmljZRJLCgpMaXN0T3JkZXJzEhwuZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXF1ZXN0Gh0uZ2VucG9zLnYxLkxpc3RPcmRlcnNSZXNwb25zZSIAEkUKCEdldE9yZGVyEhouZ2VucG9zLnYxLkdldE9yZGVyUmVxdWVzdBobLmdlbnBvcy52MS5HZXRPcmRlclJlc3BvbnNlIgASTgoLQ3JlYXRlT3JkZXISHS5nZW5wb3MudjEuQ3JlYXRlT3JkZXJSZXF1ZXN0Gh4uZ2VucG9zLnYxLkNyZWF0ZU9yZGVyUmVzcG9uc2UiAEI/Wj1naXRodWIuY29tL2dlbnBpY2svZ2VucG9zLW1vbm8vYmFja2VuZC9nZW4vZ2VucG9zL3YxO2dlbnBvc3YxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message genpos.v1.OrderSummary
@@ -159,7 +159,281 @@ export const ListOrdersResponseSchema: GenMessage<ListOrdersResponse> = /*@__PUR
 
 /**
  * ----- Order detail ----------------------------------------------------------
+ * One snapshot of a tax applied to a line item. Snapshot fields freeze the
+ * rate's identity at sale time -- editing the source tax_rate later does not
+ * change historical orders. is_compound is the snapshot of the tax_class_rate
+ * flag and reflects how this rate was computed (on the raw taxable_base, or
+ * on base + previously applied taxes).
  *
+ * @generated from message genpos.v1.OrderLineItemTax
+ */
+export type OrderLineItemTax = Message<"genpos.v1.OrderLineItemTax"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: int32 sequence = 2;
+   */
+  sequence: number;
+
+  /**
+   * optional -- source rate may be deleted
+   *
+   * @generated from field: string tax_rate_id = 3;
+   */
+  taxRateId: string;
+
+  /**
+   * @generated from field: string name_snapshot = 4;
+   */
+  nameSnapshot: string;
+
+  /**
+   * decimal string, fraction (e.g. "0.1000" = 10%)
+   *
+   * @generated from field: string rate_snapshot = 5;
+   */
+  rateSnapshot: string;
+
+  /**
+   * @generated from field: bool is_inclusive = 6;
+   */
+  isInclusive: boolean;
+
+  /**
+   * @generated from field: bool is_compound = 7;
+   */
+  isCompound: boolean;
+
+  /**
+   * decimal string
+   *
+   * @generated from field: string taxable_base = 8;
+   */
+  taxableBase: string;
+
+  /**
+   * decimal string
+   *
+   * @generated from field: string amount = 9;
+   */
+  amount: string;
+};
+
+/**
+ * Describes the message genpos.v1.OrderLineItemTax.
+ * Use `create(OrderLineItemTaxSchema)` to create a new message.
+ */
+export const OrderLineItemTaxSchema: GenMessage<OrderLineItemTax> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 3);
+
+/**
+ * One discount, promotion, fee, or comp applied to a line item. amount is
+ * signed: negative for discount and comp, positive for fee and service_charge.
+ * applies_before_tax = true reduces the taxable base; false (e.g. tip) does
+ * not affect tax. source_id is optional and FK-less by design -- the
+ * originating promotion or coupon may be deleted while historical orders
+ * remain valid.
+ *
+ * @generated from message genpos.v1.OrderLineAdjustment
+ */
+export type OrderLineAdjustment = Message<"genpos.v1.OrderLineAdjustment"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: int32 sequence = 2;
+   */
+  sequence: number;
+
+  /**
+   * discount|promotion|fee|service_charge|comp
+   *
+   * @generated from field: string kind = 3;
+   */
+  kind: string;
+
+  /**
+   * manual|promotion_rule|coupon|loyalty|customer_group|auto
+   *
+   * @generated from field: string source_type = 4;
+   */
+  sourceType: string;
+
+  /**
+   * @generated from field: string source_id = 5;
+   */
+  sourceId: string;
+
+  /**
+   * @generated from field: string source_code_snapshot = 6;
+   */
+  sourceCodeSnapshot: string;
+
+  /**
+   * @generated from field: string name_snapshot = 7;
+   */
+  nameSnapshot: string;
+
+  /**
+   * @generated from field: string reason = 8;
+   */
+  reason: string;
+
+  /**
+   * percentage|fixed_amount|fixed_price
+   *
+   * @generated from field: string calculation_type = 9;
+   */
+  calculationType: string;
+
+  /**
+   * @generated from field: string calculation_value = 10;
+   */
+  calculationValue: string;
+
+  /**
+   * @generated from field: string amount = 11;
+   */
+  amount: string;
+
+  /**
+   * @generated from field: bool applies_before_tax = 12;
+   */
+  appliesBeforeTax: boolean;
+
+  /**
+   * @generated from field: string applied_by = 13;
+   */
+  appliedBy: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp applied_at = 14;
+   */
+  appliedAt?: Timestamp;
+
+  /**
+   * @generated from field: string approved_by = 15;
+   */
+  approvedBy: string;
+};
+
+/**
+ * Describes the message genpos.v1.OrderLineAdjustment.
+ * Use `create(OrderLineAdjustmentSchema)` to create a new message.
+ */
+export const OrderLineAdjustmentSchema: GenMessage<OrderLineAdjustment> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 4);
+
+/**
+ * Order-level adjustment. Same shape as OrderLineAdjustment plus
+ * prorate_strategy, which controls how this adjustment is distributed to
+ * lines for tax purposes: pro_rata_taxable_base (typical order discount),
+ * pro_rata_qty (per-item fee), or no_prorate (e.g. tip -- sits on top, no
+ * tax impact).
+ *
+ * @generated from message genpos.v1.OrderAdjustment
+ */
+export type OrderAdjustment = Message<"genpos.v1.OrderAdjustment"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: int32 sequence = 2;
+   */
+  sequence: number;
+
+  /**
+   * discount|promotion|fee|service_charge|tip|delivery|rounding|comp
+   *
+   * @generated from field: string kind = 3;
+   */
+  kind: string;
+
+  /**
+   * manual|promotion_rule|coupon|loyalty|customer_group|auto|system
+   *
+   * @generated from field: string source_type = 4;
+   */
+  sourceType: string;
+
+  /**
+   * @generated from field: string source_id = 5;
+   */
+  sourceId: string;
+
+  /**
+   * @generated from field: string source_code_snapshot = 6;
+   */
+  sourceCodeSnapshot: string;
+
+  /**
+   * @generated from field: string name_snapshot = 7;
+   */
+  nameSnapshot: string;
+
+  /**
+   * @generated from field: string reason = 8;
+   */
+  reason: string;
+
+  /**
+   * @generated from field: string calculation_type = 9;
+   */
+  calculationType: string;
+
+  /**
+   * @generated from field: string calculation_value = 10;
+   */
+  calculationValue: string;
+
+  /**
+   * @generated from field: string amount = 11;
+   */
+  amount: string;
+
+  /**
+   * @generated from field: bool applies_before_tax = 12;
+   */
+  appliesBeforeTax: boolean;
+
+  /**
+   * pro_rata_taxable_base|pro_rata_qty|no_prorate
+   *
+   * @generated from field: string prorate_strategy = 13;
+   */
+  prorateStrategy: string;
+
+  /**
+   * @generated from field: string applied_by = 14;
+   */
+  appliedBy: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp applied_at = 15;
+   */
+  appliedAt?: Timestamp;
+
+  /**
+   * @generated from field: string approved_by = 16;
+   */
+  approvedBy: string;
+};
+
+/**
+ * Describes the message genpos.v1.OrderAdjustment.
+ * Use `create(OrderAdjustmentSchema)` to create a new message.
+ */
+export const OrderAdjustmentSchema: GenMessage<OrderAdjustment> = /*@__PURE__*/
+  messageDesc(file_genpos_v1_order, 5);
+
+/**
  * @generated from message genpos.v1.OrderLineItem
  */
 export type OrderLineItem = Message<"genpos.v1.OrderLineItem"> & {
@@ -201,6 +475,11 @@ export type OrderLineItem = Message<"genpos.v1.OrderLineItem"> & {
   unitPrice: string;
 
   /**
+   * tax_rate and tax_amount are aggregate snapshots: tax_rate is the combined
+   * effective rate applied; tax_amount is the sum of taxes[]. discount_amount
+   * is the sum of all line adjustments. They are kept for fast list/report
+   * rendering; taxes[] and adjustments[] are the source of truth for audit.
+   *
    * @generated from field: string tax_rate = 8;
    */
   taxRate: string;
@@ -224,6 +503,16 @@ export type OrderLineItem = Message<"genpos.v1.OrderLineItem"> & {
    * @generated from field: string notes = 12;
    */
   notes: string;
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderLineItemTax taxes = 13;
+   */
+  taxes: OrderLineItemTax[];
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderLineAdjustment adjustments = 14;
+   */
+  adjustments: OrderLineAdjustment[];
 };
 
 /**
@@ -231,7 +520,7 @@ export type OrderLineItem = Message<"genpos.v1.OrderLineItem"> & {
  * Use `create(OrderLineItemSchema)` to create a new message.
  */
 export const OrderLineItemSchema: GenMessage<OrderLineItem> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 3);
+  messageDesc(file_genpos_v1_order, 6);
 
 /**
  * @generated from message genpos.v1.OrderPayment
@@ -288,7 +577,7 @@ export type OrderPayment = Message<"genpos.v1.OrderPayment"> & {
  * Use `create(OrderPaymentSchema)` to create a new message.
  */
 export const OrderPaymentSchema: GenMessage<OrderPayment> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 4);
+  messageDesc(file_genpos_v1_order, 7);
 
 /**
  * @generated from message genpos.v1.Order
@@ -400,6 +689,11 @@ export type Order = Message<"genpos.v1.Order"> & {
    * @generated from field: string external_id = 21;
    */
   externalId: string;
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderAdjustment adjustments = 22;
+   */
+  adjustments: OrderAdjustment[];
 };
 
 /**
@@ -407,7 +701,7 @@ export type Order = Message<"genpos.v1.Order"> & {
  * Use `create(OrderSchema)` to create a new message.
  */
 export const OrderSchema: GenMessage<Order> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 5);
+  messageDesc(file_genpos_v1_order, 8);
 
 /**
  * @generated from message genpos.v1.GetOrderRequest
@@ -424,7 +718,7 @@ export type GetOrderRequest = Message<"genpos.v1.GetOrderRequest"> & {
  * Use `create(GetOrderRequestSchema)` to create a new message.
  */
 export const GetOrderRequestSchema: GenMessage<GetOrderRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 6);
+  messageDesc(file_genpos_v1_order, 9);
 
 /**
  * @generated from message genpos.v1.GetOrderResponse
@@ -441,16 +735,21 @@ export type GetOrderResponse = Message<"genpos.v1.GetOrderResponse"> & {
  * Use `create(GetOrderResponseSchema)` to create a new message.
  */
 export const GetOrderResponseSchema: GenMessage<GetOrderResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 7);
+  messageDesc(file_genpos_v1_order, 10);
 
 /**
  * ----- CreateOrder -----------------------------------------------------------
+ * taxes and adjustments are optional in the request: existing clients that
+ * only send aggregate tax_amount/discount_amount continue to work. When the
+ * caller sends taxes[] / adjustments[], the server persists them as the
+ * authoritative breakdown and the aggregates are treated as the caller's
+ * pre-computed totals.
  *
  * @generated from message genpos.v1.CreateOrderLineItem
  */
 export type CreateOrderLineItem = Message<"genpos.v1.CreateOrderLineItem"> & {
   /**
-   * optional — empty when the variant has been deleted
+   * optional -- empty when the variant has been deleted
    *
    * @generated from field: string variant_id = 1;
    */
@@ -507,6 +806,16 @@ export type CreateOrderLineItem = Message<"genpos.v1.CreateOrderLineItem"> & {
    * @generated from field: string notes = 11;
    */
   notes: string;
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderLineItemTax taxes = 12;
+   */
+  taxes: OrderLineItemTax[];
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderLineAdjustment adjustments = 13;
+   */
+  adjustments: OrderLineAdjustment[];
 };
 
 /**
@@ -514,7 +823,7 @@ export type CreateOrderLineItem = Message<"genpos.v1.CreateOrderLineItem"> & {
  * Use `create(CreateOrderLineItemSchema)` to create a new message.
  */
 export const CreateOrderLineItemSchema: GenMessage<CreateOrderLineItem> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 8);
+  messageDesc(file_genpos_v1_order, 11);
 
 /**
  * @generated from message genpos.v1.CreateOrderPayment
@@ -551,7 +860,7 @@ export type CreateOrderPayment = Message<"genpos.v1.CreateOrderPayment"> & {
  * Use `create(CreateOrderPaymentSchema)` to create a new message.
  */
 export const CreateOrderPaymentSchema: GenMessage<CreateOrderPayment> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 9);
+  messageDesc(file_genpos_v1_order, 12);
 
 /**
  * @generated from message genpos.v1.CreateOrderRequest
@@ -651,6 +960,11 @@ export type CreateOrderRequest = Message<"genpos.v1.CreateOrderRequest"> & {
    * @generated from field: repeated genpos.v1.CreateOrderPayment payments = 17;
    */
   payments: CreateOrderPayment[];
+
+  /**
+   * @generated from field: repeated genpos.v1.OrderAdjustment adjustments = 18;
+   */
+  adjustments: OrderAdjustment[];
 };
 
 /**
@@ -658,7 +972,7 @@ export type CreateOrderRequest = Message<"genpos.v1.CreateOrderRequest"> & {
  * Use `create(CreateOrderRequestSchema)` to create a new message.
  */
 export const CreateOrderRequestSchema: GenMessage<CreateOrderRequest> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 10);
+  messageDesc(file_genpos_v1_order, 13);
 
 /**
  * @generated from message genpos.v1.CreateOrderResponse
@@ -675,7 +989,7 @@ export type CreateOrderResponse = Message<"genpos.v1.CreateOrderResponse"> & {
  * Use `create(CreateOrderResponseSchema)` to create a new message.
  */
 export const CreateOrderResponseSchema: GenMessage<CreateOrderResponse> = /*@__PURE__*/
-  messageDesc(file_genpos_v1_order, 11);
+  messageDesc(file_genpos_v1_order, 14);
 
 /**
  * ----- OrderService ----------------------------------------------------------

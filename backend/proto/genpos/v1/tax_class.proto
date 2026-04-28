@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package genpos.v1;
+
+option go_package = "github.com/genpick/genpos-mono/backend/gen/genpos/v1;genposv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ----- TaxClassService -------------------------------------------------------
+// A tax class is a named bundle of one or more tax rates that can be assigned
+// to a product variant. The bundle's rates have an explicit application order
+// (sequence) and may stack compoundly (is_compound). Snapshotted onto each
+// order_line_taxes row at sale time, so historical orders survive class edits.
+service TaxClassService {
+  rpc ListTaxClasses(ListTaxClassesRequest)   returns (ListTaxClassesResponse) {}
+  rpc GetTaxClass(GetTaxClassRequest)         returns (GetTaxClassResponse) {}
+  rpc CreateTaxClass(CreateTaxClassRequest)   returns (CreateTaxClassResponse) {}
+  rpc UpdateTaxClass(UpdateTaxClassRequest)   returns (UpdateTaxClassResponse) {}
+  rpc DeleteTaxClass(DeleteTaxClassRequest)   returns (DeleteTaxClassResponse) {}
+}
+
+message TaxClass {
+  string                    id          = 1;
+  string                    org_id      = 2;
+  string                    name        = 3;
+  string                    description = 4;
+  bool                      is_default  = 5;
+  int32                     sort_order  = 6;
+  repeated TaxClassRate     rates       = 7;
+  google.protobuf.Timestamp created_at  = 8;
+  google.protobuf.Timestamp updated_at  = 9;
+}
+
+// One rate inside a tax class. sequence determines application order;
+// is_compound = true means this rate sees (taxable_base + sum of earlier
+// rates already applied) instead of taxable_base alone.
+message TaxClassRate {
+  string id          = 1;
+  string tax_rate_id = 2;
+  int32  sequence    = 3;
+  bool   is_compound = 4;
+}
+
+message TaxClassRateInput {
+  string tax_rate_id = 1;
+  int32  sequence    = 2;
+  bool   is_compound = 3;
+}
+
+message TaxClassInput {
+  string                     name        = 1;
+  string                     description = 2;
+  bool                       is_default  = 3;
+  int32                      sort_order  = 4;
+  repeated TaxClassRateInput rates       = 5;
+}
+
+message ListTaxClassesRequest {}
+message ListTaxClassesResponse {
+  repeated TaxClass classes = 1;
+}
+
+message GetTaxClassRequest  { string id = 1; }
+message GetTaxClassResponse { TaxClass class = 1; }
+
+message CreateTaxClassRequest  { TaxClassInput class = 1; }
+message CreateTaxClassResponse { TaxClass class = 1; }
+
+message UpdateTaxClassRequest {
+  string        id    = 1;
+  TaxClassInput class = 2;
+}
+message UpdateTaxClassResponse { TaxClass class = 1; }
+
+message DeleteTaxClassRequest  { string id = 1; }
+message DeleteTaxClassResponse {}

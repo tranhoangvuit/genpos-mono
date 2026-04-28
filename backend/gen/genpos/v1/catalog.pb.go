@@ -662,8 +662,11 @@ type ProductVariant struct {
 	IsActive       bool                   `protobuf:"varint,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	SortOrder      int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	OptionValueIds []string               `protobuf:"bytes,10,rep,name=option_value_ids,json=optionValueIds,proto3" json:"option_value_ids,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional. When set, the cart engine resolves this class's rates into
+	// per-line tax rows at sale time. Empty string = no automatic tax.
+	TaxClassId    string `protobuf:"bytes,11,opt,name=tax_class_id,json=taxClassId,proto3" json:"tax_class_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProductVariant) Reset() {
@@ -764,6 +767,13 @@ func (x *ProductVariant) GetOptionValueIds() []string {
 		return x.OptionValueIds
 	}
 	return nil
+}
+
+func (x *ProductVariant) GetTaxClassId() string {
+	if x != nil {
+		return x.TaxClassId
+	}
+	return ""
 }
 
 type ProductImage struct {
@@ -1030,7 +1040,9 @@ type VariantInput struct {
 	SortOrder  int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	// References option_values by display string (zero-based index-paired with options).
 	// Empty when product has no options.
-	OptionValues  []string `protobuf:"bytes,9,rep,name=option_values,json=optionValues,proto3" json:"option_values,omitempty"`
+	OptionValues []string `protobuf:"bytes,9,rep,name=option_values,json=optionValues,proto3" json:"option_values,omitempty"`
+	// Optional default tax class. Empty = no automatic tax.
+	TaxClassId    string `protobuf:"bytes,10,opt,name=tax_class_id,json=taxClassId,proto3" json:"tax_class_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1126,6 +1138,13 @@ func (x *VariantInput) GetOptionValues() []string {
 		return x.OptionValues
 	}
 	return nil
+}
+
+func (x *VariantInput) GetTaxClassId() string {
+	if x != nil {
+		return x.TaxClassId
+	}
+	return ""
 }
 
 type ProductImageInput struct {
@@ -2361,7 +2380,7 @@ const file_genpos_v1_catalog_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x03 \x01(\x05R\tsortOrder\"\x9c\x02\n" +
+	"sort_order\x18\x03 \x01(\x05R\tsortOrder\"\xbe\x02\n" +
 	"\x0eProductVariant\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
@@ -2376,7 +2395,9 @@ const file_genpos_v1_catalog_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\t \x01(\x05R\tsortOrder\x12(\n" +
 	"\x10option_value_ids\x18\n" +
-	" \x03(\tR\x0eoptionValueIds\"n\n" +
+	" \x03(\tR\x0eoptionValueIds\x12 \n" +
+	"\ftax_class_id\x18\v \x01(\tR\n" +
+	"taxClassId\"n\n" +
 	"\fProductImage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -2404,7 +2425,7 @@ const file_genpos_v1_catalog_proto_rawDesc = "" +
 	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"9\n" +
 	"\vOptionInput\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
-	"\x06values\x18\x02 \x03(\tR\x06values\"\x85\x02\n" +
+	"\x06values\x18\x02 \x03(\tR\x06values\"\xa7\x02\n" +
 	"\fVariantInput\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
 	"\x03sku\x18\x02 \x01(\tR\x03sku\x12\x18\n" +
@@ -2417,7 +2438,10 @@ const file_genpos_v1_catalog_proto_rawDesc = "" +
 	"\tis_active\x18\a \x01(\bR\bisActive\x12\x1d\n" +
 	"\n" +
 	"sort_order\x18\b \x01(\x05R\tsortOrder\x12#\n" +
-	"\roption_values\x18\t \x03(\tR\foptionValues\"D\n" +
+	"\roption_values\x18\t \x03(\tR\foptionValues\x12 \n" +
+	"\ftax_class_id\x18\n" +
+	" \x01(\tR\n" +
+	"taxClassId\"D\n" +
 	"\x11ProductImageInput\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1d\n" +
 	"\n" +

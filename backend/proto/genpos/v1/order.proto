@@ -49,19 +49,90 @@ message ListOrdersResponse {
 }
 
 // ----- Order detail ----------------------------------------------------------
+// One snapshot of a tax applied to a line item. Snapshot fields freeze the
+// rate's identity at sale time -- editing the source tax_rate later does not
+// change historical orders. is_compound is the snapshot of the tax_class_rate
+// flag and reflects how this rate was computed (on the raw taxable_base, or
+// on base + previously applied taxes).
+message OrderLineItemTax {
+  string id              = 1;
+  int32  sequence        = 2;
+  string tax_rate_id     = 3; // optional -- source rate may be deleted
+  string name_snapshot   = 4;
+  string rate_snapshot   = 5; // decimal string, fraction (e.g. "0.1000" = 10%)
+  bool   is_inclusive    = 6;
+  bool   is_compound     = 7;
+  string taxable_base    = 8; // decimal string
+  string amount          = 9; // decimal string
+}
+
+// One discount, promotion, fee, or comp applied to a line item. amount is
+// signed: negative for discount and comp, positive for fee and service_charge.
+// applies_before_tax = true reduces the taxable base; false (e.g. tip) does
+// not affect tax. source_id is optional and FK-less by design -- the
+// originating promotion or coupon may be deleted while historical orders
+// remain valid.
+message OrderLineAdjustment {
+  string                    id                   = 1;
+  int32                     sequence             = 2;
+  string                    kind                 = 3; // discount|promotion|fee|service_charge|comp
+  string                    source_type          = 4; // manual|promotion_rule|coupon|loyalty|customer_group|auto
+  string                    source_id            = 5;
+  string                    source_code_snapshot = 6;
+  string                    name_snapshot        = 7;
+  string                    reason               = 8;
+  string                    calculation_type     = 9; // percentage|fixed_amount|fixed_price
+  string                    calculation_value    = 10;
+  string                    amount               = 11;
+  bool                      applies_before_tax   = 12;
+  string                    applied_by           = 13;
+  google.protobuf.Timestamp applied_at           = 14;
+  string                    approved_by          = 15;
+}
+
+// Order-level adjustment. Same shape as OrderLineAdjustment plus
+// prorate_strategy, which controls how this adjustment is distributed to
+// lines for tax purposes: pro_rata_taxable_base (typical order discount),
+// pro_rata_qty (per-item fee), or no_prorate (e.g. tip -- sits on top, no
+// tax impact).
+message OrderAdjustment {
+  string                    id                   = 1;
+  int32                     sequence             = 2;
+  string                    kind                 = 3; // discount|promotion|fee|service_charge|tip|delivery|rounding|comp
+  string                    source_type          = 4; // manual|promotion_rule|coupon|loyalty|customer_group|auto|system
+  string                    source_id            = 5;
+  string                    source_code_snapshot = 6;
+  string                    name_snapshot        = 7;
+  string                    reason               = 8;
+  string                    calculation_type     = 9;
+  string                    calculation_value    = 10;
+  string                    amount               = 11;
+  bool                      applies_before_tax   = 12;
+  string                    prorate_strategy     = 13; // pro_rata_taxable_base|pro_rata_qty|no_prorate
+  string                    applied_by           = 14;
+  google.protobuf.Timestamp applied_at           = 15;
+  string                    approved_by          = 16;
+}
+
 message OrderLineItem {
-  string id               = 1;
-  string variant_id       = 2;
-  string product_name     = 3;
-  string variant_name     = 4;
-  string sku              = 5;
-  string quantity         = 6; // decimal string
-  string unit_price       = 7;
-  string tax_rate         = 8;
-  string tax_amount       = 9;
-  string discount_amount  = 10;
-  string line_total       = 11;
-  string notes            = 12;
+  string                       id              = 1;
+  string                       variant_id      = 2;
+  string                       product_name    = 3;
+  string                       variant_name    = 4;
+  string                       sku             = 5;
+  string                       quantity        = 6; // decimal string
+  string                       unit_price      = 7;
+  // tax_rate and tax_amount are aggregate snapshots: tax_rate is the combined
+  // effective rate applied; tax_amount is the sum of taxes[]. discount_amount
+  // is the sum of all line adjustments. They are kept for fast list/report
+  // rendering; taxes[] and adjustments[] are the source of truth for audit.
+  string                       tax_rate        = 8;
+  string                       tax_amount      = 9;
+  string                       discount_amount = 10;
+  string                       line_total      = 11;
+  string                       notes           = 12;
+  repeated OrderLineItemTax    taxes           = 13;
+  repeated OrderLineAdjustment adjustments     = 14;
 }
 
 message OrderPayment {
@@ -99,24 +170,32 @@ message Order {
   // pos | online_store | shopify | woocommerce | manual | import
   string                     source          = 20;
   string                     external_id     = 21;
+  repeated OrderAdjustment   adjustments     = 22;
 }
 
 message GetOrderRequest  { string id = 1; }
 message GetOrderResponse { Order order = 1; }
 
 // ----- CreateOrder -----------------------------------------------------------
+// taxes and adjustments are optional in the request: existing clients that
+// only send aggregate tax_amount/discount_amount continue to work. When the
+// caller sends taxes[] / adjustments[], the server persists them as the
+// authoritative breakdown and the aggregates are treated as the caller's
+// pre-computed totals.
 message CreateOrderLineItem {
-  string variant_id      = 1; // optional — empty when the variant has been deleted
-  string product_name    = 2;
-  string variant_name    = 3;
-  string sku             = 4;
-  string quantity        = 5; // decimal string
-  string unit_price      = 6;
-  string discount_amount = 7;
-  string tax_rate        = 8;
-  string tax_amount      = 9;
-  string line_total      = 10;
-  string notes           = 11;
+  string                       variant_id      = 1; // optional -- empty when the variant has been deleted
+  string                       product_name    = 2;
+  string                       variant_name    = 3;
+  string                       sku             = 4;
+  string                       quantity        = 5; // decimal string
+  string                       unit_price      = 6;
+  string                       discount_amount = 7;
+  string                       tax_rate        = 8;
+  string                       tax_amount      = 9;
+  string                       line_total      = 10;
+  string                       notes           = 11;
+  repeated OrderLineItemTax    taxes           = 12;
+  repeated OrderLineAdjustment adjustments     = 13;
 }
 
 message CreateOrderPayment {
@@ -148,6 +227,7 @@ message CreateOrderRequest {
 
   repeated CreateOrderLineItem line_items      = 16;
   repeated CreateOrderPayment  payments        = 17;
+  repeated OrderAdjustment     adjustments     = 18;
 }
 
 message CreateOrderResponse { Order order = 1; }
