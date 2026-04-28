@@ -295,7 +295,120 @@ func (q *Queries) InsertOrder(ctx context.Context, arg InsertOrderParams) (Inser
 	return i, err
 }
 
-const insertOrderLineItem = `-- name: InsertOrderLineItem :exec
+const insertOrderAdjustment = `-- name: InsertOrderAdjustment :exec
+INSERT INTO order_adjustments (
+    org_id, order_id, sequence, kind, source_type, source_id,
+    source_code_snapshot, name_snapshot, reason,
+    calculation_type, calculation_value, amount,
+    applies_before_tax, prorate_strategy, applied_by, approved_by
+) VALUES (
+    $1, $2, $3,
+    $4, $5, $6,
+    $7, $8, $9,
+    $10, $11::NUMERIC,
+    $12::NUMERIC,
+    $13, $14,
+    $15, $16
+)
+`
+
+type InsertOrderAdjustmentParams struct {
+	OrgID              pgtype.UUID    `json:"org_id"`
+	OrderID            pgtype.UUID    `json:"order_id"`
+	Sequence           int32          `json:"sequence"`
+	Kind               string         `json:"kind"`
+	SourceType         string         `json:"source_type"`
+	SourceID           pgtype.UUID    `json:"source_id"`
+	SourceCodeSnapshot pgtype.Text    `json:"source_code_snapshot"`
+	NameSnapshot       string         `json:"name_snapshot"`
+	Reason             pgtype.Text    `json:"reason"`
+	CalculationType    string         `json:"calculation_type"`
+	CalculationValue   pgtype.Numeric `json:"calculation_value"`
+	Amount             pgtype.Numeric `json:"amount"`
+	AppliesBeforeTax   bool           `json:"applies_before_tax"`
+	ProrateStrategy    string         `json:"prorate_strategy"`
+	AppliedBy          pgtype.UUID    `json:"applied_by"`
+	ApprovedBy         pgtype.UUID    `json:"approved_by"`
+}
+
+func (q *Queries) InsertOrderAdjustment(ctx context.Context, arg InsertOrderAdjustmentParams) error {
+	_, err := q.db.Exec(ctx, insertOrderAdjustment,
+		arg.OrgID,
+		arg.OrderID,
+		arg.Sequence,
+		arg.Kind,
+		arg.SourceType,
+		arg.SourceID,
+		arg.SourceCodeSnapshot,
+		arg.NameSnapshot,
+		arg.Reason,
+		arg.CalculationType,
+		arg.CalculationValue,
+		arg.Amount,
+		arg.AppliesBeforeTax,
+		arg.ProrateStrategy,
+		arg.AppliedBy,
+		arg.ApprovedBy,
+	)
+	return err
+}
+
+const insertOrderLineAdjustment = `-- name: InsertOrderLineAdjustment :exec
+INSERT INTO order_line_adjustments (
+    org_id, line_item_id, sequence, kind, source_type, source_id,
+    source_code_snapshot, name_snapshot, reason,
+    calculation_type, calculation_value, amount,
+    applies_before_tax, applied_by, approved_by
+) VALUES (
+    $1, $2, $3,
+    $4, $5, $6,
+    $7, $8, $9,
+    $10, $11::NUMERIC,
+    $12::NUMERIC,
+    $13, $14, $15
+)
+`
+
+type InsertOrderLineAdjustmentParams struct {
+	OrgID              pgtype.UUID    `json:"org_id"`
+	LineItemID         pgtype.UUID    `json:"line_item_id"`
+	Sequence           int32          `json:"sequence"`
+	Kind               string         `json:"kind"`
+	SourceType         string         `json:"source_type"`
+	SourceID           pgtype.UUID    `json:"source_id"`
+	SourceCodeSnapshot pgtype.Text    `json:"source_code_snapshot"`
+	NameSnapshot       string         `json:"name_snapshot"`
+	Reason             pgtype.Text    `json:"reason"`
+	CalculationType    string         `json:"calculation_type"`
+	CalculationValue   pgtype.Numeric `json:"calculation_value"`
+	Amount             pgtype.Numeric `json:"amount"`
+	AppliesBeforeTax   bool           `json:"applies_before_tax"`
+	AppliedBy          pgtype.UUID    `json:"applied_by"`
+	ApprovedBy         pgtype.UUID    `json:"approved_by"`
+}
+
+func (q *Queries) InsertOrderLineAdjustment(ctx context.Context, arg InsertOrderLineAdjustmentParams) error {
+	_, err := q.db.Exec(ctx, insertOrderLineAdjustment,
+		arg.OrgID,
+		arg.LineItemID,
+		arg.Sequence,
+		arg.Kind,
+		arg.SourceType,
+		arg.SourceID,
+		arg.SourceCodeSnapshot,
+		arg.NameSnapshot,
+		arg.Reason,
+		arg.CalculationType,
+		arg.CalculationValue,
+		arg.Amount,
+		arg.AppliesBeforeTax,
+		arg.AppliedBy,
+		arg.ApprovedBy,
+	)
+	return err
+}
+
+const insertOrderLineItem = `-- name: InsertOrderLineItem :one
 INSERT INTO order_line_items (
     org_id, order_id, variant_id, product_name, variant_name, sku,
     quantity, unit_price, tax_rate, tax_amount, discount_amount, line_total, notes
@@ -307,6 +420,7 @@ INSERT INTO order_line_items (
     $11::NUMERIC, $12::NUMERIC,
     $13
 )
+RETURNING id
 `
 
 type InsertOrderLineItemParams struct {
@@ -325,8 +439,8 @@ type InsertOrderLineItemParams struct {
 	Notes          pgtype.Text    `json:"notes"`
 }
 
-func (q *Queries) InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) error {
-	_, err := q.db.Exec(ctx, insertOrderLineItem,
+func (q *Queries) InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, insertOrderLineItem,
 		arg.OrgID,
 		arg.OrderID,
 		arg.VariantID,
@@ -340,6 +454,51 @@ func (q *Queries) InsertOrderLineItem(ctx context.Context, arg InsertOrderLineIt
 		arg.DiscountAmount,
 		arg.LineTotal,
 		arg.Notes,
+	)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const insertOrderLineTax = `-- name: InsertOrderLineTax :exec
+INSERT INTO order_line_taxes (
+    org_id, line_item_id, sequence, tax_rate_id,
+    name_snapshot, rate_snapshot, is_inclusive, is_compound,
+    taxable_base, amount
+) VALUES (
+    $1, $2, $3,
+    $4,
+    $5, $6::NUMERIC,
+    $7, $8,
+    $9::NUMERIC, $10::NUMERIC
+)
+`
+
+type InsertOrderLineTaxParams struct {
+	OrgID        pgtype.UUID    `json:"org_id"`
+	LineItemID   pgtype.UUID    `json:"line_item_id"`
+	Sequence     int32          `json:"sequence"`
+	TaxRateID    pgtype.UUID    `json:"tax_rate_id"`
+	NameSnapshot string         `json:"name_snapshot"`
+	RateSnapshot pgtype.Numeric `json:"rate_snapshot"`
+	IsInclusive  bool           `json:"is_inclusive"`
+	IsCompound   bool           `json:"is_compound"`
+	TaxableBase  pgtype.Numeric `json:"taxable_base"`
+	Amount       pgtype.Numeric `json:"amount"`
+}
+
+func (q *Queries) InsertOrderLineTax(ctx context.Context, arg InsertOrderLineTaxParams) error {
+	_, err := q.db.Exec(ctx, insertOrderLineTax,
+		arg.OrgID,
+		arg.LineItemID,
+		arg.Sequence,
+		arg.TaxRateID,
+		arg.NameSnapshot,
+		arg.RateSnapshot,
+		arg.IsInclusive,
+		arg.IsCompound,
+		arg.TaxableBase,
+		arg.Amount,
 	)
 	return err
 }
@@ -379,6 +538,149 @@ func (q *Queries) InsertOrderPayment(ctx context.Context, arg InsertOrderPayment
 		arg.Status,
 	)
 	return err
+}
+
+const listOrderAdjustmentsByOrderID = `-- name: ListOrderAdjustmentsByOrderID :many
+SELECT a.id, a.sequence, a.kind, a.source_type, a.source_id,
+       COALESCE(a.source_code_snapshot, '') AS source_code_snapshot,
+       a.name_snapshot,
+       COALESCE(a.reason, '')               AS reason,
+       a.calculation_type,
+       a.calculation_value::TEXT AS calculation_value,
+       a.amount::TEXT            AS amount,
+       a.applies_before_tax, a.prorate_strategy,
+       a.applied_by, a.applied_at, a.approved_by
+FROM order_adjustments a
+WHERE a.order_id = $1
+ORDER BY a.sequence
+`
+
+type ListOrderAdjustmentsByOrderIDRow struct {
+	ID                 pgtype.UUID        `json:"id"`
+	Sequence           int32              `json:"sequence"`
+	Kind               string             `json:"kind"`
+	SourceType         string             `json:"source_type"`
+	SourceID           pgtype.UUID        `json:"source_id"`
+	SourceCodeSnapshot string             `json:"source_code_snapshot"`
+	NameSnapshot       string             `json:"name_snapshot"`
+	Reason             string             `json:"reason"`
+	CalculationType    string             `json:"calculation_type"`
+	CalculationValue   string             `json:"calculation_value"`
+	Amount             string             `json:"amount"`
+	AppliesBeforeTax   bool               `json:"applies_before_tax"`
+	ProrateStrategy    string             `json:"prorate_strategy"`
+	AppliedBy          pgtype.UUID        `json:"applied_by"`
+	AppliedAt          pgtype.Timestamptz `json:"applied_at"`
+	ApprovedBy         pgtype.UUID        `json:"approved_by"`
+}
+
+func (q *Queries) ListOrderAdjustmentsByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderAdjustmentsByOrderIDRow, error) {
+	rows, err := q.db.Query(ctx, listOrderAdjustmentsByOrderID, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListOrderAdjustmentsByOrderIDRow{}
+	for rows.Next() {
+		var i ListOrderAdjustmentsByOrderIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Sequence,
+			&i.Kind,
+			&i.SourceType,
+			&i.SourceID,
+			&i.SourceCodeSnapshot,
+			&i.NameSnapshot,
+			&i.Reason,
+			&i.CalculationType,
+			&i.CalculationValue,
+			&i.Amount,
+			&i.AppliesBeforeTax,
+			&i.ProrateStrategy,
+			&i.AppliedBy,
+			&i.AppliedAt,
+			&i.ApprovedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listOrderLineAdjustmentsByOrderID = `-- name: ListOrderLineAdjustmentsByOrderID :many
+SELECT a.id, a.line_item_id, a.sequence, a.kind, a.source_type, a.source_id,
+       COALESCE(a.source_code_snapshot, '') AS source_code_snapshot,
+       a.name_snapshot,
+       COALESCE(a.reason, '')               AS reason,
+       a.calculation_type,
+       a.calculation_value::TEXT AS calculation_value,
+       a.amount::TEXT            AS amount,
+       a.applies_before_tax,
+       a.applied_by, a.applied_at, a.approved_by
+FROM order_line_adjustments a
+JOIN order_line_items li ON li.id = a.line_item_id
+WHERE li.order_id = $1
+ORDER BY a.line_item_id, a.sequence
+`
+
+type ListOrderLineAdjustmentsByOrderIDRow struct {
+	ID                 pgtype.UUID        `json:"id"`
+	LineItemID         pgtype.UUID        `json:"line_item_id"`
+	Sequence           int32              `json:"sequence"`
+	Kind               string             `json:"kind"`
+	SourceType         string             `json:"source_type"`
+	SourceID           pgtype.UUID        `json:"source_id"`
+	SourceCodeSnapshot string             `json:"source_code_snapshot"`
+	NameSnapshot       string             `json:"name_snapshot"`
+	Reason             string             `json:"reason"`
+	CalculationType    string             `json:"calculation_type"`
+	CalculationValue   string             `json:"calculation_value"`
+	Amount             string             `json:"amount"`
+	AppliesBeforeTax   bool               `json:"applies_before_tax"`
+	AppliedBy          pgtype.UUID        `json:"applied_by"`
+	AppliedAt          pgtype.Timestamptz `json:"applied_at"`
+	ApprovedBy         pgtype.UUID        `json:"approved_by"`
+}
+
+func (q *Queries) ListOrderLineAdjustmentsByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineAdjustmentsByOrderIDRow, error) {
+	rows, err := q.db.Query(ctx, listOrderLineAdjustmentsByOrderID, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListOrderLineAdjustmentsByOrderIDRow{}
+	for rows.Next() {
+		var i ListOrderLineAdjustmentsByOrderIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.LineItemID,
+			&i.Sequence,
+			&i.Kind,
+			&i.SourceType,
+			&i.SourceID,
+			&i.SourceCodeSnapshot,
+			&i.NameSnapshot,
+			&i.Reason,
+			&i.CalculationType,
+			&i.CalculationValue,
+			&i.Amount,
+			&i.AppliesBeforeTax,
+			&i.AppliedBy,
+			&i.AppliedAt,
+			&i.ApprovedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listOrderLineItems = `-- name: ListOrderLineItems :many
@@ -436,6 +738,62 @@ func (q *Queries) ListOrderLineItems(ctx context.Context, orderID pgtype.UUID) (
 			&i.DiscountAmount,
 			&i.LineTotal,
 			&i.Notes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listOrderLineTaxesByOrderID = `-- name: ListOrderLineTaxesByOrderID :many
+SELECT olt.id, olt.line_item_id, olt.sequence, olt.tax_rate_id,
+       olt.name_snapshot, olt.rate_snapshot::TEXT AS rate_snapshot,
+       olt.is_inclusive, olt.is_compound,
+       olt.taxable_base::TEXT AS taxable_base,
+       olt.amount::TEXT       AS amount
+FROM order_line_taxes olt
+JOIN order_line_items li ON li.id = olt.line_item_id
+WHERE li.order_id = $1
+ORDER BY olt.line_item_id, olt.sequence
+`
+
+type ListOrderLineTaxesByOrderIDRow struct {
+	ID           pgtype.UUID `json:"id"`
+	LineItemID   pgtype.UUID `json:"line_item_id"`
+	Sequence     int32       `json:"sequence"`
+	TaxRateID    pgtype.UUID `json:"tax_rate_id"`
+	NameSnapshot string      `json:"name_snapshot"`
+	RateSnapshot string      `json:"rate_snapshot"`
+	IsInclusive  bool        `json:"is_inclusive"`
+	IsCompound   bool        `json:"is_compound"`
+	TaxableBase  string      `json:"taxable_base"`
+	Amount       string      `json:"amount"`
+}
+
+func (q *Queries) ListOrderLineTaxesByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineTaxesByOrderIDRow, error) {
+	rows, err := q.db.Query(ctx, listOrderLineTaxesByOrderID, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListOrderLineTaxesByOrderIDRow{}
+	for rows.Next() {
+		var i ListOrderLineTaxesByOrderIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.LineItemID,
+			&i.Sequence,
+			&i.TaxRateID,
+			&i.NameSnapshot,
+			&i.RateSnapshot,
+			&i.IsInclusive,
+			&i.IsCompound,
+			&i.TaxableBase,
+			&i.Amount,
 		); err != nil {
 			return nil, err
 		}

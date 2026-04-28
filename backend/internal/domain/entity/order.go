@@ -46,6 +46,7 @@ type Order struct {
 	ExternalID    string
 	LineItems     []*OrderLineItem
 	Payments      []*OrderPayment
+	Adjustments   []*OrderAdjustment
 }
 
 type OrderLineItem struct {
@@ -61,6 +62,65 @@ type OrderLineItem struct {
 	DiscountAmount string
 	LineTotal      string
 	Notes          string
+	Taxes          []*OrderLineItemTax
+	Adjustments    []*OrderLineAdjustment
+}
+
+// OrderLineItemTax is the per-tax snapshot row for one line item. Snapshot
+// fields freeze the rate's identity so editing the source rate later does
+// not change historical orders.
+type OrderLineItemTax struct {
+	ID           string
+	Sequence     int32
+	TaxRateID    string
+	NameSnapshot string
+	RateSnapshot string
+	IsInclusive  bool
+	IsCompound   bool
+	TaxableBase  string
+	Amount       string
+}
+
+// OrderLineAdjustment captures a discount, fee, comp, or service charge
+// applied to a single line item.
+type OrderLineAdjustment struct {
+	ID                 string
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	AppliedBy          string
+	AppliedAt          time.Time
+	ApprovedBy         string
+}
+
+// OrderAdjustment is the order-level equivalent: order discount, delivery
+// fee, tip, system rounding. ProrateStrategy controls how the engine
+// distributes its impact across lines for tax purposes.
+type OrderAdjustment struct {
+	ID                 string
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	ProrateStrategy    string
+	AppliedBy          string
+	AppliedAt          time.Time
+	ApprovedBy         string
 }
 
 type OrderPayment struct {

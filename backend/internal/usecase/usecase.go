@@ -52,6 +52,15 @@ type TaxRateUsecase interface {
 	DeleteTaxRate(ctx context.Context, in input.DeleteTaxRateInput) error
 }
 
+// TaxClassUsecase is the service contract consumed by the TaxClassService handler.
+type TaxClassUsecase interface {
+	ListTaxClasses(ctx context.Context, orgID string) ([]*entity.TaxClass, error)
+	GetTaxClass(ctx context.Context, in input.GetTaxClassInput) (*entity.TaxClass, error)
+	CreateTaxClass(ctx context.Context, in input.CreateTaxClassInput) (*entity.TaxClass, error)
+	UpdateTaxClass(ctx context.Context, in input.UpdateTaxClassInput) (*entity.TaxClass, error)
+	DeleteTaxClass(ctx context.Context, in input.DeleteTaxClassInput) error
+}
+
 // MemberUsecase is the service contract consumed by the MemberService handler.
 type MemberUsecase interface {
 	ListMembers(ctx context.Context, orgID string) ([]*entity.Member, error)

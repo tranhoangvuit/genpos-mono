@@ -102,6 +102,21 @@ func (mr *MockOrderReaderMockRecorder) ListLineItems(ctx, orderID any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLineItems", reflect.TypeOf((*MockOrderReader)(nil).ListLineItems), ctx, orderID)
 }
 
+// ListOrderAdjustments mocks base method.
+func (m *MockOrderReader) ListOrderAdjustments(ctx context.Context, orderID string) ([]*entity.OrderAdjustment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListOrderAdjustments", ctx, orderID)
+	ret0, _ := ret[0].([]*entity.OrderAdjustment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListOrderAdjustments indicates an expected call of ListOrderAdjustments.
+func (mr *MockOrderReaderMockRecorder) ListOrderAdjustments(ctx, orderID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListOrderAdjustments", reflect.TypeOf((*MockOrderReader)(nil).ListOrderAdjustments), ctx, orderID)
+}
+
 // ListPayments mocks base method.
 func (m *MockOrderReader) ListPayments(ctx context.Context, orderID string) ([]*entity.OrderPayment, error) {
 	m.ctrl.T.Helper()

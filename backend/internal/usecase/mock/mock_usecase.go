@@ -478,6 +478,104 @@ func (mr *MockTaxRateUsecaseMockRecorder) UpdateTaxRate(ctx, in any) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTaxRate", reflect.TypeOf((*MockTaxRateUsecase)(nil).UpdateTaxRate), ctx, in)
 }
 
+// MockTaxClassUsecase is a mock of TaxClassUsecase interface.
+type MockTaxClassUsecase struct {
+	ctrl     *gomock.Controller
+	recorder *MockTaxClassUsecaseMockRecorder
+	isgomock struct{}
+}
+
+// MockTaxClassUsecaseMockRecorder is the mock recorder for MockTaxClassUsecase.
+type MockTaxClassUsecaseMockRecorder struct {
+	mock *MockTaxClassUsecase
+}
+
+// NewMockTaxClassUsecase creates a new mock instance.
+func NewMockTaxClassUsecase(ctrl *gomock.Controller) *MockTaxClassUsecase {
+	mock := &MockTaxClassUsecase{ctrl: ctrl}
+	mock.recorder = &MockTaxClassUsecaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTaxClassUsecase) EXPECT() *MockTaxClassUsecaseMockRecorder {
+	return m.recorder
+}
+
+// CreateTaxClass mocks base method.
+func (m *MockTaxClassUsecase) CreateTaxClass(ctx context.Context, in input.CreateTaxClassInput) (*entity.TaxClass, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTaxClass", ctx, in)
+	ret0, _ := ret[0].(*entity.TaxClass)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTaxClass indicates an expected call of CreateTaxClass.
+func (mr *MockTaxClassUsecaseMockRecorder) CreateTaxClass(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTaxClass", reflect.TypeOf((*MockTaxClassUsecase)(nil).CreateTaxClass), ctx, in)
+}
+
+// DeleteTaxClass mocks base method.
+func (m *MockTaxClassUsecase) DeleteTaxClass(ctx context.Context, in input.DeleteTaxClassInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTaxClass", ctx, in)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTaxClass indicates an expected call of DeleteTaxClass.
+func (mr *MockTaxClassUsecaseMockRecorder) DeleteTaxClass(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTaxClass", reflect.TypeOf((*MockTaxClassUsecase)(nil).DeleteTaxClass), ctx, in)
+}
+
+// GetTaxClass mocks base method.
+func (m *MockTaxClassUsecase) GetTaxClass(ctx context.Context, in input.GetTaxClassInput) (*entity.TaxClass, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTaxClass", ctx, in)
+	ret0, _ := ret[0].(*entity.TaxClass)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTaxClass indicates an expected call of GetTaxClass.
+func (mr *MockTaxClassUsecaseMockRecorder) GetTaxClass(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTaxClass", reflect.TypeOf((*MockTaxClassUsecase)(nil).GetTaxClass), ctx, in)
+}
+
+// ListTaxClasses mocks base method.
+func (m *MockTaxClassUsecase) ListTaxClasses(ctx context.Context, orgID string) ([]*entity.TaxClass, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTaxClasses", ctx, orgID)
+	ret0, _ := ret[0].([]*entity.TaxClass)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTaxClasses indicates an expected call of ListTaxClasses.
+func (mr *MockTaxClassUsecaseMockRecorder) ListTaxClasses(ctx, orgID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTaxClasses", reflect.TypeOf((*MockTaxClassUsecase)(nil).ListTaxClasses), ctx, orgID)
+}
+
+// UpdateTaxClass mocks base method.
+func (m *MockTaxClassUsecase) UpdateTaxClass(ctx context.Context, in input.UpdateTaxClassInput) (*entity.TaxClass, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTaxClass", ctx, in)
+	ret0, _ := ret[0].(*entity.TaxClass)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTaxClass indicates an expected call of UpdateTaxClass.
+func (mr *MockTaxClassUsecaseMockRecorder) UpdateTaxClass(ctx, in any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTaxClass", reflect.TypeOf((*MockTaxClassUsecase)(nil).UpdateTaxClass), ctx, in)
+}
+
 // MockMemberUsecase is a mock of MemberUsecase interface.
 type MockMemberUsecase struct {
 	ctrl     *gomock.Controller

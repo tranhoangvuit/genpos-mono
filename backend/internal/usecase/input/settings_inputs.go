@@ -50,6 +50,47 @@ type DeleteTaxRateInput struct {
 	OrgID string
 }
 
+// ----- Tax classes ----------------------------------------------------------
+
+type TaxClassRateInput struct {
+	TaxRateID  string
+	Sequence   int32
+	IsCompound bool
+}
+
+type TaxClassInput struct {
+	Name        string
+	Description string
+	IsDefault   bool
+	SortOrder   int32
+	Rates       []TaxClassRateInput
+}
+
+type ListTaxClassesInput struct {
+	OrgID string
+}
+
+type GetTaxClassInput struct {
+	OrgID string
+	ID    string
+}
+
+type CreateTaxClassInput struct {
+	OrgID string
+	Class TaxClassInput
+}
+
+type UpdateTaxClassInput struct {
+	ID    string
+	OrgID string
+	Class TaxClassInput
+}
+
+type DeleteTaxClassInput struct {
+	ID    string
+	OrgID string
+}
+
 // ----- Members --------------------------------------------------------------
 
 type CreateMemberInput struct {

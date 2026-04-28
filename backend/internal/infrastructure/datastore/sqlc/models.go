@@ -97,6 +97,49 @@ type Order struct {
 	ExternalSourceID pgtype.Text        `json:"external_source_id"`
 }
 
+type OrderAdjustment struct {
+	ID                 pgtype.UUID        `json:"id"`
+	OrgID              pgtype.UUID        `json:"org_id"`
+	OrderID            pgtype.UUID        `json:"order_id"`
+	Sequence           int32              `json:"sequence"`
+	Kind               string             `json:"kind"`
+	SourceType         string             `json:"source_type"`
+	SourceID           pgtype.UUID        `json:"source_id"`
+	SourceCodeSnapshot pgtype.Text        `json:"source_code_snapshot"`
+	NameSnapshot       string             `json:"name_snapshot"`
+	Reason             pgtype.Text        `json:"reason"`
+	CalculationType    string             `json:"calculation_type"`
+	CalculationValue   pgtype.Numeric     `json:"calculation_value"`
+	Amount             pgtype.Numeric     `json:"amount"`
+	AppliesBeforeTax   bool               `json:"applies_before_tax"`
+	ProrateStrategy    string             `json:"prorate_strategy"`
+	AppliedBy          pgtype.UUID        `json:"applied_by"`
+	AppliedAt          pgtype.Timestamptz `json:"applied_at"`
+	ApprovedBy         pgtype.UUID        `json:"approved_by"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+}
+
+type OrderLineAdjustment struct {
+	ID                 pgtype.UUID        `json:"id"`
+	OrgID              pgtype.UUID        `json:"org_id"`
+	LineItemID         pgtype.UUID        `json:"line_item_id"`
+	Sequence           int32              `json:"sequence"`
+	Kind               string             `json:"kind"`
+	SourceType         string             `json:"source_type"`
+	SourceID           pgtype.UUID        `json:"source_id"`
+	SourceCodeSnapshot pgtype.Text        `json:"source_code_snapshot"`
+	NameSnapshot       string             `json:"name_snapshot"`
+	Reason             pgtype.Text        `json:"reason"`
+	CalculationType    string             `json:"calculation_type"`
+	CalculationValue   pgtype.Numeric     `json:"calculation_value"`
+	Amount             pgtype.Numeric     `json:"amount"`
+	AppliesBeforeTax   bool               `json:"applies_before_tax"`
+	AppliedBy          pgtype.UUID        `json:"applied_by"`
+	AppliedAt          pgtype.Timestamptz `json:"applied_at"`
+	ApprovedBy         pgtype.UUID        `json:"approved_by"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+}
+
 type OrderLineItem struct {
 	ID                pgtype.UUID        `json:"id"`
 	OrgID             pgtype.UUID        `json:"org_id"`
@@ -115,6 +158,21 @@ type OrderLineItem struct {
 	Notes             pgtype.Text        `json:"notes"`
 	CreatedAt         pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+}
+
+type OrderLineTax struct {
+	ID           pgtype.UUID        `json:"id"`
+	OrgID        pgtype.UUID        `json:"org_id"`
+	LineItemID   pgtype.UUID        `json:"line_item_id"`
+	Sequence     int32              `json:"sequence"`
+	TaxRateID    pgtype.UUID        `json:"tax_rate_id"`
+	NameSnapshot string             `json:"name_snapshot"`
+	RateSnapshot pgtype.Numeric     `json:"rate_snapshot"`
+	IsInclusive  bool               `json:"is_inclusive"`
+	IsCompound   bool               `json:"is_compound"`
+	TaxableBase  pgtype.Numeric     `json:"taxable_base"`
+	Amount       pgtype.Numeric     `json:"amount"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
 }
 
 type Organization struct {
@@ -216,6 +274,7 @@ type ProductVariant struct {
 	DeletedAt  pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
+	TaxClassID pgtype.UUID        `json:"tax_class_id"`
 }
 
 type ProductVariantOptionValue struct {
@@ -447,6 +506,30 @@ type Supplier struct {
 	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
 	CreatedAt   pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type TaxClass struct {
+	ID          pgtype.UUID        `json:"id"`
+	OrgID       pgtype.UUID        `json:"org_id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	IsDefault   bool               `json:"is_default"`
+	SortOrder   int32              `json:"sort_order"`
+	DeletedAt   pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type TaxClassRate struct {
+	ID         pgtype.UUID        `json:"id"`
+	OrgID      pgtype.UUID        `json:"org_id"`
+	TaxClassID pgtype.UUID        `json:"tax_class_id"`
+	TaxRateID  pgtype.UUID        `json:"tax_rate_id"`
+	Sequence   int32              `json:"sequence"`
+	IsCompound bool               `json:"is_compound"`
+	DeletedAt  pgtype.Timestamptz `json:"deleted_at"`
+	CreatedAt  pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
 }
 
 type TaxRate struct {

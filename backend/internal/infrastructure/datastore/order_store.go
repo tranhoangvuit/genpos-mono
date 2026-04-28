@@ -5,6 +5,7 @@ import (
 	stderrors "errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/genpick/genpos-mono/backend/internal/domain/entity"
 	"github.com/genpick/genpos-mono/backend/internal/domain/gateway"
@@ -113,13 +114,15 @@ func (s *orderStore) ListLineItems(ctx context.Context, orderID string) ([]*enti
 	if err != nil {
 		return nil, errors.BadRequest("invalid order id")
 	}
-	rows, err := sqlc.New(dbtx).ListOrderLineItems(ctx, uid)
+	q := sqlc.New(dbtx)
+	rows, err := q.ListOrderLineItems(ctx, uid)
 	if err != nil {
 		return nil, errors.Wrap(err, "list order line items")
 	}
 	out := make([]*entity.OrderLineItem, 0, len(rows))
+	byID := make(map[string]*entity.OrderLineItem, len(rows))
 	for _, r := range rows {
-		out = append(out, &entity.OrderLineItem{
+		li := &entity.OrderLineItem{
 			ID:             uuidString(r.ID),
 			VariantID:      uuidString(r.VariantID),
 			ProductName:    r.ProductName,
@@ -132,6 +135,101 @@ func (s *orderStore) ListLineItems(ctx context.Context, orderID string) ([]*enti
 			DiscountAmount: r.DiscountAmount,
 			LineTotal:      r.LineTotal,
 			Notes:          r.Notes,
+		}
+		out = append(out, li)
+		byID[li.ID] = li
+	}
+
+	// Hydrate per-tax breakdown and per-line adjustments. Single round-trip
+	// per child table (the dispatch is in Go) keeps the read path
+	// straightforward without N+1 queries.
+	taxes, tErr := q.ListOrderLineTaxesByOrderID(ctx, uid)
+	if tErr != nil {
+		return nil, errors.Wrap(tErr, "list order line taxes")
+	}
+	for _, t := range taxes {
+		li, ok := byID[uuidString(t.LineItemID)]
+		if !ok {
+			continue
+		}
+		li.Taxes = append(li.Taxes, &entity.OrderLineItemTax{
+			ID:           uuidString(t.ID),
+			Sequence:     t.Sequence,
+			TaxRateID:    uuidString(t.TaxRateID),
+			NameSnapshot: t.NameSnapshot,
+			RateSnapshot: t.RateSnapshot,
+			IsInclusive:  t.IsInclusive,
+			IsCompound:   t.IsCompound,
+			TaxableBase:  t.TaxableBase,
+			Amount:       t.Amount,
+		})
+	}
+
+	adjs, aErr := q.ListOrderLineAdjustmentsByOrderID(ctx, uid)
+	if aErr != nil {
+		return nil, errors.Wrap(aErr, "list order line adjustments")
+	}
+	for _, a := range adjs {
+		li, ok := byID[uuidString(a.LineItemID)]
+		if !ok {
+			continue
+		}
+		li.Adjustments = append(li.Adjustments, &entity.OrderLineAdjustment{
+			ID:                 uuidString(a.ID),
+			Sequence:           a.Sequence,
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceID:           uuidString(a.SourceID),
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   a.CalculationValue,
+			Amount:             a.Amount,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			AppliedBy:          uuidString(a.AppliedBy),
+			AppliedAt:          a.AppliedAt.Time,
+			ApprovedBy:         uuidString(a.ApprovedBy),
+		})
+	}
+	return out, nil
+}
+
+// ListOrderAdjustments returns the order-level adjustments attached to one
+// order. Hydration is split out (rather than rolled into GetByID) to mirror
+// the existing ListLineItems / ListPayments pattern.
+func (s *orderStore) ListOrderAdjustments(ctx context.Context, orderID string) ([]*entity.OrderAdjustment, error) {
+	dbtx, err := GetDBTX(ctx)
+	if err != nil {
+		return nil, err
+	}
+	uid, err := parseUUID(orderID)
+	if err != nil {
+		return nil, errors.BadRequest("invalid order id")
+	}
+	rows, err := sqlc.New(dbtx).ListOrderAdjustmentsByOrderID(ctx, uid)
+	if err != nil {
+		return nil, errors.Wrap(err, "list order adjustments")
+	}
+	out := make([]*entity.OrderAdjustment, 0, len(rows))
+	for _, a := range rows {
+		out = append(out, &entity.OrderAdjustment{
+			ID:                 uuidString(a.ID),
+			Sequence:           a.Sequence,
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceID:           uuidString(a.SourceID),
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   a.CalculationValue,
+			Amount:             a.Amount,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			ProrateStrategy:    a.ProrateStrategy,
+			AppliedBy:          uuidString(a.AppliedBy),
+			AppliedAt:          a.AppliedAt.Time,
+			ApprovedBy:         uuidString(a.ApprovedBy),
 		})
 	}
 	return out, nil
@@ -324,7 +422,7 @@ func (s *orderStore) Create(ctx context.Context, params gateway.CreateOrderParam
 		if variantName == "" {
 			variantName = "Default"
 		}
-		if iErr := q.InsertOrderLineItem(ctx, sqlc.InsertOrderLineItemParams{
+		lineID, iErr := q.InsertOrderLineItem(ctx, sqlc.InsertOrderLineItemParams{
 			OrgID:          orgID,
 			OrderID:        row.ID,
 			VariantID:      variantID,
@@ -338,8 +436,29 @@ func (s *orderStore) Create(ctx context.Context, params gateway.CreateOrderParam
 			DiscountAmount: discountAmount,
 			LineTotal:      lineTotal,
 			Notes:          textOrNull(item.Notes),
-		}); iErr != nil {
+		})
+		if iErr != nil {
 			return nil, errors.Wrap(iErr, "insert order line item")
+		}
+
+		// Snapshot children: per-tax breakdown + per-line adjustments. When
+		// the caller sends only aggregates (legacy desk POS upload), these
+		// slices are empty and the loops are no-ops.
+		for _, t := range item.Taxes {
+			if iErr := insertOrderLineTax(ctx, q, orgID, lineID, t); iErr != nil {
+				return nil, iErr
+			}
+		}
+		for _, a := range item.Adjustments {
+			if iErr := insertOrderLineAdjustment(ctx, q, orgID, lineID, a); iErr != nil {
+				return nil, iErr
+			}
+		}
+	}
+
+	for _, oa := range params.Adjustments {
+		if oaErr := insertOrderAdjustment(ctx, q, orgID, row.ID, oa); oaErr != nil {
+			return nil, oaErr
 		}
 	}
 
@@ -392,4 +511,125 @@ func (s *orderStore) Create(ctx context.Context, params gateway.CreateOrderParam
 		Source:        row.Source,
 		ExternalID:    row.ExternalID,
 	}, nil
+}
+
+func insertOrderLineTax(ctx context.Context, q *sqlc.Queries, orgID, lineID pgtype.UUID, t gateway.OrderLineTaxParams) error {
+	taxRateID, err := uuidOrNull(t.TaxRateID)
+	if err != nil {
+		return errors.BadRequest("invalid line tax rate id")
+	}
+	rate, err := numericFromString(t.RateSnapshot)
+	if err != nil {
+		return errors.BadRequest("invalid line tax rate snapshot")
+	}
+	base, err := numericFromString(t.TaxableBase)
+	if err != nil {
+		return errors.BadRequest("invalid line tax taxable base")
+	}
+	amount, err := numericFromString(t.Amount)
+	if err != nil {
+		return errors.BadRequest("invalid line tax amount")
+	}
+	if err := q.InsertOrderLineTax(ctx, sqlc.InsertOrderLineTaxParams{
+		OrgID:        orgID,
+		LineItemID:   lineID,
+		Sequence:     t.Sequence,
+		TaxRateID:    taxRateID,
+		NameSnapshot: t.NameSnapshot,
+		RateSnapshot: rate,
+		IsInclusive:  t.IsInclusive,
+		IsCompound:   t.IsCompound,
+		TaxableBase:  base,
+		Amount:       amount,
+	}); err != nil {
+		return errors.Wrap(err, "insert order line tax")
+	}
+	return nil
+}
+
+func insertOrderLineAdjustment(ctx context.Context, q *sqlc.Queries, orgID, lineID pgtype.UUID, a gateway.OrderLineAdjustmentParams) error {
+	sourceID, err := uuidOrNull(a.SourceID)
+	if err != nil {
+		return errors.BadRequest("invalid line adjustment source id")
+	}
+	appliedBy, err := uuidOrNull(a.AppliedBy)
+	if err != nil {
+		return errors.BadRequest("invalid line adjustment applied_by")
+	}
+	approvedBy, err := uuidOrNull(a.ApprovedBy)
+	if err != nil {
+		return errors.BadRequest("invalid line adjustment approved_by")
+	}
+	calcValue, err := numericFromString(a.CalculationValue)
+	if err != nil {
+		return errors.BadRequest("invalid line adjustment calculation value")
+	}
+	amount, err := numericFromString(a.Amount)
+	if err != nil {
+		return errors.BadRequest("invalid line adjustment amount")
+	}
+	if err := q.InsertOrderLineAdjustment(ctx, sqlc.InsertOrderLineAdjustmentParams{
+		OrgID:              orgID,
+		LineItemID:         lineID,
+		Sequence:           a.Sequence,
+		Kind:               a.Kind,
+		SourceType:         a.SourceType,
+		SourceID:           sourceID,
+		SourceCodeSnapshot: textOrNull(a.SourceCodeSnapshot),
+		NameSnapshot:       a.NameSnapshot,
+		Reason:             textOrNull(a.Reason),
+		CalculationType:    a.CalculationType,
+		CalculationValue:   calcValue,
+		Amount:             amount,
+		AppliesBeforeTax:   a.AppliesBeforeTax,
+		AppliedBy:          appliedBy,
+		ApprovedBy:         approvedBy,
+	}); err != nil {
+		return errors.Wrap(err, "insert order line adjustment")
+	}
+	return nil
+}
+
+func insertOrderAdjustment(ctx context.Context, q *sqlc.Queries, orgID, orderID pgtype.UUID, a gateway.OrderAdjustmentParams) error {
+	sourceID, err := uuidOrNull(a.SourceID)
+	if err != nil {
+		return errors.BadRequest("invalid order adjustment source id")
+	}
+	appliedBy, err := uuidOrNull(a.AppliedBy)
+	if err != nil {
+		return errors.BadRequest("invalid order adjustment applied_by")
+	}
+	approvedBy, err := uuidOrNull(a.ApprovedBy)
+	if err != nil {
+		return errors.BadRequest("invalid order adjustment approved_by")
+	}
+	calcValue, err := numericFromString(a.CalculationValue)
+	if err != nil {
+		return errors.BadRequest("invalid order adjustment calculation value")
+	}
+	amount, err := numericFromString(a.Amount)
+	if err != nil {
+		return errors.BadRequest("invalid order adjustment amount")
+	}
+	if err := q.InsertOrderAdjustment(ctx, sqlc.InsertOrderAdjustmentParams{
+		OrgID:              orgID,
+		OrderID:            orderID,
+		Sequence:           a.Sequence,
+		Kind:               a.Kind,
+		SourceType:         a.SourceType,
+		SourceID:           sourceID,
+		SourceCodeSnapshot: textOrNull(a.SourceCodeSnapshot),
+		NameSnapshot:       a.NameSnapshot,
+		Reason:             textOrNull(a.Reason),
+		CalculationType:    a.CalculationType,
+		CalculationValue:   calcValue,
+		Amount:             amount,
+		AppliesBeforeTax:   a.AppliesBeforeTax,
+		ProrateStrategy:    a.ProrateStrategy,
+		AppliedBy:          appliedBy,
+		ApprovedBy:         approvedBy,
+	}); err != nil {
+		return errors.Wrap(err, "insert order adjustment")
+	}
+	return nil
 }

@@ -22,9 +22,60 @@ type OrderReader interface {
 	GetByExternalID(ctx context.Context, source, externalID string) (*entity.Order, error)
 	ListLineItems(ctx context.Context, orderID string) ([]*entity.OrderLineItem, error)
 	ListPayments(ctx context.Context, orderID string) ([]*entity.OrderPayment, error)
+	ListOrderAdjustments(ctx context.Context, orderID string) ([]*entity.OrderAdjustment, error)
+}
+
+// OrderLineTaxParams is one snapshot tax row attached to a line on Create.
+type OrderLineTaxParams struct {
+	Sequence     int32
+	TaxRateID    string // optional -- snapshot survives if rate is deleted
+	NameSnapshot string
+	RateSnapshot string // decimal fraction string (e.g. "0.1000")
+	IsInclusive  bool
+	IsCompound   bool
+	TaxableBase  string
+	Amount       string
+}
+
+// OrderLineAdjustmentParams is one line-level adjustment on Create.
+type OrderLineAdjustmentParams struct {
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	AppliedBy          string
+	ApprovedBy         string
+}
+
+// OrderAdjustmentParams is one order-level adjustment on Create.
+type OrderAdjustmentParams struct {
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	ProrateStrategy    string
+	AppliedBy          string
+	ApprovedBy         string
 }
 
 // CreateOrderLineItemParams is the per-line-item write payload for Create.
+// Taxes and Adjustments are optional: empty slices preserve the legacy
+// aggregate-only contract (existing desk POS uploads); when populated the
+// children are persisted alongside the aggregates the caller supplied.
 type CreateOrderLineItemParams struct {
 	VariantID      string // optional — empty when variant has been deleted upstream
 	ProductName    string
@@ -37,6 +88,8 @@ type CreateOrderLineItemParams struct {
 	TaxAmount      string
 	LineTotal      string
 	Notes          string
+	Taxes          []OrderLineTaxParams
+	Adjustments    []OrderLineAdjustmentParams
 }
 
 // CreateOrderPaymentParams is the per-payment write payload for Create.
@@ -68,8 +121,9 @@ type CreateOrderParams struct {
 	Notes         string
 	CompletedAt   time.Time
 
-	LineItems []CreateOrderLineItemParams
-	Payments  []CreateOrderPaymentParams
+	LineItems   []CreateOrderLineItemParams
+	Payments    []CreateOrderPaymentParams
+	Adjustments []OrderAdjustmentParams
 }
 
 // OrderWriter persists orders coming from external channels (POS, online

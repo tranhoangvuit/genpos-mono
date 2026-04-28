@@ -87,6 +87,8 @@ func (h *OrderHandler) CreateOrder(
 			TaxAmount:      it.GetTaxAmount(),
 			LineTotal:      it.GetLineTotal(),
 			Notes:          it.GetNotes(),
+			Taxes:          toLineTaxesInput(it.GetTaxes()),
+			Adjustments:    toLineAdjustmentsInput(it.GetAdjustments()),
 		})
 	}
 	payments := make([]input.CreateOrderPaymentInput, 0, len(msg.GetPayments()))
@@ -119,6 +121,7 @@ func (h *OrderHandler) CreateOrder(
 		CompletedAt:      completedAt,
 		LineItems:        items,
 		Payments:         payments,
+		Adjustments:      toOrderAdjustmentsInput(msg.GetAdjustments()),
 	})
 	if err != nil {
 		return nil, h.logAndConvert(ctx, "create order", err)
@@ -163,6 +166,8 @@ func toOrderProto(o *entity.Order) *genposv1.Order {
 			DiscountAmount: it.DiscountAmount,
 			LineTotal:      it.LineTotal,
 			Notes:          it.Notes,
+			Taxes:          toLineTaxesProto(it.Taxes),
+			Adjustments:    toLineAdjustmentsProto(it.Adjustments),
 		})
 	}
 	payments := make([]*genposv1.OrderPayment, 0, len(o.Payments))
@@ -200,9 +205,163 @@ func toOrderProto(o *entity.Order) *genposv1.Order {
 		Payments:      payments,
 		Source:        o.Source,
 		ExternalId:    o.ExternalID,
+		Adjustments:   toOrderAdjustmentsProto(o.Adjustments),
 	}
 	if !o.CompletedAt.IsZero() {
 		out.CompletedAt = timestamppb.New(o.CompletedAt)
+	}
+	return out
+}
+
+func toLineTaxesInput(in []*genposv1.OrderLineItemTax) []input.CreateOrderLineItemTaxInput {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]input.CreateOrderLineItemTaxInput, len(in))
+	for i, t := range in {
+		out[i] = input.CreateOrderLineItemTaxInput{
+			Sequence:     t.GetSequence(),
+			TaxRateID:    t.GetTaxRateId(),
+			NameSnapshot: t.GetNameSnapshot(),
+			RateSnapshot: t.GetRateSnapshot(),
+			IsInclusive:  t.GetIsInclusive(),
+			IsCompound:   t.GetIsCompound(),
+			TaxableBase:  t.GetTaxableBase(),
+			Amount:       t.GetAmount(),
+		}
+	}
+	return out
+}
+
+func toLineAdjustmentsInput(in []*genposv1.OrderLineAdjustment) []input.CreateOrderLineAdjustmentInput {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]input.CreateOrderLineAdjustmentInput, len(in))
+	for i, a := range in {
+		out[i] = input.CreateOrderLineAdjustmentInput{
+			Sequence:           a.GetSequence(),
+			Kind:               a.GetKind(),
+			SourceType:         a.GetSourceType(),
+			SourceID:           a.GetSourceId(),
+			SourceCodeSnapshot: a.GetSourceCodeSnapshot(),
+			NameSnapshot:       a.GetNameSnapshot(),
+			Reason:             a.GetReason(),
+			CalculationType:    a.GetCalculationType(),
+			CalculationValue:   a.GetCalculationValue(),
+			Amount:             a.GetAmount(),
+			AppliesBeforeTax:   a.GetAppliesBeforeTax(),
+			AppliedBy:          a.GetAppliedBy(),
+			ApprovedBy:         a.GetApprovedBy(),
+		}
+	}
+	return out
+}
+
+func toOrderAdjustmentsInput(in []*genposv1.OrderAdjustment) []input.CreateOrderAdjustmentInput {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]input.CreateOrderAdjustmentInput, len(in))
+	for i, a := range in {
+		out[i] = input.CreateOrderAdjustmentInput{
+			Sequence:           a.GetSequence(),
+			Kind:               a.GetKind(),
+			SourceType:         a.GetSourceType(),
+			SourceID:           a.GetSourceId(),
+			SourceCodeSnapshot: a.GetSourceCodeSnapshot(),
+			NameSnapshot:       a.GetNameSnapshot(),
+			Reason:             a.GetReason(),
+			CalculationType:    a.GetCalculationType(),
+			CalculationValue:   a.GetCalculationValue(),
+			Amount:             a.GetAmount(),
+			AppliesBeforeTax:   a.GetAppliesBeforeTax(),
+			ProrateStrategy:    a.GetProrateStrategy(),
+			AppliedBy:          a.GetAppliedBy(),
+			ApprovedBy:         a.GetApprovedBy(),
+		}
+	}
+	return out
+}
+
+func toLineTaxesProto(in []*entity.OrderLineItemTax) []*genposv1.OrderLineItemTax {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]*genposv1.OrderLineItemTax, len(in))
+	for i, t := range in {
+		out[i] = &genposv1.OrderLineItemTax{
+			Id:           t.ID,
+			Sequence:     t.Sequence,
+			TaxRateId:    t.TaxRateID,
+			NameSnapshot: t.NameSnapshot,
+			RateSnapshot: t.RateSnapshot,
+			IsInclusive:  t.IsInclusive,
+			IsCompound:   t.IsCompound,
+			TaxableBase:  t.TaxableBase,
+			Amount:       t.Amount,
+		}
+	}
+	return out
+}
+
+func toLineAdjustmentsProto(in []*entity.OrderLineAdjustment) []*genposv1.OrderLineAdjustment {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]*genposv1.OrderLineAdjustment, len(in))
+	for i, a := range in {
+		row := &genposv1.OrderLineAdjustment{
+			Id:                 a.ID,
+			Sequence:           a.Sequence,
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceId:           a.SourceID,
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   a.CalculationValue,
+			Amount:             a.Amount,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			AppliedBy:          a.AppliedBy,
+			ApprovedBy:         a.ApprovedBy,
+		}
+		if !a.AppliedAt.IsZero() {
+			row.AppliedAt = timestamppb.New(a.AppliedAt)
+		}
+		out[i] = row
+	}
+	return out
+}
+
+func toOrderAdjustmentsProto(in []*entity.OrderAdjustment) []*genposv1.OrderAdjustment {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]*genposv1.OrderAdjustment, len(in))
+	for i, a := range in {
+		row := &genposv1.OrderAdjustment{
+			Id:                 a.ID,
+			Sequence:           a.Sequence,
+			Kind:               a.Kind,
+			SourceType:         a.SourceType,
+			SourceId:           a.SourceID,
+			SourceCodeSnapshot: a.SourceCodeSnapshot,
+			NameSnapshot:       a.NameSnapshot,
+			Reason:             a.Reason,
+			CalculationType:    a.CalculationType,
+			CalculationValue:   a.CalculationValue,
+			Amount:             a.Amount,
+			AppliesBeforeTax:   a.AppliesBeforeTax,
+			ProrateStrategy:    a.ProrateStrategy,
+			AppliedBy:          a.AppliedBy,
+			ApprovedBy:         a.ApprovedBy,
+		}
+		if !a.AppliedAt.IsZero() {
+			row.AppliedAt = timestamppb.New(a.AppliedAt)
+		}
+		out[i] = row
 	}
 	return out
 }

@@ -16,6 +16,53 @@ type GetOrderInput struct {
 	ID    string
 }
 
+// CreateOrderLineItemTaxInput is one snapshot tax row attached to a line.
+type CreateOrderLineItemTaxInput struct {
+	Sequence     int32
+	TaxRateID    string
+	NameSnapshot string
+	RateSnapshot string
+	IsInclusive  bool
+	IsCompound   bool
+	TaxableBase  string
+	Amount       string
+}
+
+// CreateOrderLineAdjustmentInput is one line-level discount/fee/comp.
+type CreateOrderLineAdjustmentInput struct {
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	AppliedBy          string
+	ApprovedBy         string
+}
+
+// CreateOrderAdjustmentInput is one order-level adjustment.
+type CreateOrderAdjustmentInput struct {
+	Sequence           int32
+	Kind               string
+	SourceType         string
+	SourceID           string
+	SourceCodeSnapshot string
+	NameSnapshot       string
+	Reason             string
+	CalculationType    string
+	CalculationValue   string
+	Amount             string
+	AppliesBeforeTax   bool
+	ProrateStrategy    string
+	AppliedBy          string
+	ApprovedBy         string
+}
+
 // CreateOrderLineItemInput is one line item on a CreateOrder request.
 type CreateOrderLineItemInput struct {
 	VariantID      string
@@ -29,6 +76,8 @@ type CreateOrderLineItemInput struct {
 	TaxAmount      string
 	LineTotal      string
 	Notes          string
+	Taxes          []CreateOrderLineItemTaxInput
+	Adjustments    []CreateOrderLineAdjustmentInput
 }
 
 // CreateOrderPaymentInput is one payment row on a CreateOrder request.
@@ -61,6 +110,7 @@ type CreateOrderInput struct {
 	Notes         string
 	CompletedAt   time.Time
 
-	LineItems []CreateOrderLineItemInput
-	Payments  []CreateOrderPaymentInput
+	LineItems   []CreateOrderLineItemInput
+	Payments    []CreateOrderPaymentInput
+	Adjustments []CreateOrderAdjustmentInput
 }

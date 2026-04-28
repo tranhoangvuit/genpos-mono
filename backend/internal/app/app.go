@@ -28,6 +28,7 @@ type App struct {
 	StoreHandler         *grpchandler.StoreHandler
 	PaymentMethodHandler *grpchandler.PaymentMethodHandler
 	TaxRateHandler       *grpchandler.TaxRateHandler
+	TaxClassHandler      *grpchandler.TaxClassHandler
 	MemberHandler        *grpchandler.MemberHandler
 	DB                   *database.PostgresDB
 	AuthDB               *database.PostgresDB
@@ -76,6 +77,9 @@ func (a *App) NewHTTPHandler() http.Handler {
 
 	trPath, trHTTP := genposv1connect.NewTaxRateServiceHandler(a.TaxRateHandler, interceptors)
 	mux.Handle(trPath, trHTTP)
+
+	tcPath, tcHTTP := genposv1connect.NewTaxClassServiceHandler(a.TaxClassHandler, interceptors)
+	mux.Handle(tcPath, tcHTTP)
 
 	memPath, memHTTP := genposv1connect.NewMemberServiceHandler(a.MemberHandler, interceptors)
 	mux.Handle(memPath, memHTTP)

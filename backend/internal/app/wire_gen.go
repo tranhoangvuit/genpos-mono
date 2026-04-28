@@ -103,6 +103,12 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	trUsecase := usecase.NewTaxRateUsecase(tenantDB, trReader, trWriter)
 	trHandler := grpchandler.NewTaxRateHandler(logger, trUsecase)
 
+	// Tax classes (settings) -- groups of tax_rates assignable to product_variants.
+	tcReader := datastore.NewTaxClassReader()
+	tcWriter := datastore.NewTaxClassWriter()
+	tcUsecase := usecase.NewTaxClassUsecase(tenantDB, tcReader, tcWriter)
+	tcHandler := grpchandler.NewTaxClassHandler(logger, tcUsecase)
+
 	// Members (users)
 	memberReader := datastore.NewMemberReader()
 	memberWriter := datastore.NewMemberWriter()
@@ -142,6 +148,7 @@ func InitializeApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		StoreHandler:         storeHandler,
 		PaymentMethodHandler: pmHandler,
 		TaxRateHandler:       trHandler,
+		TaxClassHandler:      tcHandler,
 		MemberHandler:        memberHandler,
 		DB:                   db,
 		AuthDB:               authDB,

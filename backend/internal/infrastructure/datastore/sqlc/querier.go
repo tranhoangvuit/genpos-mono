@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	AddPurchaseOrderItemReceived(ctx context.Context, arg AddPurchaseOrderItemReceivedParams) error
+	ClearDefaultTaxClasses(ctx context.Context) error
 	ClearDefaultTaxRates(ctx context.Context) error
 	CountPurchaseOrdersForPrefix(ctx context.Context, arg CountPurchaseOrdersForPrefixParams) (int32, error)
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (CreateCategoryRow, error)
@@ -27,6 +28,7 @@ type Querier interface {
 	CreateStockTake(ctx context.Context, arg CreateStockTakeParams) (CreateStockTakeRow, error)
 	CreateStore(ctx context.Context, arg CreateStoreParams) (CreateStoreRow, error)
 	CreateSupplier(ctx context.Context, arg CreateSupplierParams) (CreateSupplierRow, error)
+	CreateTaxClass(ctx context.Context, arg CreateTaxClassParams) (CreateTaxClassRow, error)
 	CreateTaxRate(ctx context.Context, arg CreateTaxRateParams) (CreateTaxRateRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	DeleteCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) error
@@ -57,13 +59,17 @@ type Querier interface {
 	GetRoleByOrgAndName(ctx context.Context, arg GetRoleByOrgAndNameParams) (GetRoleByOrgAndNameRow, error)
 	GetStockTakeByID(ctx context.Context, id pgtype.UUID) (GetStockTakeByIDRow, error)
 	GetSupplierByID(ctx context.Context, id pgtype.UUID) (GetSupplierByIDRow, error)
+	GetTaxClass(ctx context.Context, id pgtype.UUID) (GetTaxClassRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (GetUserByIDRow, error)
 	HasStoreAccess(ctx context.Context, arg HasStoreAccessParams) (bool, error)
 	InsertCustomerGroupMember(ctx context.Context, arg InsertCustomerGroupMemberParams) error
 	InsertMemberStore(ctx context.Context, arg InsertMemberStoreParams) error
 	InsertOrder(ctx context.Context, arg InsertOrderParams) (InsertOrderRow, error)
-	InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) error
+	InsertOrderAdjustment(ctx context.Context, arg InsertOrderAdjustmentParams) error
+	InsertOrderLineAdjustment(ctx context.Context, arg InsertOrderLineAdjustmentParams) error
+	InsertOrderLineItem(ctx context.Context, arg InsertOrderLineItemParams) (pgtype.UUID, error)
+	InsertOrderLineTax(ctx context.Context, arg InsertOrderLineTaxParams) error
 	InsertOrderPayment(ctx context.Context, arg InsertOrderPaymentParams) error
 	InsertProductImage(ctx context.Context, arg InsertProductImageParams) (ProductImage, error)
 	InsertProductOption(ctx context.Context, arg InsertProductOptionParams) (ProductOption, error)
@@ -73,13 +79,17 @@ type Querier interface {
 	InsertPurchaseOrderItem(ctx context.Context, arg InsertPurchaseOrderItemParams) (PurchaseOrderItem, error)
 	InsertStockMovement(ctx context.Context, arg InsertStockMovementParams) (pgtype.UUID, error)
 	InsertStockTakeItem(ctx context.Context, arg InsertStockTakeItemParams) (StockTakeItem, error)
+	InsertTaxClassRate(ctx context.Context, arg InsertTaxClassRateParams) (InsertTaxClassRateRow, error)
 	ListCategories(ctx context.Context) ([]ListCategoriesRow, error)
 	ListCustomerGroupMembersByCustomer(ctx context.Context, customerID pgtype.UUID) ([]CustomerGroupMember, error)
 	ListCustomerGroups(ctx context.Context) ([]ListCustomerGroupsRow, error)
 	ListCustomerSummaries(ctx context.Context) ([]ListCustomerSummariesRow, error)
 	ListMemberStoreIDs(ctx context.Context, userID pgtype.UUID) ([]pgtype.UUID, error)
 	ListMembers(ctx context.Context) ([]ListMembersRow, error)
+	ListOrderAdjustmentsByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderAdjustmentsByOrderIDRow, error)
+	ListOrderLineAdjustmentsByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineAdjustmentsByOrderIDRow, error)
 	ListOrderLineItems(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineItemsRow, error)
+	ListOrderLineTaxesByOrderID(ctx context.Context, orderID pgtype.UUID) ([]ListOrderLineTaxesByOrderIDRow, error)
 	ListOrderPayments(ctx context.Context, orderID pgtype.UUID) ([]ListOrderPaymentsRow, error)
 	ListOrdersByDateRange(ctx context.Context, arg ListOrdersByDateRangeParams) ([]ListOrdersByDateRangeRow, error)
 	ListPaymentMethods(ctx context.Context) ([]ListPaymentMethodsRow, error)
@@ -98,6 +108,8 @@ type Querier interface {
 	ListStoreRefs(ctx context.Context) ([]ListStoreRefsRow, error)
 	ListStores(ctx context.Context) ([]ListStoresRow, error)
 	ListSuppliers(ctx context.Context) ([]ListSuppliersRow, error)
+	ListTaxClassRatesByClassIDs(ctx context.Context, classIds []pgtype.UUID) ([]ListTaxClassRatesByClassIDsRow, error)
+	ListTaxClasses(ctx context.Context) ([]ListTaxClassesRow, error)
 	ListTaxRates(ctx context.Context) ([]ListTaxRatesRow, error)
 	ListVariantPickerItems(ctx context.Context) ([]ListVariantPickerItemsRow, error)
 	RevokeRefreshToken(ctx context.Context, arg RevokeRefreshTokenParams) error
@@ -115,6 +127,8 @@ type Querier interface {
 	SoftDeleteStockTake(ctx context.Context, id pgtype.UUID) error
 	SoftDeleteStore(ctx context.Context, id pgtype.UUID) (int64, error)
 	SoftDeleteSupplier(ctx context.Context, id pgtype.UUID) error
+	SoftDeleteTaxClass(ctx context.Context, id pgtype.UUID) (int64, error)
+	SoftDeleteTaxClassRatesByClassID(ctx context.Context, taxClassID pgtype.UUID) error
 	SoftDeleteTaxRate(ctx context.Context, id pgtype.UUID) (int64, error)
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (UpdateCategoryRow, error)
 	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (UpdateCustomerRow, error)
@@ -129,6 +143,7 @@ type Querier interface {
 	UpdateStockTakeStatus(ctx context.Context, arg UpdateStockTakeStatusParams) error
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) (UpdateStoreRow, error)
 	UpdateSupplier(ctx context.Context, arg UpdateSupplierParams) (UpdateSupplierRow, error)
+	UpdateTaxClass(ctx context.Context, arg UpdateTaxClassParams) (UpdateTaxClassRow, error)
 	UpdateTaxRate(ctx context.Context, arg UpdateTaxRateParams) (UpdateTaxRateRow, error)
 }
 

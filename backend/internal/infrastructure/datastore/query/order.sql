@@ -138,7 +138,7 @@ RETURNING id, org_id, store_id, register_id, customer_id, user_id,
           COALESCE(external_id, '') AS external_id,
           created_at, updated_at;
 
--- name: InsertOrderLineItem :exec
+-- name: InsertOrderLineItem :one
 INSERT INTO order_line_items (
     org_id, order_id, variant_id, product_name, variant_name, sku,
     quantity, unit_price, tax_rate, tax_amount, discount_amount, line_total, notes
@@ -149,7 +149,92 @@ INSERT INTO order_line_items (
     sqlc.arg('tax_rate')::NUMERIC, sqlc.arg('tax_amount')::NUMERIC,
     sqlc.arg('discount_amount')::NUMERIC, sqlc.arg('line_total')::NUMERIC,
     sqlc.narg('notes')
+)
+RETURNING id;
+
+-- name: InsertOrderLineTax :exec
+INSERT INTO order_line_taxes (
+    org_id, line_item_id, sequence, tax_rate_id,
+    name_snapshot, rate_snapshot, is_inclusive, is_compound,
+    taxable_base, amount
+) VALUES (
+    sqlc.arg('org_id'), sqlc.arg('line_item_id'), sqlc.arg('sequence'),
+    sqlc.narg('tax_rate_id'),
+    sqlc.arg('name_snapshot'), sqlc.arg('rate_snapshot')::NUMERIC,
+    sqlc.arg('is_inclusive'), sqlc.arg('is_compound'),
+    sqlc.arg('taxable_base')::NUMERIC, sqlc.arg('amount')::NUMERIC
 );
+
+-- name: InsertOrderLineAdjustment :exec
+INSERT INTO order_line_adjustments (
+    org_id, line_item_id, sequence, kind, source_type, source_id,
+    source_code_snapshot, name_snapshot, reason,
+    calculation_type, calculation_value, amount,
+    applies_before_tax, applied_by, approved_by
+) VALUES (
+    sqlc.arg('org_id'), sqlc.arg('line_item_id'), sqlc.arg('sequence'),
+    sqlc.arg('kind'), sqlc.arg('source_type'), sqlc.narg('source_id'),
+    sqlc.narg('source_code_snapshot'), sqlc.arg('name_snapshot'), sqlc.narg('reason'),
+    sqlc.arg('calculation_type'), sqlc.arg('calculation_value')::NUMERIC,
+    sqlc.arg('amount')::NUMERIC,
+    sqlc.arg('applies_before_tax'), sqlc.narg('applied_by'), sqlc.narg('approved_by')
+);
+
+-- name: InsertOrderAdjustment :exec
+INSERT INTO order_adjustments (
+    org_id, order_id, sequence, kind, source_type, source_id,
+    source_code_snapshot, name_snapshot, reason,
+    calculation_type, calculation_value, amount,
+    applies_before_tax, prorate_strategy, applied_by, approved_by
+) VALUES (
+    sqlc.arg('org_id'), sqlc.arg('order_id'), sqlc.arg('sequence'),
+    sqlc.arg('kind'), sqlc.arg('source_type'), sqlc.narg('source_id'),
+    sqlc.narg('source_code_snapshot'), sqlc.arg('name_snapshot'), sqlc.narg('reason'),
+    sqlc.arg('calculation_type'), sqlc.arg('calculation_value')::NUMERIC,
+    sqlc.arg('amount')::NUMERIC,
+    sqlc.arg('applies_before_tax'), sqlc.arg('prorate_strategy'),
+    sqlc.narg('applied_by'), sqlc.narg('approved_by')
+);
+
+-- name: ListOrderLineTaxesByOrderID :many
+SELECT olt.id, olt.line_item_id, olt.sequence, olt.tax_rate_id,
+       olt.name_snapshot, olt.rate_snapshot::TEXT AS rate_snapshot,
+       olt.is_inclusive, olt.is_compound,
+       olt.taxable_base::TEXT AS taxable_base,
+       olt.amount::TEXT       AS amount
+FROM order_line_taxes olt
+JOIN order_line_items li ON li.id = olt.line_item_id
+WHERE li.order_id = sqlc.arg('order_id')
+ORDER BY olt.line_item_id, olt.sequence;
+
+-- name: ListOrderLineAdjustmentsByOrderID :many
+SELECT a.id, a.line_item_id, a.sequence, a.kind, a.source_type, a.source_id,
+       COALESCE(a.source_code_snapshot, '') AS source_code_snapshot,
+       a.name_snapshot,
+       COALESCE(a.reason, '')               AS reason,
+       a.calculation_type,
+       a.calculation_value::TEXT AS calculation_value,
+       a.amount::TEXT            AS amount,
+       a.applies_before_tax,
+       a.applied_by, a.applied_at, a.approved_by
+FROM order_line_adjustments a
+JOIN order_line_items li ON li.id = a.line_item_id
+WHERE li.order_id = sqlc.arg('order_id')
+ORDER BY a.line_item_id, a.sequence;
+
+-- name: ListOrderAdjustmentsByOrderID :many
+SELECT a.id, a.sequence, a.kind, a.source_type, a.source_id,
+       COALESCE(a.source_code_snapshot, '') AS source_code_snapshot,
+       a.name_snapshot,
+       COALESCE(a.reason, '')               AS reason,
+       a.calculation_type,
+       a.calculation_value::TEXT AS calculation_value,
+       a.amount::TEXT            AS amount,
+       a.applies_before_tax, a.prorate_strategy,
+       a.applied_by, a.applied_at, a.approved_by
+FROM order_adjustments a
+WHERE a.order_id = sqlc.arg('order_id')
+ORDER BY a.sequence;
 
 -- name: InsertOrderPayment :exec
 INSERT INTO payments (
